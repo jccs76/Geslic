@@ -75,7 +75,7 @@ public class UserControllerTest {
 
     @Test
     @DisplayName("Given a User id obtain the user details")
-    void givenUserID_whenFind_thenReturnUser() throws Exception {
+    void givenUserID_whenFind_thenReturnUser() throws Exception { 
         Long id = 1L;
 
         String jsonResponse = """
