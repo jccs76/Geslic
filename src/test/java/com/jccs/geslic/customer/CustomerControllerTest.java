@@ -1,4 +1,5 @@
-package com.jccs.geslic.user;
+package com.jccs.geslic.customer;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,45 +28,45 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import static org.hamcrest.Matchers.*;
 
-@WebMvcTest(controllers = UserController.class, 
+@WebMvcTest(controllers = CustomerController.class, 
             excludeAutoConfiguration =SecurityAutoConfiguration.class)
-public class UserControllerTest {
+class CustomerControllerTest {
+    
     @Autowired
     private MockMvc sut;
 
     @MockBean
-    private UserService userService;
+    private CustomerService customerService;
     
-    private List<UserDTO> users = new ArrayList<>();
+    private List<CustomerDTO> customers = new ArrayList<>();
 
     @BeforeEach
     void setUp() {
-        users = List.of(
-                    new UserDTO(1L,"Usuario1"),
-                    new UserDTO(2L,"Usuario2")
+        customers = List.of(
+                    new CustomerDTO(1L,"Cliente 1"),
+                    new CustomerDTO(2L,"Cliente 2")
         );                
     }
 
     @Test
-    @DisplayName("Obtain a list of users")    
-    void given_whenFindAll_thenReturnUserList() throws Exception {
+    @DisplayName("Obtain a list of customers")    
+    void given_whenFindAll_thenReturnCustomerList() throws Exception {
 
         String jsonResponse = """
             [
                 {
                     "id":1,
-                    "name":"Usuario1"
+                    "name":"Cliente 1"
                 },
                 {
                     "id":2,
-                    "name":"Usuario2"
-                }
+                    "name":"Cliente 2"                }
             ]
             """;
     
-        when(userService.getAll()).thenReturn(users);
+        when(customerService.getAll()).thenReturn(customers);
 
-        ResultActions resultActions = sut.perform(get("/api/v1/users"))
+        ResultActions resultActions = sut.perform(get("/api/v1/customers"))
                                          .andExpect(status().isOk())
                                          .andExpect(content().contentType("application/json"))
                                          .andExpect(jsonPath("$", hasSize(2)));
@@ -74,20 +75,20 @@ public class UserControllerTest {
     }
 
     @Test
-    @DisplayName("Given a User id obtain the user details")
-    void givenUserID_whenFind_thenReturnUser() throws Exception { 
+    @DisplayName("Given a Customer id obtain the customer details")
+    void givenCustomerID_whenFind_thenReturnCustomer() throws Exception {
         Long id = 1L;
 
         String jsonResponse = """
                 {
                     "id" : 1,                    
-                    "name":"Usuario1"                
+                    "name":"Cliente 1"
                 }
                 """;
                 
-        when(userService.get(id)).thenReturn(users.get(0));
+        when(customerService.get(id)).thenReturn(customers.get(0));
 
-        sut.perform(get("/api/v1/users/{id}", id)
+        sut.perform(get("/api/v1/customers/{id}", id)
                     .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON ))
@@ -96,128 +97,129 @@ public class UserControllerTest {
 
     
     @Test
-    @DisplayName("Given a User id not existing return Not Found")
-    void givenInexistentUserID_whenGet_thenReturnNotFound() throws Exception {
+    @DisplayName("Given a Customer id not existing return Not Found")
+    void givenInexistentCustomerID_whenGet_thenReturnCustomerNotFound() throws Exception {
         Long id = -1L;
 
-        when(userService.get(id)).thenThrow(new EntityNotFoundException(Constants.ENTITY_NOTFOUND));
+        when(customerService.get(id)).thenThrow(new EntityNotFoundException(Constants.ENTITY_NOTFOUND));
 
-        sut.perform(get("/api/v1/users/{id}", id)
+        sut.perform(get("/api/v1/customers/{id}", id)
                     .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound())            
             .andExpect(content().string(Constants.ENTITY_NOTFOUND));
     }
 
     @Test
-    @DisplayName("Create an user and obtain the saved user")
-    void givenUser_whenCreated_thenIsSaved() throws Exception {
-        UserDTO user = new UserDTO(null,"Usuario 3");
-        UserDTO userCreated = new UserDTO(3L,"Usuario 3");
-        
+    @DisplayName("Create a customer and obtain the saved customer")
+    void givenCustomer_whenCreated_thenIsSaved() throws Exception {
+        CustomerDTO customer = new CustomerDTO(null,"Cliente 3");
+        CustomerDTO customerCreated = new CustomerDTO(3L,"Cliente 3");
+
         String jsonResponse = """
                 {
                     "id" : 3,                    
-                    "name":"Usuario 3"
+                    "name":"Cliente 3"
                 }
                 """;
                 
-        when(userService.create(user)).thenReturn(userCreated);
+        when(customerService.create(customer)).thenReturn(customerCreated);
 
-        sut.perform(post("/api/v1/users")
+        sut.perform(post("/api/v1/customers")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(new ObjectMapper().writeValueAsString(user)))                                         
+                    .content(new ObjectMapper().writeValueAsString(customer)))                                         
             .andExpect(status().isCreated())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON ))
             .andExpect(content().json(jsonResponse));
     }
 
     @Test
-    @DisplayName("Create User without name returns invalid User error")
-    void givenBadUser_whenCreate_thenReturnBadRequestError() throws Exception {
-        UserDTO user = new UserDTO(null,"");
+    @DisplayName("Create Customer without name returns invalid customer error")
+    void givenBadCustomer_whenCreate_thenReturnBadRequestError() throws Exception {
+        CustomerDTO customer = new CustomerDTO(null,"Cliente 3");
 
-        when(userService.create(user)).thenThrow(new EntityInvalidException(Constants.ENTITY_INVALID));
+        when(customerService.create(customer)).thenThrow(new EntityInvalidException(Constants.ENTITY_INVALID));
 
-        sut.perform(post("/api/v1/users")
+        sut.perform(post("/api/v1/customers")
                     .contentType("application/json")
-                    .content(new ObjectMapper().writeValueAsString(user)))                                         
+                    .content(new ObjectMapper().writeValueAsString(customer)))                                         
             .andExpect(status().isBadRequest())            
             .andExpect(content().string(Constants.ENTITY_INVALID));
     }
 
     @Test
-    @DisplayName("Create User that exist returns user exist error")
-    void givenUserExisting_whenCreate_thenReturnConflict() throws Exception {
-        UserDTO user = users.get(0);
+    @DisplayName("Create Customer that exist returns customer exist error")
+    void givenCustomerExisting_whenCreate_thenReturnConflict() throws Exception {
+        CustomerDTO customer = customers.get(0);
 
-        when(userService.create(user)).thenThrow(new EntityExistingException(Constants.ENTITY_EXISTS));
+        when(customerService.create(customer)).thenThrow(new EntityExistingException(Constants.ENTITY_EXISTS));
 
-        sut.perform(post("/api/v1/users")
+        sut.perform(post("/api/v1/customers")
                     .contentType("application/json")
-                    .content(new ObjectMapper().writeValueAsString(user)))                                         
+                    .content(new ObjectMapper().writeValueAsString(customer)))                                         
                     .andExpect(status().isConflict())            
             .andExpect(content().string(Constants.ENTITY_EXISTS));
     }
 
 
     @Test
-    @DisplayName("Update an existing user and obtain the updated user")
-    void givenUser_whenUpdated_thenIsSaved() throws Exception {
+    @DisplayName("Update an existing customer and obtain the updated customer")
+    void givenCustomer_whenUpdated_thenIsSaved() throws Exception {
         Long id = 2L;
-        UserDTO user = new UserDTO(id,"Usuario 3");
+        CustomerDTO customer = new CustomerDTO(id,"Cliente 3");
 
         String jsonResponse = """
                 {
                     "id" : 2,                    
-                    "name":"Usuario 3"
+                    "name":"Cliente 3"
                 }
                 """;
                 
-        when(userService.update(id, user)).thenReturn(user);
+        when(customerService.update(id, customer)).thenReturn(customer);
 
-        sut.perform(put("/api/v1/users/{id}", id)
+        sut.perform(put("/api/v1/customers/{id}", id)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(new ObjectMapper().writeValueAsString(user)))                                         
+                    .content(new ObjectMapper().writeValueAsString(customer)))                                         
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON ))
             .andExpect(content().json(jsonResponse));
     }
 
     @Test
-    @DisplayName("Update inexistent user returns user not found")
-    void givenInexistentUserID_whenUpdate_thenReturnNotFoundError() throws Exception {
+    @DisplayName("Update inexistent customer returns customer not found")
+    void givenInexistentCustomerID_whenUpdate_thenReturnNotFoundError() throws Exception {
         Long id = -1L;
-        UserDTO user = new UserDTO(id,"Usuario 3");
+        CustomerDTO customer = new CustomerDTO(id,"Cliente 3");
 
-        when(userService.update(id, user)).thenThrow(new EntityNotFoundException(Constants.ENTITY_NOTFOUND));
+        when(customerService.update(id, customer)).thenThrow(new EntityNotFoundException(Constants.ENTITY_NOTFOUND));
 
-        sut.perform(put("/api/v1/users/{id}", id)
+        sut.perform(put("/api/v1/customers/{id}", id)
                     .contentType("application/json")
-                    .content(new ObjectMapper().writeValueAsString(user)))                                         
+                    .content(new ObjectMapper().writeValueAsString(customer)))                                         
             .andExpect(status().isNotFound())            
             .andExpect(content().string(Constants.ENTITY_NOTFOUND));
     }
 
     @Test
-    @DisplayName("Delete an existing user returns Ok")
-    void givenUserID_whenDelete_thenIsDeleted() throws Exception {
+    @DisplayName("Delete an existing customer returns Ok")
+    void givenCustomerID_whenDelete_thenIsDeleted() throws Exception {
         Long id = 2L;
 
-        sut.perform(delete("/api/v1/users/{id}", id)
+        sut.perform(delete("/api/v1/customers/{id}", id)
                     .contentType(MediaType.APPLICATION_JSON))                                         
             .andExpect(status().isNoContent());
     }
 
     @Test
-    @DisplayName("Delete inexistent user returns user not found")
-    void givenInexistentUserID_whenDelete_thenReturnNotFoundError() throws Exception {
+    @DisplayName("Delete inexistent customer returns customer not found")
+    void givenInexistentCustomerID_whenDelete_thenReturnNotFoundError() throws Exception {
         Long id = -1L;
     
-        doThrow(new EntityNotFoundException(Constants.ENTITY_NOTFOUND)).when(userService).delete(id);
+        doThrow(new EntityNotFoundException(Constants.ENTITY_NOTFOUND)).when(customerService).delete(id);
 
-        sut.perform(delete("/api/v1/users/{id}", id)
+        sut.perform(delete("/api/v1/customers/{id}", id)
                     .contentType("application/json"))
             .andExpect(status().isNotFound())            
             .andExpect(content().string(Constants.ENTITY_NOTFOUND));
     }
+
 }

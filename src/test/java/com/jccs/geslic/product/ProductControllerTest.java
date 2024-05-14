@@ -16,10 +16,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jccs.geslic.common.Constants;
 import com.jccs.geslic.common.exception.EntityExistingException;
 import com.jccs.geslic.common.exception.EntityInvalidException;
 import com.jccs.geslic.common.exception.EntityNotFoundException;
-import com.jccs.geslic.util.Constants;
 
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
@@ -36,7 +36,7 @@ class ProductControllerTest {
     private MockMvc sut;
 
     @MockBean
-    private ProductServiceImpl productService;
+    private ProductService productService;
     
     private List<ProductDTO> products = new ArrayList<>();
 
@@ -108,12 +108,12 @@ class ProductControllerTest {
     void givenInexistentProductID_whenGet_thenReturnProductNotFound() throws Exception {
         Long id = -1L;
 
-        when(productService.get(id)).thenThrow(new EntityNotFoundException(Constants.PRODUCT_NOTFOUND));
+        when(productService.get(id)).thenThrow(new EntityNotFoundException(Constants.ENTITY_NOTFOUND));
 
         sut.perform(get("/api/v1/products/{id}", id)
                     .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound())            
-            .andExpect(content().string(Constants.PRODUCT_NOTFOUND));
+            .andExpect(content().string(Constants.ENTITY_NOTFOUND));
     }
 
     @Test
@@ -146,13 +146,13 @@ class ProductControllerTest {
     void givenBadProduct_whenCreate_thenReturnBadRequestError() throws Exception {
         ProductDTO product = new ProductDTO(null,"RMCOBOLRT","Runtime RM/COBOL 5 Usuarios", 480);
 
-        when(productService.create(product)).thenThrow(new EntityInvalidException(Constants.PRODUCT_INVALID));
+        when(productService.create(product)).thenThrow(new EntityInvalidException(Constants.ENTITY_INVALID));
 
         sut.perform(post("/api/v1/products")
                     .contentType("application/json")
                     .content(new ObjectMapper().writeValueAsString(product)))                                         
             .andExpect(status().isBadRequest())            
-            .andExpect(content().string(Constants.PRODUCT_INVALID));
+            .andExpect(content().string(Constants.ENTITY_INVALID));
     }
 
     @Test
@@ -160,13 +160,13 @@ class ProductControllerTest {
     void givenProductExisting_whenCreate_thenReturnConflict() throws Exception {
         ProductDTO product = products.get(0);
 
-        when(productService.create(product)).thenThrow(new EntityExistingException(Constants.PRODUCT_EXISTS));
+        when(productService.create(product)).thenThrow(new EntityExistingException(Constants.ENTITY_EXISTS));
 
         sut.perform(post("/api/v1/products")
                     .contentType("application/json")
                     .content(new ObjectMapper().writeValueAsString(product)))                                         
                     .andExpect(status().isConflict())            
-            .andExpect(content().string(Constants.PRODUCT_EXISTS));
+            .andExpect(content().string(Constants.ENTITY_EXISTS));
     }
 
 
@@ -201,13 +201,13 @@ class ProductControllerTest {
         Long id = -1L;
         ProductDTO product = new ProductDTO(id,"RMCOBOLRT6US","Runtime RM/COBOL 6 Usuarios", 600);
 
-        when(productService.update(id, product)).thenThrow(new EntityNotFoundException(Constants.PRODUCT_NOTFOUND));
+        when(productService.update(id, product)).thenThrow(new EntityNotFoundException(Constants.ENTITY_NOTFOUND));
 
         sut.perform(put("/api/v1/products/{id}", id)
                     .contentType("application/json")
                     .content(new ObjectMapper().writeValueAsString(product)))                                         
             .andExpect(status().isNotFound())            
-            .andExpect(content().string(Constants.PRODUCT_NOTFOUND));
+            .andExpect(content().string(Constants.ENTITY_NOTFOUND));
     }
 
     @Test
@@ -225,12 +225,12 @@ class ProductControllerTest {
     void givenInexistentProductID_whenDelete_thenReturnNotFoundError() throws Exception {
         Long id = -1L;
     
-        doThrow(new EntityNotFoundException(Constants.PRODUCT_NOTFOUND)).when(productService).delete(id);
+        doThrow(new EntityNotFoundException(Constants.ENTITY_NOTFOUND)).when(productService).delete(id);
 
         sut.perform(delete("/api/v1/products/{id}", id)
                     .contentType("application/json"))
             .andExpect(status().isNotFound())            
-            .andExpect(content().string(Constants.PRODUCT_NOTFOUND));
+            .andExpect(content().string(Constants.ENTITY_NOTFOUND));
     }
 
 }

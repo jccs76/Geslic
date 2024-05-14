@@ -3,7 +3,6 @@ package com.jccs.geslic.common;
 import java.util.List;
 
 import com.jccs.geslic.common.exception.EntityNotFoundException;
-import com.jccs.geslic.util.Constants;
 
 public abstract class AbstractService<D extends Record, E extends AbstractEntity, M extends CommonMapper<D, E>, R extends CommonRepository<E>> implements CommonService<D> {
 
@@ -23,7 +22,7 @@ public abstract class AbstractService<D extends Record, E extends AbstractEntity
     @Override
     public D get(Long id) {
         return  mapper.toDTO(repository.findById(id)
-                                            .orElseThrow(() -> new EntityNotFoundException(Constants.PRODUCT_NOTFOUND)));
+                                            .orElseThrow(() -> new EntityNotFoundException(Constants.ENTITY_NOTFOUND)));
     }
 
     @Override
@@ -34,6 +33,7 @@ public abstract class AbstractService<D extends Record, E extends AbstractEntity
 
     @Override
     public D update(Long id, D dto) {
+        repository.findById(id).orElseThrow(() -> new EntityNotFoundException(Constants.ENTITY_NOTFOUND));
         return mapper.toDTO(repository.save(mapper.toEntity(dto)));
     }
 

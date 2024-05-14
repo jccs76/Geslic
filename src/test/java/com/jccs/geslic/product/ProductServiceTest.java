@@ -21,9 +21,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.jccs.geslic.common.Constants;
 import com.jccs.geslic.common.exception.EntityExistingException;
 import com.jccs.geslic.common.exception.EntityNotFoundException;
-import com.jccs.geslic.util.Constants;
 
 @ExtendWith(MockitoExtension.class)
 public class ProductServiceTest {
@@ -41,10 +41,20 @@ public class ProductServiceTest {
 
     @BeforeEach
     void setUp(){
-        this.sut = new ProductServiceImpl(productRepository, productMapper);
-        products = List.of(
-                    new Product(1L,"RMCOBOLRT1US","Runtime RM/COBOL 1 Usuario", BigDecimal.valueOf(120L)),
-                    new Product(2L,"RMCOBOLRT2US","Runtime RM/COBOL 2 Usuarios", BigDecimal.valueOf(240L))
+        this.sut = new ProductService(productRepository, productMapper);
+        
+        
+        products = List.of(Product.builder()
+                                  .id(1L)
+                                  .name("RMCOBOLRT1US")
+                                  .description("Runtime RM/COBOL 1 Usuario")
+                                  .price(BigDecimal.valueOf(240L)).build(),
+                            Product.builder()
+                            .id(2L)
+                            .name("RMCOBOLRT2US")
+                            .description("Runtime RM/COBOL 2 Usuarios")
+                            .price(BigDecimal.valueOf(240L)).build()
+                    
         );                
         productsDTO = List.of(
                     new ProductDTO(1L,"RMCOBOLRT1US","Runtime RM/COBOL 1 Usuario", 120L),
@@ -62,7 +72,7 @@ public class ProductServiceTest {
         List<ProductDTO> productsObtained = sut.getAll();
 
         assertEquals(2, productsObtained.size());
-        assertEquals(products.get(0).id, productsObtained.get(0).id());
+        assertEquals(products.get(0).getId(), productsObtained.get(0).id());
     }
 
     @Test
@@ -75,14 +85,14 @@ public class ProductServiceTest {
         
         ProductDTO productObtained = sut.get(id);
 
-        assertEquals(product.id, productObtained.id());
+        assertEquals(product.getId(), productObtained.id());
     }
 
     @Test
     public void givenInexistentProductId_whenGet_thenThrowsNotFound () {
         Long id = -1L;
  
-        doThrow(new EntityNotFoundException(Constants.PRODUCT_NOTFOUND)).when(productRepository).findById(id);
+        doThrow(new EntityNotFoundException(Constants.ENTITY_NOTFOUND)).when(productRepository).findById(id);
  
         assertThrows(EntityNotFoundException.class, () ->sut.get(id));
 
@@ -104,7 +114,7 @@ public class ProductServiceTest {
     public void givenExistingProduct_whenCreated_thenThrowProductExisting(){
         ProductDTO productDTO = new ProductDTO(null,"RMCOBOLRT1US","", 0);
         
-        doThrow(new EntityExistingException(Constants.PRODUCT_EXISTS)).when(productRepository).findByName(anyString());
+        doThrow(new EntityExistingException(Constants.ENTITY_EXISTS)).when(productRepository).findByName(anyString());
 
         assertThrows(EntityExistingException.class, () ->sut.create(productDTO));
         
@@ -116,7 +126,11 @@ public class ProductServiceTest {
     public void givenProduct_whenUpdate_thenCallsRepositorySave(){
         Long id = 1L;
         Product formerProduct = products.get(0);
-        Product updatedProduct = new Product (id, "RMCOBOLRT10US","Runtime RM/COBOL 10 Usuarios", BigDecimal.valueOf(1200));
+        Product updatedProduct = Product.builder()
+                                         .id(id)
+                                         .name("RMCOBOLRT10US")
+                                         .description("Runtime RM/COBOL 10 Usuarios")
+                                         .price(BigDecimal.valueOf(1200)).build();
         ProductDTO requestProductDTO = new ProductDTO(id,"RMCOBOLRT10US","Runtime RM/COBOL 10 Usuarios", 1200);
         
         when(productMapper.toEntity(requestProductDTO)).thenReturn(new Product());
@@ -128,7 +142,7 @@ public class ProductServiceTest {
 
         verify(productRepository, times(1)).save(any(Product.class));
         assertEquals(id, responseProductDTO.id());
-        assertNotEquals(formerProduct.name, responseProductDTO.name());
+        assertNotEquals(formerProduct.getName(), responseProductDTO.name());
     }
 
     @Test
@@ -137,7 +151,7 @@ public class ProductServiceTest {
         Long id = -1L;
         ProductDTO productDTO = new ProductDTO(id,"RMCOBOLRT6US","Runtime RM/COBOL 6 Usuarios", 600);
         
-        doThrow(new EntityNotFoundException(Constants.PRODUCT_NOTFOUND)).when(productRepository).findById(id);
+        doThrow(new EntityNotFoundException(Constants.ENTITY_NOTFOUND)).when(productRepository).findById(id);
        
         assertThrows(EntityNotFoundException.class, () ->sut.update(id, productDTO));
         
@@ -163,7 +177,7 @@ public class ProductServiceTest {
     void givenInexistentProductID_whenDelete_thenThrowProductNotFound() throws Exception {
         Long id = -1L;
          
-        doThrow(new EntityNotFoundException(Constants.PRODUCT_NOTFOUND)).when(productRepository).findById(id);
+        doThrow(new EntityNotFoundException(Constants.ENTITY_NOTFOUND)).when(productRepository).findById(id);
         
         verify(productRepository, never()).deleteById(id);
         assertThrows(EntityNotFoundException.class, () ->sut.delete(id));

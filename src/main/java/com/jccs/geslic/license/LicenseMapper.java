@@ -1,4 +1,4 @@
-package com.jccs.geslic.product;
+package com.jccs.geslic.license;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
@@ -6,4 +6,6 @@ import org.mapstruct.ReportingPolicy;
 import com.jccs.geslic.common.CommonMapper;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
-interface ProductMapper extends CommonMapper<ProductDTO, Product>{}
+public interface LicenseMapper extends CommonMapper<LicenseDTO, License> {
+
+}
