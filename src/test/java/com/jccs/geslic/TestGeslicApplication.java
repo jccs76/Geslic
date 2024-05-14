@@ -16,7 +16,7 @@ public class TestGeslicApplication {
 	@ServiceConnection
 	@RestartScope
 	OracleContainer oracleFreeContainer() {
-		return new OracleContainer(DockerImageName.parse("gvenzl/oracle-xe:18.4.0-slim"))
+		return new OracleContainer(DockerImageName.parse("gvenzl/oracle-xe:21-slim-faststart"))
 			.withDatabaseName("geslicdb")
 			.withUsername("testuser")
 			.withPassword(("testpwd"));        

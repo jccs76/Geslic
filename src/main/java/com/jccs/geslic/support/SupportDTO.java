@@ -1,5 +1,13 @@
 package com.jccs.geslic.support;
 
-import com.jccs.geslic.license.License;
+import java.time.LocalDate;
 
-public record SupportDTO(Long id, License license) {}
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+public record SupportDTO(Long id,
+                         @JsonFormat(pattern="yyyy-MM-dd") 
+                         LocalDate fromDate,
+                         @JsonFormat(pattern="yyyy-MM-dd") 
+                         LocalDate toDate,
+                         SupportStatus status,
+                         Long license_id) {}

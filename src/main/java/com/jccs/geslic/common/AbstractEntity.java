@@ -2,10 +2,12 @@ package com.jccs.geslic.common;
 
 
 import java.io.Serializable;
-import java.security.Timestamp;
+import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
@@ -31,9 +33,11 @@ public abstract class AbstractEntity implements Serializable {
     
     @CreationTimestamp
     @Column(updatable = false)
-    private Timestamp createdDate;
+    @JsonIgnore
+    private LocalDateTime createdDate;
 
     @UpdateTimestamp
-    private Timestamp lastModifiedDate;
+    @JsonIgnore
+    private LocalDateTime lastModifiedDate;
     
 }

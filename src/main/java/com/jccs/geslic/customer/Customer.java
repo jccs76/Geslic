@@ -17,6 +17,6 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder(toBuilder = true)
 @Entity
 @Table(name="customers")
-class Customer extends AbstractEntity {
+public class Customer extends AbstractEntity {
     String name;
 }

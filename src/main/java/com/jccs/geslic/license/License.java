@@ -1,15 +1,18 @@
 package com.jccs.geslic.license;
 
-
-
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.jccs.geslic.common.AbstractEntity;
+import com.jccs.geslic.customer.Customer;
+import com.jccs.geslic.product.Product;
 import com.jccs.geslic.support.Support;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -28,7 +31,15 @@ import lombok.experimental.SuperBuilder;
 public class License extends AbstractEntity {
     private String code;
     
-    @OneToMany(fetch = FetchType.LAZY, mappedBy="license", cascade = CascadeType.ALL)
+    @ManyToOne
+    @JoinColumn(name = "product_id", referencedColumnName = "id")
+    private Product product;
     
+    @ManyToOne
+    @JoinColumn(name = "customer_id", referencedColumnName= "id")
+    private Customer customer;
+    
+    @OneToMany(fetch = FetchType.LAZY, mappedBy="license", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Support> supports;
 }

@@ -7,9 +7,8 @@ spring :
     jpa:
         properties:
             hibernate:
-                "[format_sql]" : true
-        
-        database-platform: org.hibernate.dialect.OracleDialect
+                "[format_sql]" : true        
+        #database-platform: org.hibernate.dialect.OracleDialect
         hibernate:
             ddl-auto: update
         show-sql: true

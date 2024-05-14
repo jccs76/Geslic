@@ -7,10 +7,12 @@ import com.jccs.geslic.common.AbstractService;
 import com.jccs.geslic.common.Constants;
 import com.jccs.geslic.common.exception.EntityExistingException;
 import com.jccs.geslic.common.exception.EntityInvalidException;
+import com.jccs.geslic.common.exception.EntityNotFoundException;
 
 
 @Service
-class CustomerService extends AbstractService<CustomerDTO, Customer, CustomerMapper, CustomerRepository> {
+public class CustomerService extends AbstractService<CustomerDTO, Customer, CustomerMapper, CustomerRepository> {
+
     public CustomerService(CustomerRepository repository, CustomerMapper mapper){
         super(repository, mapper);
     }
@@ -29,6 +31,11 @@ class CustomerService extends AbstractService<CustomerDTO, Customer, CustomerMap
             return super.update(id, dto);
         }
         throw new EntityInvalidException(Constants.ENTITY_INVALID);
+    }
+
+    public Customer getCustomer(Long id) {
+        return repository.findById(id)
+                         .orElseThrow(() -> new EntityNotFoundException(Constants.ENTITY_NOTFOUND));
     }
 
 }

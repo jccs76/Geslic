@@ -23,6 +23,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.jccs.geslic.common.Constants;
 import com.jccs.geslic.common.exception.EntityExistingException;
 import com.jccs.geslic.common.exception.EntityNotFoundException;
+import com.jccs.geslic.customer.Customer;
+import com.jccs.geslic.customer.CustomerService;
+import com.jccs.geslic.product.Product;
+import com.jccs.geslic.product.ProductService;
+import com.jccs.geslic.support.SupportMapper;
+import com.jccs.geslic.support.SupportRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class LicenseServiceTest {
@@ -32,27 +38,49 @@ public class LicenseServiceTest {
     private List<License> licenses;
     private List<LicenseDTO> licensesDTO;
 
+    private Product product;
+    private Customer customer;
+
     @Mock
     private LicenseRepository licenseRepository;
+
+    @Mock
+    private SupportRepository supportRepository;
     
     @Mock
     private LicenseMapper licenseMapper;
 
+    @Mock
+    private ProductService productService;
+
+    @Mock
+    private CustomerService customerService;
+    
+    @Mock
+    private SupportMapper supportMapper;
+
     @BeforeEach
     void setUp(){
-        this.sut = new LicenseService(licenseRepository, licenseMapper);
+        this.sut = new LicenseService(licenseRepository, licenseMapper, productService, customerService, supportMapper);
         
+        product = Product.builder().id(1L).name("RMCOBOLRT1").build();
+        customer = Customer.builder().id(1L).name("Cliente 1").build();
         
         licenses = List.of(License.builder()
                                     .id(1L)
-                                    .code("6A-1000-01").build(),
+                                    .code("6A-1000-01")
+                                    .product(product)
+                                    .customer(customer)
+                                    .build(),
                         License.builder()
-                                    .id(2L)
+                                    .id(2L)                                    
+                                    .product(product)
+                                    .customer(customer)
                                     .code("6A-1000-02").build());
                             
         licensesDTO = List.of(
-                    new LicenseDTO(1L,"6A-1000-01"),
-                    new LicenseDTO(2L,"6A-1000-02")
+                    new LicenseDTO(1L,"6A-1000-01", 1L, 1L),
+                    new LicenseDTO(2L,"6A-1000-02", 1L, 1L)
         );                
 
     }
@@ -94,19 +122,18 @@ public class LicenseServiceTest {
 
     @Test
     public void givenLicense_whenCreated_thenCallsRepositorySave(){
-        LicenseDTO licenseDTO = new LicenseDTO(null,"6A-1000-03");
+        LicenseDTO licenseDTO = new LicenseDTO(null,"6A-1000-03",1L, 1L);
         when(licenseMapper.toEntity(licenseDTO)).thenReturn(new License());
         when(licenseRepository.save(any(License.class))).thenReturn(new License());
 
         sut.create(licenseDTO);
 
         verify(licenseRepository, times(1)).save(any(License.class));
-        
     }
 
     @Test
     public void givenExistingLicense_whenCreated_thenThrowLicenseExisting(){
-        LicenseDTO licenseDTO = new LicenseDTO(null,"6A-1000-01");
+        LicenseDTO licenseDTO = new LicenseDTO(null,"6A-1000-01", 1L, 1L);
         
         doThrow(new EntityExistingException(Constants.ENTITY_EXISTS)).when(licenseRepository).findByCode(anyString());
 
@@ -123,8 +150,10 @@ public class LicenseServiceTest {
         License updatedLicense = License.builder()
                                         .id(id)
                                         .code("6A-1000-03")
+                                        .product(product)
+                                        .customer(customer)
                                         .build();
-        LicenseDTO requestLicenseDTO = new LicenseDTO(id,"6A-1000-03");
+        LicenseDTO requestLicenseDTO = new LicenseDTO(id,"6A-1000-03", 1L, 1L);
         
         when(licenseMapper.toEntity(requestLicenseDTO)).thenReturn(new License());
         when(licenseMapper.toDTO(updatedLicense)).thenReturn(requestLicenseDTO);
@@ -142,7 +171,7 @@ public class LicenseServiceTest {
     
     void givenInexistentLicenseID_whenUpdate_thenThrowLicenseNotFound() throws Exception {
         Long id = -1L;
-        LicenseDTO licenseDTO = new LicenseDTO(id,"6A-1000-05");
+        LicenseDTO licenseDTO = new LicenseDTO(id,"6A-1000-05", 1L, 1L);
         
         doThrow(new EntityNotFoundException(Constants.ENTITY_NOTFOUND)).when(licenseRepository).findById(id);
        

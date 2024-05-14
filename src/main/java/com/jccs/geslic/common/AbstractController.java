@@ -10,10 +10,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import lombok.Getter;
+
+@Getter
 public abstract class AbstractController <E extends Record, S extends CommonService<E>>
         implements CommonController<E> {
  
-    private final S service;
+    private S service;
  
     protected AbstractController(S service) {
         this.service = service;

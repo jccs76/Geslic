@@ -43,8 +43,8 @@ public class LicenseControllerTest {
     @BeforeEach
     void setUp() {
         licenses = List.of(
-                    new LicenseDTO(1L,"6A-1000-01"),
-                    new LicenseDTO(2L,"6A-1000-02")
+                    new LicenseDTO(1L,"6A-1000-01", 1L, 1L),
+                    new LicenseDTO(2L,"6A-1000-02", 1L, 1L)
         );                
     }
 
@@ -56,11 +56,15 @@ public class LicenseControllerTest {
             [
                 {
                     "id":1,
-                    "code":"6A-1000-01"
+                    "code":"6A-1000-01",
+                    "productId": 1,
+                    "customerId" : 1
                 },
                 {
                     "id":2,
-                    "code":"6A-1000-02"
+                    "code":"6A-1000-02",
+                    "productId": 1,
+                    "customerId" : 1
                 }
             ]
             """;
@@ -83,7 +87,9 @@ public class LicenseControllerTest {
         String jsonResponse = """
                 {
                     "id" : 1,                    
-                    "code":"6A-1000-01"                
+                    "code":"6A-1000-01",
+                    "productId": 1,
+                    "customerId" : 1
                 }
                 """;
                 
@@ -113,8 +119,8 @@ public class LicenseControllerTest {
     @Test
     @DisplayName("Create an license and obtain the saved license")
     void givenLicense_whenCreated_thenIsSaved() throws Exception {
-        LicenseDTO license = new LicenseDTO(null,"6A-1000-03");
-        LicenseDTO licenseCreated = new LicenseDTO(3L,"6A-1000-03");
+        LicenseDTO license = new LicenseDTO(null,"6A-1000-03",1L,1L);
+        LicenseDTO licenseCreated = new LicenseDTO(3L,"6A-1000-03",1L,1L);
         
         String jsonResponse = """
                 {
@@ -136,7 +142,7 @@ public class LicenseControllerTest {
     @Test
     @DisplayName("Create License without code returns invalid License error")
     void givenBadLicense_whenCreate_thenReturnBadRequestError() throws Exception {
-        LicenseDTO license = new LicenseDTO(null,"");
+        LicenseDTO license = new LicenseDTO(null,"", 1L, 1L);
 
         when(licenseService.create(license)).thenThrow(new EntityInvalidException(Constants.ENTITY_INVALID));
 
@@ -166,7 +172,7 @@ public class LicenseControllerTest {
     @DisplayName("Update an existing license and obtain the updated license")
     void givenLicense_whenUpdated_thenIsSaved() throws Exception {
         Long id = 2L;
-        LicenseDTO license = new LicenseDTO(id,"6A-1000-04");
+        LicenseDTO license = new LicenseDTO(id,"6A-1000-04", 1L, 1L);
 
         String jsonResponse = """
                 {
@@ -189,7 +195,7 @@ public class LicenseControllerTest {
     @DisplayName("Update inexistent license returns license not found")
     void givenInexistentLicenseID_whenUpdate_thenReturnNotFoundError() throws Exception {
         Long id = -1L;
-        LicenseDTO license = new LicenseDTO(id,"6A-1000-05");
+        LicenseDTO license = new LicenseDTO(id,"6A-1000-05", 1L, 1L);
 
         when(licenseService.update(id, license)).thenThrow(new EntityNotFoundException(Constants.ENTITY_NOTFOUND));
 

@@ -6,4 +6,4 @@ import org.mapstruct.ReportingPolicy;
 import com.jccs.geslic.common.CommonMapper;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
-interface ProductMapper extends CommonMapper<ProductDTO, Product>{}
+public interface ProductMapper extends CommonMapper<ProductDTO, Product>{}
