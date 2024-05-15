@@ -10,5 +10,5 @@ public class SupportService extends AbstractService<SupportDTO, Support, Support
     public SupportService(SupportRepository repository, SupportMapper mapper) {
         super(repository, mapper);
     }
-
+    
 }
