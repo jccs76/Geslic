@@ -1,8 +1,15 @@
 package com.jccs.geslic.customer;
 
-import com.jccs.geslic.common.AbstractEntity;
+import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.jccs.geslic.common.AbstractEntity;
+import com.jccs.geslic.license.License;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,4 +26,7 @@ import lombok.experimental.SuperBuilder;
 @Table(name="customers")
 public class Customer extends AbstractEntity {
     String name;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy="customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    List<License> licenses;
 }

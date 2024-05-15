@@ -2,6 +2,7 @@ package com.jccs.geslic.license;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.jccs.geslic.common.AbstractEntity;
 import com.jccs.geslic.customer.Customer;
@@ -32,12 +33,13 @@ import lombok.experimental.SuperBuilder;
 public class License extends AbstractEntity {
     private String code;
     
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "product_id", referencedColumnName = "id")
     private Product product;
     
     @ManyToOne
     @JoinColumn(name = "customer_id", referencedColumnName= "id")
+    @JsonBackReference
     private Customer customer;
 
     @OneToOne(cascade = CascadeType.ALL)

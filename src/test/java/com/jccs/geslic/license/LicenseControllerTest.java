@@ -22,6 +22,8 @@ import com.jccs.geslic.common.Constants;
 import com.jccs.geslic.common.exception.EntityExistingException;
 import com.jccs.geslic.common.exception.EntityInvalidException;
 import com.jccs.geslic.common.exception.EntityNotFoundException;
+import com.jccs.geslic.customer.CustomerDTO;
+import com.jccs.geslic.product.ProductDTO;
 import com.jccs.geslic.support.SupportDTO;
 import com.jccs.geslic.support.SupportStatus;
 
@@ -44,6 +46,11 @@ public class LicenseControllerTest {
     
     private List<LicenseDTO> licenses = new ArrayList<>();
 
+    private List<SupportDTO> supports = new ArrayList<>();
+
+    private ProductDTO productDTO;
+    private CustomerDTO customerDTO;
+
     private ObjectMapper objectMapper;
 
     @BeforeEach
@@ -51,11 +58,14 @@ public class LicenseControllerTest {
         objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
 
-        List<SupportDTO> supports = List.of(new SupportDTO(1L, LocalDate.parse("2024-01-01"), LocalDate.parse("2025-01-01"), SupportStatus.ACTIVE, 1L),
+        productDTO = new ProductDTO(1l, "RMCOBOLRT1US", "Runtime RM/COBOL 1 Usuario", 120l);
+        customerDTO = new CustomerDTO(1L, "Cliente 1");
+
+        supports = List.of(new SupportDTO(1L, LocalDate.parse("2024-01-01"), LocalDate.parse("2025-01-01"), SupportStatus.ACTIVE, 1L),
                                             new SupportDTO(2L, LocalDate.parse("2024-01-01"), LocalDate.parse("2025-01-01"), SupportStatus.ACTIVE, 2L));
                  
-        licenses = List.of(new LicenseDTO(1L,"6A-1000-01", 1L, 1L, supports.get(0)),
-                           new LicenseDTO(2L,"6A-1000-02", 1L, 1L, supports.get(1)));
+        licenses = List.of(new LicenseDTO(1L,"6A-1000-01", productDTO, customerDTO, supports.get(0)),
+                           new LicenseDTO(2L,"6A-1000-02",productDTO, customerDTO, supports.get(1)));
 
     }
 
@@ -68,8 +78,16 @@ public class LicenseControllerTest {
                 {
                     "id":1,
                     "code":"6A-1000-01",
-                    "productId": 1,
-                    "customerId" : 1,
+                    "product": {
+                        "id":1,
+                        "name":"RMCOBOLRT1US",
+                        "description":"Runtime RM/COBOL 1 Usuario",
+                        "price": 120                     
+                    },
+                    "customer" : {
+                        "id" : 1,
+                        "name" : "Cliente 1"
+                    },
                     "lastSupport": {
                         "id": 1,
                         "fromDate": "2024-01-01",
@@ -80,8 +98,16 @@ public class LicenseControllerTest {
                 {
                     "id":2,
                     "code":"6A-1000-02",
-                    "productId": 1,
-                    "customerId" : 1,
+                    "product": {
+                        "id":1,
+                        "name":"RMCOBOLRT1US",
+                        "description":"Runtime RM/COBOL 1 Usuario",
+                        "price": 120                     
+                    },
+                    "customer" : {
+                        "id" : 1,
+                        "name" : "Cliente 1"
+                    },
                     "lastSupport": {
                         "id": 2,
                         "fromDate": "2024-01-01",
@@ -112,14 +138,21 @@ public class LicenseControllerTest {
                 {
                     "id" : 1,                    
                     "code":"6A-1000-01",
-                    "productId": 1,
-                    "customerId" : 1,
+                    "product": {
+                        "id":1,
+                        "name":"RMCOBOLRT1US",
+                        "description":"Runtime RM/COBOL 1 Usuario",
+                        "price": 120                     
+                    },
+                    "customer" : {
+                        "id" : 1,
+                        "name" : "Cliente 1"
+                    },
                     "lastSupport": {
                         "id": 1,
                         "fromDate": "2024-01-01",
                         "toDate": "2025-01-01",
-                        "status": "ACTIVE",
-                        "licenseId": 1
+                        "status": "ACTIVE"
                     }
                 }
                 """;
@@ -150,14 +183,24 @@ public class LicenseControllerTest {
     @Test
     @DisplayName("Create an license and obtain the saved license")
     void givenLicense_whenCreated_thenIsSaved() throws Exception {
-        LicenseDTO license = new LicenseDTO(null,"6A-1000-03",1L,1L, null);        
+        LicenseDTO license = new LicenseDTO(null,"6A-1000-03", productDTO, customerDTO, null);        
         SupportDTO supportCreated = new SupportDTO(3L, LocalDate.parse("2024-01-01"), LocalDate.parse("2025-01-01"), SupportStatus.ACTIVE, null);
-        LicenseDTO licenseCreated = new LicenseDTO(3L,"6A-1000-03",1L,1L,supportCreated);
+        LicenseDTO licenseCreated = new LicenseDTO(3L,"6A-1000-03",productDTO, customerDTO,supportCreated);
         
         String jsonResponse = """
                 {
                     "id" : 3,                    
                     "code":"6A-1000-03",
+                    "product": {
+                        "id":1,
+                        "name":"RMCOBOLRT1US",
+                        "description":"Runtime RM/COBOL 1 Usuario",
+                        "price": 120                     
+                    },
+                    "customer" : {
+                        "id" : 1,
+                        "name" : "Cliente 1"
+                    },
                     "lastSupport": {
                         "id": 3,
                         "fromDate": "2024-01-01",
@@ -180,7 +223,7 @@ public class LicenseControllerTest {
     @Test
     @DisplayName("Create License without code returns invalid License error")
     void givenBadLicense_whenCreate_thenReturnBadRequestError() throws Exception {
-        LicenseDTO license = new LicenseDTO(null,"", 1L, 1L,null);
+        LicenseDTO license = new LicenseDTO(null,"", productDTO, customerDTO,null);
 
         when(licenseService.create(license)).thenThrow(new EntityInvalidException(Constants.ENTITY_INVALID));
 
@@ -210,12 +253,23 @@ public class LicenseControllerTest {
     @DisplayName("Update an existing license and obtain the updated license")
     void givenLicense_whenUpdated_thenIsSaved() throws Exception {
         Long id = 2L;
-        LicenseDTO license = new LicenseDTO(id,"6A-1000-04", 1L, 1L,null);
+        SupportDTO lastSupport = new SupportDTO(2L, LocalDate.parse("2024-01-01"), LocalDate.parse("2025-01-01"), SupportStatus.ACTIVE, 2L);
+        LicenseDTO license = new LicenseDTO(id,"6A-1000-04", productDTO, customerDTO, lastSupport);
 
         String jsonResponse = """
                 {
                     "id" : 2,                    
                     "code":"6A-1000-04",
+                    "product": {
+                        "id":1,
+                        "name":"RMCOBOLRT1US",
+                        "description":"Runtime RM/COBOL 1 Usuario",
+                        "price": 120                     
+                    },
+                    "customer" : {
+                        "id" : 1,
+                        "name" : "Cliente 1"
+                    },
                     "lastSupport": {
                         "id": 2,
                         "fromDate": "2024-01-01",
@@ -240,7 +294,7 @@ public class LicenseControllerTest {
     @DisplayName("Update inexistent license returns license not found")
     void givenInexistentLicenseID_whenUpdate_thenReturnNotFoundError() throws Exception {
         Long id = -1L;
-        LicenseDTO license = new LicenseDTO(id,"6A-1000-05", 1L, 1L,null);
+        LicenseDTO license = new LicenseDTO(id,"6A-1000-05", null, customerDTO,null);
 
         when(licenseService.update(id, license)).thenThrow(new EntityNotFoundException(Constants.ENTITY_NOTFOUND));
 
@@ -273,5 +327,112 @@ public class LicenseControllerTest {
             .andExpect(status().isNotFound())            
             .andExpect(content().string(Constants.ENTITY_NOTFOUND));
     }
+
+    @Test
+    @DisplayName("Given a License id obtain all its supports")
+    void givenLicenseID_whenGetSupports_thenReturnListOfSupports() throws Exception { 
+        Long id = 1L;
+
+        String jsonResponse = """
+                [{
+                    "id" : 1,                    
+                    "fromDate":"2024-01-01",
+                    "toDate": "2025-01-01",
+                    "status": "ACTIVE",
+                    "licenseId": 1
+                }]
+                """;
+                
+        when(licenseService.getSupports(id)).thenReturn(List.of(supports.get(0)));
+
+        sut.perform(get("/api/v1/licenses/{id}/supports", id)
+                    .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON ))
+            .andExpect(content().json(jsonResponse));
+    }
+
+    @Test
+    @DisplayName("Given a License id obtain its last support")
+    void givenLicenseID_whenGetLastSupport_thenReturnLastSupport() throws Exception { 
+        Long id = 1L;
+
+        String jsonResponse = """
+                {
+                    "id" : 1,                    
+                    "fromDate":"2024-01-01",
+                    "toDate": "2025-01-01",
+                    "status": "ACTIVE",
+                    "licenseId": 1
+                }
+                """;
+                
+        when(licenseService.getLastSupport(id)).thenReturn(supports.get(0));
+
+        sut.perform(get("/api/v1/licenses/{id}/supports/last", id)
+                    .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON ))
+            .andExpect(content().json(jsonResponse));
+    }
+
+    @Test
+    @DisplayName("Given a License id renew its support creating a new Support")
+    void givenLicenseID_whenRenewSupport_thenReturnLicenseUpdatedWithNewSupport() throws Exception { 
+        Long id = 1L;
+        SupportDTO newSupport = new SupportDTO(3L, LocalDate.parse("2025-01-01"), LocalDate.parse("2026-01-01"), SupportStatus.ACTIVE, 1L);
+        LicenseDTO updatedLicense = new LicenseDTO(1L, "6A-1000-01", productDTO, customerDTO, newSupport);
+        String jsonResponse = """
+                {
+                    "id" : 1,                    
+                    "code":"6A-1000-01",
+                    "lastSupport": {
+                        "id": 3,
+                        "fromDate": "2025-01-01",
+                        "toDate": "2026-01-01",
+                        "status": "ACTIVE",
+                        "licenseId": 1
+                    }                    
+                }
+                """;
+                
+        when(licenseService.renewSupport(id)).thenReturn(updatedLicense);
+
+        sut.perform(get("/api/v1/licenses/{id}/supports/last/renew", id)
+                    .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON ))
+            .andExpect(content().json(jsonResponse));
+    }
+
+    @Test
+    @DisplayName("Given a License id cancel its support setting its last support to CANCELED")
+    void givenLicenseID_whenCancelSupport_thenReturnLicenseUpdatedWithLastSupportCanceled() throws Exception { 
+        Long id = 1L;
+        SupportDTO lastSupport = new SupportDTO(1L, LocalDate.parse("2024-01-01"), LocalDate.parse("2025-01-01"), SupportStatus.CANCELED, 1L);
+        LicenseDTO updatedLicense = new LicenseDTO(1L, "6A-1000-01", productDTO, customerDTO, lastSupport);
+        String jsonResponse = """
+                {
+                    "id" : 1,                    
+                    "code":"6A-1000-01",
+                    "lastSupport": {
+                        "id": 1,
+                        "fromDate": "2024-01-01",
+                        "toDate": "2025-01-01",
+                        "status": "CANCELED",
+                        "licenseId": 1
+                    }                    
+                }
+                """;
+                
+        when(licenseService.cancelSupport(id)).thenReturn(updatedLicense);
+
+        sut.perform(get("/api/v1/licenses/{id}/supports/last/cancel", id)
+                    .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON ))
+            .andExpect(content().json(jsonResponse));
+    }
+
 
 }

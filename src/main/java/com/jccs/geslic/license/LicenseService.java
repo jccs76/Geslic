@@ -48,9 +48,9 @@ public class LicenseService extends AbstractService<LicenseDTO, License, License
                               .ifPresent ( p -> {throw new EntityExistingException (Constants.ENTITY_EXISTS);});
         
         License license = mapper.toEntity(dto);
-        Product product = productService.getProduct(dto.productId());
+        Product product = productService.getProduct(dto.product().id());
         license.setProduct(product);
-        Customer customer = customerService.getCustomer(dto.customerId());
+        Customer customer = customerService.getCustomer(dto.customer().id());
         license.setCustomer(customer);
         List<Support> supports = new ArrayList<>();
         Support firstSupport = new Support();

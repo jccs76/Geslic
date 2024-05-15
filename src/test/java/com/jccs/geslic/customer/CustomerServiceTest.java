@@ -23,6 +23,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.jccs.geslic.common.Constants;
 import com.jccs.geslic.common.exception.EntityExistingException;
 import com.jccs.geslic.common.exception.EntityNotFoundException;
+import com.jccs.geslic.license.LicenseMapper;
 
 @ExtendWith(MockitoExtension.class)
 public class CustomerServiceTest {
@@ -38,9 +39,12 @@ public class CustomerServiceTest {
     @Mock
     private CustomerMapper customerMapper;
 
+    @Mock
+    private LicenseMapper licenseMapper;
+
     @BeforeEach
     void setUp(){
-        this.sut = new CustomerService(customerRepository, customerMapper);
+        this.sut = new CustomerService(customerRepository, customerMapper, licenseMapper);
         
         
         customers = List.of(Customer.builder()
