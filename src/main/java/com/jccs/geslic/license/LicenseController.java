@@ -25,4 +25,14 @@ public class LicenseController extends AbstractController<LicenseDTO, LicenseSer
         return ResponseEntity.ok(super.getService().getSupports(id));
     }
 
+    @GetMapping("/{id}/supports/last")
+    public ResponseEntity<SupportDTO> getLastSupport(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(super.getService().getLastSupport(id));
+    }
+
+    @GetMapping("/{id}/supports/last/renew")
+    public  ResponseEntity<LicenseDTO> renewSupport(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(super.getService().renewSupport(id));
+    }
+
 }

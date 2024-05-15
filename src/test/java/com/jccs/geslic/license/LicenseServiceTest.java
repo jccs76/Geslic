@@ -79,8 +79,8 @@ public class LicenseServiceTest {
                                     .code("6A-1000-02").build());
                             
         licensesDTO = List.of(
-                    new LicenseDTO(1L,"6A-1000-01", 1L, 1L),
-                    new LicenseDTO(2L,"6A-1000-02", 1L, 1L)
+                    new LicenseDTO(1L,"6A-1000-01", 1L, 1L,null),
+                    new LicenseDTO(2L,"6A-1000-02", 1L, 1L,null)
         );                
 
     }
@@ -122,7 +122,7 @@ public class LicenseServiceTest {
 
     @Test
     public void givenLicense_whenCreated_thenCallsRepositorySave(){
-        LicenseDTO licenseDTO = new LicenseDTO(null,"6A-1000-03",1L, 1L);
+        LicenseDTO licenseDTO = new LicenseDTO(null,"6A-1000-03",1L, 1L,null);
         when(licenseMapper.toEntity(licenseDTO)).thenReturn(new License());
         when(licenseRepository.save(any(License.class))).thenReturn(new License());
 
@@ -133,7 +133,7 @@ public class LicenseServiceTest {
 
     @Test
     public void givenExistingLicense_whenCreated_thenThrowLicenseExisting(){
-        LicenseDTO licenseDTO = new LicenseDTO(null,"6A-1000-01", 1L, 1L);
+        LicenseDTO licenseDTO = new LicenseDTO(null,"6A-1000-01", 1L, 1L,null);
         
         doThrow(new EntityExistingException(Constants.ENTITY_EXISTS)).when(licenseRepository).findByCode(anyString());
 
@@ -153,7 +153,7 @@ public class LicenseServiceTest {
                                         .product(product)
                                         .customer(customer)
                                         .build();
-        LicenseDTO requestLicenseDTO = new LicenseDTO(id,"6A-1000-03", 1L, 1L);
+        LicenseDTO requestLicenseDTO = new LicenseDTO(id,"6A-1000-03", 1L, 1L,null);
         
         when(licenseMapper.toEntity(requestLicenseDTO)).thenReturn(new License());
         when(licenseMapper.toDTO(updatedLicense)).thenReturn(requestLicenseDTO);
@@ -171,7 +171,7 @@ public class LicenseServiceTest {
     
     void givenInexistentLicenseID_whenUpdate_thenThrowLicenseNotFound() throws Exception {
         Long id = -1L;
-        LicenseDTO licenseDTO = new LicenseDTO(id,"6A-1000-05", 1L, 1L);
+        LicenseDTO licenseDTO = new LicenseDTO(id,"6A-1000-05", 1L, 1L,null);
         
         doThrow(new EntityNotFoundException(Constants.ENTITY_NOTFOUND)).when(licenseRepository).findById(id);
        

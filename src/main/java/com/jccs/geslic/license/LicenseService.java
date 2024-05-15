@@ -41,6 +41,7 @@ public class LicenseService extends AbstractService<LicenseDTO, License, License
         this.supportMapper = supportMapper;
     }
 
+
     @Override
     public LicenseDTO create(LicenseDTO dto) {
         repository.findByCode(dto.code())
@@ -56,9 +57,9 @@ public class LicenseService extends AbstractService<LicenseDTO, License, License
         firstSupport.setFromDate(LocalDate.ofInstant(Instant.now(), ZoneId.systemDefault()));
         firstSupport.setToDate(firstSupport.getFromDate().plusYears(1));
         firstSupport.setStatus(SupportStatus.ACTIVE);
-        firstSupport.setLicense(license);
-
+        firstSupport.setLicense(license);        
         supports.add(firstSupport);
+        license.setLastSupport(firstSupport);
         license.setSupports(supports);
         License savedlicense = repository.save(license);
         return mapper.toDTO(savedlicense);
@@ -78,8 +79,31 @@ public class LicenseService extends AbstractService<LicenseDTO, License, License
     }
 
     public List<SupportDTO> getSupports(Long id){
-        License license = getLicense(id);
-        List<Support> supports = license.getSupports();
-        return supportMapper.map(supports);
+        return supportMapper.map(getListSupports(id));
     }
+
+    public SupportDTO getLastSupport(Long id) {
+        return supportMapper.toDTO(getListSupports(id).getLast());
+    }
+
+    public LicenseDTO renewSupport(Long id) {
+        License license = repository.findById(id)
+                                    .orElseThrow(() -> new EntityNotFoundException(Constants.ENTITY_NOTFOUND));
+        Support lastSupport = license.getLastSupport();
+        
+        Support newSupport = new Support();
+        newSupport.setFromDate(lastSupport.getFromDate().plusYears(1));
+        newSupport.setToDate(lastSupport.getToDate().plusYears(1));
+        newSupport.setStatus(SupportStatus.ACTIVE);
+        newSupport.setLicense(license);
+        license.getSupports().add(newSupport);        
+        license.setLastSupport(newSupport);
+        License savedLicense = repository.save(license);
+        return mapper.toDTO(savedLicense);
+    }
+
+    private List<Support> getListSupports(Long id){
+        return getLicense(id).getSupports();
+    }
+
 }

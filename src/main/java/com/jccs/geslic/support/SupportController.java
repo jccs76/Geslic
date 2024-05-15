@@ -12,4 +12,6 @@ public class SupportController extends AbstractController<SupportDTO, SupportSer
     SupportController(SupportService service){
         super(service);
     }
+
+    
 }
