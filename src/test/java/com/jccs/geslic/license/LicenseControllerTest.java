@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.jccs.geslic.common.Constants;
 import com.jccs.geslic.common.exception.EntityExistingException;
 import com.jccs.geslic.common.exception.EntityInvalidException;
@@ -43,16 +44,18 @@ public class LicenseControllerTest {
     
     private List<LicenseDTO> licenses = new ArrayList<>();
 
-    
+    private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {
-        List<SupportDTO> supports = List.of(new SupportDTO(1L, LocalDate.parse("2024-01-01"), LocalDate.parse("2025-01-01"), SupportStatus.ACTIVE, null),
-                                            new SupportDTO(2L, LocalDate.parse("2024-01-01"), LocalDate.parse("2025-01-01"), SupportStatus.ACTIVE, null));
+        objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+
+        List<SupportDTO> supports = List.of(new SupportDTO(1L, LocalDate.parse("2024-01-01"), LocalDate.parse("2025-01-01"), SupportStatus.ACTIVE, 1L),
+                                            new SupportDTO(2L, LocalDate.parse("2024-01-01"), LocalDate.parse("2025-01-01"), SupportStatus.ACTIVE, 2L));
                  
         licenses = List.of(new LicenseDTO(1L,"6A-1000-01", 1L, 1L, supports.get(0)),
                            new LicenseDTO(2L,"6A-1000-02", 1L, 1L, supports.get(1)));
-        
 
     }
 
@@ -168,7 +171,7 @@ public class LicenseControllerTest {
 
         sut.perform(post("/api/v1/licenses")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(new ObjectMapper().writeValueAsString(license)))                                         
+                    .content(objectMapper.writeValueAsString(license)))                                         
             .andExpect(status().isCreated())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON ))
             .andExpect(content().json(jsonResponse));
@@ -183,7 +186,7 @@ public class LicenseControllerTest {
 
         sut.perform(post("/api/v1/licenses")
                     .contentType("application/json")
-                    .content(new ObjectMapper().writeValueAsString(license)))                                         
+                    .content(objectMapper.writeValueAsString(license)))                                         
             .andExpect(status().isBadRequest())            
             .andExpect(content().string(Constants.ENTITY_INVALID));
     }
@@ -197,9 +200,9 @@ public class LicenseControllerTest {
 
         sut.perform(post("/api/v1/licenses")
                     .contentType("application/json")
-                    .content(new ObjectMapper().writeValueAsString(license)))                                         
+                    .content(objectMapper.writeValueAsString(license)))                                         
                     .andExpect(status().isConflict())            
-            .andExpect(content().string(Constants.ENTITY_EXISTS));
+                    .andExpect(content().string(Constants.ENTITY_EXISTS));
     }
 
 
@@ -227,7 +230,7 @@ public class LicenseControllerTest {
 
         sut.perform(put("/api/v1/licenses/{id}", id)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(new ObjectMapper().writeValueAsString(license)))                                         
+                    .content(objectMapper.writeValueAsString(license)))                                         
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON ))
             .andExpect(content().json(jsonResponse));
@@ -243,7 +246,7 @@ public class LicenseControllerTest {
 
         sut.perform(put("/api/v1/licenses/{id}", id)
                     .contentType("application/json")
-                    .content(new ObjectMapper().writeValueAsString(license)))                                         
+                    .content(objectMapper.writeValueAsString(license)))                                         
             .andExpect(status().isNotFound())            
             .andExpect(content().string(Constants.ENTITY_NOTFOUND));
     }

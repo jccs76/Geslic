@@ -73,22 +73,16 @@ public class LicenseService extends AbstractService<LicenseDTO, License, License
         throw new EntityInvalidException(Constants.ENTITY_INVALID);
     }
 
-    public License getLicense(Long id){
-        return repository.findById(id)
-                         .orElseThrow(() -> new EntityNotFoundException(Constants.ENTITY_NOTFOUND));
-    }
-
     public List<SupportDTO> getSupports(Long id){
-        return supportMapper.map(getListSupports(id));
+        return supportMapper.map(getLicenseSupports(id));
     }
 
     public SupportDTO getLastSupport(Long id) {
-        return supportMapper.toDTO(getListSupports(id).getLast());
+        return supportMapper.toDTO(getLicenseSupports(id).getLast());
     }
 
     public LicenseDTO renewSupport(Long id) {
-        License license = repository.findById(id)
-                                    .orElseThrow(() -> new EntityNotFoundException(Constants.ENTITY_NOTFOUND));
+        License license = getLicense(id);
         Support lastSupport = license.getLastSupport();
         
         Support newSupport = new Support();
@@ -102,7 +96,18 @@ public class LicenseService extends AbstractService<LicenseDTO, License, License
         return mapper.toDTO(savedLicense);
     }
 
-    private List<Support> getListSupports(Long id){
+    public LicenseDTO cancelSupport(Long id) {
+        License license = getLicense(id);
+        license.getLastSupport().setStatus(SupportStatus.CANCELED);
+        return mapper.toDTO(repository.save(license));
+    }
+
+    private License getLicense(Long id){
+        return repository.findById(id)
+                         .orElseThrow(() -> new EntityNotFoundException(Constants.ENTITY_NOTFOUND));
+    }
+
+    private List<Support> getLicenseSupports(Long id){
         return getLicense(id).getSupports();
     }
 
