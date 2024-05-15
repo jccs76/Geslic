@@ -10,4 +10,4 @@ public record SupportDTO(Long id,
                          @JsonFormat(pattern="yyyy-MM-dd") 
                          LocalDate toDate,
                          SupportStatus status,
-                         Long license_id) {}
+                         Long licenseId) {}

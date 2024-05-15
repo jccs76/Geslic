@@ -12,7 +12,7 @@ import com.jccs.geslic.product.ProductMapper;
 public interface LicenseMapper extends CommonMapper<LicenseDTO, License> {
 
     @Mapping(source = "product.id", target="productId")
-    @Mapping(source = "customer.id", target="customerId")
-    public LicenseDTO toDTO(License entity);
+    @Mapping(source = "customer.id", target="customerId")    
+    public LicenseDTO toDTO(License license);
 
 }
