@@ -22,7 +22,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.jccs.geslic.common.Constants;
-import com.jccs.geslic.common.exception.EntityExistingException;
 import com.jccs.geslic.common.exception.EntityNotFoundException;
 import com.jccs.geslic.license.License;
 

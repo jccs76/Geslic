@@ -1,4 +1,6 @@
-import { ReactElement, Dispatch, SetStateAction, HTMLAttributeAnchorTarget, ReactNode } from 'react';
+import React, { ReactElement, Dispatch, SetStateAction, HTMLAttributeAnchorTarget, ReactNode } from 'react';
+import { NextPage } from 'next';
+import { Demo } from './demo';
 import { Toast } from 'primereact/toast';
 
 /* Breadcrumb Types */

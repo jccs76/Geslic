@@ -5,7 +5,7 @@ import { InputText } from 'primereact/inputtext';
 import { Toast } from 'primereact/toast';
 import { Toolbar } from 'primereact/toolbar';
 import { useEffect, useRef, useState } from 'react';
-import { Demo } from '../../types/Demo';
+//import { Demo } from '../../types/Demo';
 import { ProductService } from '../../services/ProductService';
 //import jsonData from "../../data/products.json";
 
@@ -13,7 +13,7 @@ import { ProductService } from '../../services/ProductService';
 
 /* @todo Used 'as any' for types here. Will fix in next version due to onSelectionChange event type issue. */
 const Crud = () => {
-    let emptyProduct: Demo.Product = {
+    let emptyProduct: Product = {
         id: '',
         name: '',
         description: '',
@@ -40,15 +40,18 @@ const Crud = () => {
 
     const header = (
         <div className="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
-            <h5 className="m-0">Productos</h5>
-            <span className="block mt-2 md:mt-0 p-input-icon-left">
-                <i className="pi pi-search" />
-                <InputText type="search" onInput={(e) => setGlobalFilter(e.currentTarget.value)} placeholder="Buscar..." />
-            </span>
+            <h3 className="m-0">Productos</h3>
+            <div className="block p-inputgroup flex-1">
+                <span className="p-inputgroup-addon">
+                    <i className="pi pi-search"></i>
+                    <InputText type="search" onInput={(e) => setGlobalFilter(e.currentTarget.value)} placeholder="Buscar..." />
+                </span>
+
+            </div>
         </div>
     );
 
-    const actionBodyTemplate = (rowData: Demo.Product) => {
+    const actionBodyTemplate = (rowData: Product) => {
         return (
             <>
                 <Button icon="pi pi-pencil" rounded severity="success" className="mr-2"  />
@@ -57,7 +60,7 @@ const Crud = () => {
         );
     };
 
-    const nameBodyTemplate = (rowData: Demo.Product) => {
+    const nameBodyTemplate = (rowData: Product) => {
         return (
             <>
                 <span className="p-column-title">Nombre</span>
@@ -66,7 +69,7 @@ const Crud = () => {
         );
     };
 
-    const descriptionBodyTemplate = (rowData: Demo.Product) => {
+    const descriptionBodyTemplate = (rowData: Product) => {
         return (
             <>
                 <span className="p-column-title">Descripcion</span>
@@ -75,7 +78,7 @@ const Crud = () => {
         );
     };
 
-    const priceBodyTemplate = (rowData: Demo.Product) => {
+    const priceBodyTemplate = (rowData: Product) => {
         return (
             <>
                 <span className="p-column-title">Precio</span>

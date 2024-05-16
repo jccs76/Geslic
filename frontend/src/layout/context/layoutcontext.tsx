@@ -1,7 +1,5 @@
 import { useState, createContext } from 'react';
-import { LayoutState, LayoutConfig, LayoutContextProps } from '../types/layout';
-import {ChildContainerProps} from "../types/index";
-
+import { LayoutState, ChildContainerProps, LayoutConfig, LayoutContextProps } from '@/types';
 export const LayoutContext = createContext({} as LayoutContextProps);
 
 export const LayoutProvider = ({ children }: ChildContainerProps) => {

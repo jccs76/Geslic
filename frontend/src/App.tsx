@@ -1,14 +1,14 @@
-import './App.css'
-import Crud from './pages/Main'
+import "primereact/resources/primereact.css";
+import "./styles/layout/layout.scss";
+import { LayoutProvider } from "./layout/context/layoutcontext";
 
-function App() {
 
-
-  return (
-    <>
-    <Crud/>
-    </>
-  )
+interface RootLayoutProps {
+    children: React.ReactNode;
 }
 
-export default App
+export default function App({ children }: RootLayoutProps) {
+  return (
+    <LayoutProvider>{children}</LayoutProvider>
+  );
+}
