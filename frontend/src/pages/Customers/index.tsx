@@ -78,36 +78,38 @@ const Customers = () => {
     };
 
     
-    const leftToolbarTemplate = () => {
-        return (
-            <>
-              
-            </>
-        );
-    };
+    const toolbarStartContent = (    
+            <h5 className="mt-3">Gestión de Clientes</h5>        
+    );
 
+    const toolbarCenterContent = (
+        <div className="p-inputgroup">
+        <span className="p-inputgroup-addon">
+            <i className="pi pi-search" />
+        </span>
+        <InputText className="pl-2" type="search" onInput={(e) => setGlobalFilter(e.currentTarget.value)} placeholder="Buscar..." />
+    </div>
+    );
+
+    const toolbarEndContent = (
+        // <div className="flex-grow m-2">
+            <Button label="Nuevo" icon="pi pi-plus" severity="info" className=" mr-5" onClick={openNew} />
+        // </div>            
+
+    );
     const header = (
         <div className="flex flex-column md:flex-row md:justify-content-evenly md:align-items-center">
-            <h5 className="m-0">Gestión de Clientes</h5>
-            <div>
-                <Button label="Nuevo" icon="pi pi-plus" severity="success" className=" mr-5" onClick={openNew} />
-            </div>            
-            <div className="p-inputgroup">
-                <span className="p-inputgroup-addon">
-                    <i className="pi pi-search" />
-                </span>
-                <InputText className="pl-2" type="search" onInput={(e) => setGlobalFilter(e.currentTarget.value)} placeholder="Buscar..." />
-            </div>
+            <span>Clientes</span>
         </div>
         
     );
 
     const actionBodyTemplate = (rowData: App.Customer) => {
         return (
-            <>
+            <div className="flex flex-column md:flex-row md:justify-content-center md:align-items-center ">
                 <Button icon="pi pi-pencil" rounded severity="success" className="mr-2" onClick={() => editCustomer(rowData)} />
                 <Button icon="pi pi-trash" rounded severity="warning" onClick={() => confirmDelete(rowData)}/>
-            </>
+            </div>
         );
     };
 
@@ -128,7 +130,7 @@ const Customers = () => {
             <div className="col-12">
                 <div className="card">
                     <Toast ref={toast} />
-                    <Toolbar className="mb-4" left={leftToolbarTemplate}></Toolbar>
+                    <Toolbar className="mb-4" start={toolbarStartContent} center={toolbarCenterContent} end={toolbarEndContent}/>
 
                     <DataTable
                         ref={dt}
@@ -139,16 +141,16 @@ const Customers = () => {
                         paginator
                         rows={10}
                         rowsPerPageOptions={[5, 10, 25]}
+                        showGridlines 
+                        stripedRows
                         className="datatable-responsive"
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                         currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords}"
                         globalFilter={globalFilter}
                         emptyMessage="No hay clientes."
                         header={header}
-                        responsiveLayout="scroll"
                     >
-                        <Column selectionMode="single" headerStyle={{ width: '4rem' }}></Column>
-                        <Column field="name" header="Nombre" sortable body={nameBodyTemplate} headerStyle={{ minWidth: '15rem' }}></Column>
+                        <Column field="name" header="Nombre" sortable body={nameBodyTemplate} headerStyle={{ minWidth: '30rem' }}></Column>
                         <Column body={actionBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
                     </DataTable>
                     <ConfirmDialog />
