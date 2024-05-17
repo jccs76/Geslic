@@ -5,16 +5,13 @@ import { InputText } from 'primereact/inputtext';
 import { Toast } from 'primereact/toast';
 import { Toolbar } from 'primereact/toolbar';
 import { useEffect, useRef, useState } from 'react';
-//import { Demo } from '../../types/Demo';
-import { ProductService } from '../../services/ProductService';
-
-//import jsonData from "../../data/products.json";
-
-import Layout from "../../layout/layout";
+import { App } from '@/types';
+import { ProductService } from '@/services/ProductService';
+import Layout from "@/layout/layout";
 
 /* @todo Used 'as any' for types here. Will fix in next version due to onSelectionChange event type issue. */
 const Products = () => {
-    let emptyProduct: Product = {
+    let emptyProduct: App.Product = {
         id: '',
         name: '',
         description: '',
@@ -52,7 +49,7 @@ const Products = () => {
         </div>
     );
 
-    const actionBodyTemplate = (rowData: Product) => {
+    const actionBodyTemplate = (rowData: App.Product) => {
         return (
             <>
                 <Button icon="pi pi-pencil" rounded severity="success" className="mr-2"  />
@@ -61,7 +58,7 @@ const Products = () => {
         );
     };
 
-    const nameBodyTemplate = (rowData: Product) => {
+    const nameBodyTemplate = (rowData: App.Product) => {
         return (
             <>
                 <span className="p-column-title">Nombre</span>
@@ -70,7 +67,7 @@ const Products = () => {
         );
     };
 
-    const descriptionBodyTemplate = (rowData: Product) => {
+    const descriptionBodyTemplate = (rowData: App.Product) => {
         return (
             <>
                 <span className="p-column-title">Descripcion</span>
@@ -79,7 +76,7 @@ const Products = () => {
         );
     };
 
-    const priceBodyTemplate = (rowData: Product) => {
+    const priceBodyTemplate = (rowData: App.Product) => {
         return (
             <>
                 <span className="p-column-title">Precio</span>

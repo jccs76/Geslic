@@ -5,63 +5,113 @@ import { InputText } from 'primereact/inputtext';
 import { Toast } from 'primereact/toast';
 import { Toolbar } from 'primereact/toolbar';
 import { useEffect, useRef, useState } from 'react';
-//import { Demo } from '../../types/Demo';
-import { ProductService } from '../../services/ProductService';
-
-//import jsonData from "../../data/products.json";
-
 import Layout from "../../layout/layout";
+import { App } from '@/types';
+import { CustomerService } from '../../services/CustomerService';
+
+import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
+
+
 
 /* @todo Used 'as any' for types here. Will fix in next version due to onSelectionChange event type issue. */
 const Customers = () => {
-    let emptyProduct: Product = {
+
+    let emptyCustomer: App.Customer = {
         id: '',
-        name: '',
-        description: '',
-        price: 0,
+        name: ''
     };
-    
-    const [products, setProducts] = useState(null);
-    const [selectedProducts, setSelectedProducts] = useState(null);
+
+    const [customer, setCustomer] = useState<App.Customer>(emptyCustomer);
+    const [customers, setCustomers] = useState(null);
+    const [selectedCustomers, setSelectedCustomers] = useState(null);
+    const [deleteDialog, setDeleteDialog] = useState(false);
     const [globalFilter, setGlobalFilter] = useState('');
     const toast = useRef<Toast>(null);
     const dt = useRef<DataTable<any>>(null);
 
-    useEffect(() => {
-        //setProducts(jsonData as any);
-        ProductService.getProducts().then((data) => setProducts(data as any));
+    useEffect(() => {        
+        CustomerService.getCustomers().then((data) => setCustomers(data as any));
     }, []);
 
-    const formatCurrency = (value: number) => {
-        return value.toLocaleString('es-ES', {
-            style: 'currency',
-            currency: 'EUR'
+    const openNew = () => {
+        return;
+    };
+
+    const editCustomer = (customer: App.Customer) => {
+        setCustomer({ ...customer });
+        
+    };
+
+    const confirmDelete = (customer: App.Customer) => {
+        setCustomer(customer);
+        showDeleteDialog();
+    }
+
+    const hideDeleteDialog = () => {
+        setDeleteDialog(false);
+    };
+
+    const deleteCustomer = () => {
+        let _customers = (customers as any)?.filter((val: any) => val.id !== customer.id);
+        setCustomers(_customers);
+        CustomerService.deleteCustomer(customer.id).then((data) => setCustomer(data as any));
+        setDeleteDialog(false);
+        setCustomer(emptyCustomer);
+        toast.current?.show({
+            severity: 'success',
+            summary: 'Successful',
+            detail: 'Cliente Eliminado',
+            life: 3000
         });
     };
 
-    const header = (
-        <div className="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
-            <h3 className="m-0">Productos</h3>
-            <div className="block p-inputgroup flex-1">
-                <span className="p-inputgroup-addon">
-                    <i className="pi pi-search"></i>
-                    <InputText type="search" onInput={(e) => setGlobalFilter(e.currentTarget.value)} placeholder="Buscar..." />
-                </span>
+    const showDeleteDialog = () => {
+        confirmDialog({
+            message: '¿Seguro que quiere borrar el cliente?',
+            header: 'Confirmar Borrado',
+            icon: 'pi pi-info-circle',
+            defaultFocus: 'reject',
+            acceptClassName: 'p-button-danger',
+            accept : deleteCustomer,
+            reject: hideDeleteDialog
+        });
+    };
 
-            </div>
-        </div>
-    );
-
-    const actionBodyTemplate = (rowData: Product) => {
+    
+    const leftToolbarTemplate = () => {
         return (
             <>
-                <Button icon="pi pi-pencil" rounded severity="success" className="mr-2"  />
-                <Button icon="pi pi-trash" rounded severity="warning" />
+              
             </>
         );
     };
 
-    const nameBodyTemplate = (rowData: Product) => {
+    const header = (
+        <div className="flex flex-column md:flex-row md:justify-content-evenly md:align-items-center">
+            <h5 className="m-0">Gestión de Clientes</h5>
+            <div>
+                <Button label="Nuevo" icon="pi pi-plus" severity="success" className=" mr-5" onClick={openNew} />
+            </div>            
+            <div className="p-inputgroup">
+                <span className="p-inputgroup-addon">
+                    <i className="pi pi-search" />
+                </span>
+                <InputText className="pl-2" type="search" onInput={(e) => setGlobalFilter(e.currentTarget.value)} placeholder="Buscar..." />
+            </div>
+        </div>
+        
+    );
+
+    const actionBodyTemplate = (rowData: App.Customer) => {
+        return (
+            <>
+                <Button icon="pi pi-pencil" rounded severity="success" className="mr-2" onClick={() => editCustomer(rowData)} />
+                <Button icon="pi pi-trash" rounded severity="warning" onClick={() => confirmDelete(rowData)}/>
+            </>
+        );
+    };
+
+    const nameBodyTemplate = (rowData: App.Customer) => {
         return (
             <>
                 <span className="p-column-title">Nombre</span>
@@ -70,23 +120,6 @@ const Customers = () => {
         );
     };
 
-    const descriptionBodyTemplate = (rowData: Product) => {
-        return (
-            <>
-                <span className="p-column-title">Descripcion</span>
-                {rowData.description}
-            </>
-        );
-    };
-
-    const priceBodyTemplate = (rowData: Product) => {
-        return (
-            <>
-                <span className="p-column-title">Precio</span>
-                {formatCurrency(rowData.price as number)}
-            </>
-        );
-    };
 
     return (
         <Layout>
@@ -95,31 +128,31 @@ const Customers = () => {
             <div className="col-12">
                 <div className="card">
                     <Toast ref={toast} />
-                    <Toolbar className="mb-4"></Toolbar>
+                    <Toolbar className="mb-4" left={leftToolbarTemplate}></Toolbar>
 
                     <DataTable
                         ref={dt}
-                        value={products}
-                        selection={selectedProducts}
-                        onSelectionChange={(e) => setSelectedProducts(e.value as any)}
+                        value={customers}
+                        selection={selectedCustomers}
+                        onSelectionChange={(e) => setSelectedCustomers(e.value as any)}
                         dataKey="id"
                         paginator
                         rows={10}
                         rowsPerPageOptions={[5, 10, 25]}
                         className="datatable-responsive"
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} productos"
+                        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords}"
                         globalFilter={globalFilter}
-                        emptyMessage="No hay productos."
+                        emptyMessage="No hay clientes."
                         header={header}
                         responsiveLayout="scroll"
                     >
-                        <Column selectionMode="multiple" headerStyle={{ width: '4rem' }}></Column>
+                        <Column selectionMode="single" headerStyle={{ width: '4rem' }}></Column>
                         <Column field="name" header="Nombre" sortable body={nameBodyTemplate} headerStyle={{ minWidth: '15rem' }}></Column>
-                        <Column field="description" header="Descripcion" sortable body={descriptionBodyTemplate} headerStyle={{ minWidth: '15rem' }}></Column>
-                        <Column field="price" header="Precio" body={priceBodyTemplate}></Column>
                         <Column body={actionBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
                     </DataTable>
+                    <ConfirmDialog />
+    
                 </div>
             </div>
         </div>
