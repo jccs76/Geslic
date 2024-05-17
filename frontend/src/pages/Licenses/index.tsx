@@ -7,12 +7,13 @@ import { Toolbar } from 'primereact/toolbar';
 import { useEffect, useRef, useState } from 'react';
 //import { Demo } from '../../types/Demo';
 import { ProductService } from '../../services/ProductService';
+
 //import jsonData from "../../data/products.json";
 
-
+import Layout from "../../layout/layout";
 
 /* @todo Used 'as any' for types here. Will fix in next version due to onSelectionChange event type issue. */
-const Crud = () => {
+const Licenses = () => {
     let emptyProduct: Product = {
         id: '',
         name: '',
@@ -88,7 +89,9 @@ const Crud = () => {
     };
 
     return (
-        <div className="grid crud-demo">
+        <Layout>
+
+        <div className="grid">
             <div className="col-12">
                 <div className="card">
                     <Toast ref={toast} />
@@ -120,7 +123,8 @@ const Crud = () => {
                 </div>
             </div>
         </div>
+        </Layout>
     );
 };
 
-export default Crud;
+export default Licenses;

@@ -1,25 +1,29 @@
-'use client';
 import {Link} from 'react-router-dom';
 import { Ripple } from 'primereact/ripple';
 import { classNames } from 'primereact/utils';
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect, useContext} from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { MenuContext } from './context/menucontext';
 import { AppMenuItemProps } from '@/types';
 import { useLocation, useSearchParams } from 'react-router-dom';
 
 const AppMenuitem = (props: AppMenuItemProps) => {
-    const pathname = useLocation().pathname;
+    //const pathname = useLocation().pathname;
+    const location = useLocation();
+    const pathname = location.pathname;
+    
     const searchParams = useSearchParams();
     const { activeMenu, setActiveMenu } = useContext(MenuContext);
     const item = props.item;
     const key = props.parentKey ? props.parentKey + '-' + props.index : String(props.index);
     const isActiveRoute = item!.to && pathname === item!.to;
     const active = activeMenu === key || activeMenu.startsWith(key + '-');
+   
     const onRouteChange = (url: string) => {
-        if (item!.to && item!.to === url) {
+        if (item!.to && item!.to === url) {            
             setActiveMenu(key);
         }
+
     };
 
     useEffect(() => {
@@ -27,15 +31,15 @@ const AppMenuitem = (props: AppMenuItemProps) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [pathname, searchParams]);
 
-    const itemClick = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    const itemClick = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {        
         //avoid processing disabled items
         if (item!.disabled) {
             event.preventDefault();
             return;
         }
-
+            
         //execute command
-        if (item!.command) {
+        if (item!.command) {            
             item!.command({ originalEvent: event, item: item });
         }
 

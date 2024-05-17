@@ -17,16 +17,16 @@ const AppMenu = () => {
         {
             label: 'Gestion',
             items: [
-                { label: 'Clientes', icon: 'pi pi-fw pi-id-card', to: '/uikit/formlayout' },
-                { label: 'Productos', icon: 'pi pi-fw pi-box', to: '/uikit/input' },
-                { label: 'Licencias', icon: 'pi pi-fw pi-key', to: '/uikit/floatlabel' },
+                { label: 'Clientes', icon: 'pi pi-fw pi-id-card', to: '/customers' },
+                { label: 'Productos', icon: 'pi pi-fw pi-box', to: '/products' },
+                { label: 'Licencias', icon: 'pi pi-fw pi-key', to: '/licenses' },
             ]
         },
         {
             label: 'Procesos',
             items: [
-                { label: 'Alta Licencia', icon: 'pi pi-fw pi-file-plus', to: '/blocks', badge: 'NEW' },
-                { label: 'Cancelar Mantenimiento', icon: 'pi pi-fw pi-times', url: 'https://blocks.primereact.org', target: '_blank' }
+                { label: 'Alta Licencia', icon: 'pi pi-fw pi-file-plus', to: '/licenses/create'},
+                { label: 'Cancelar Mantenimiento', icon: 'pi pi-fw pi-times',to: '/licenses/cancel'}
             ]
         }
     ];
