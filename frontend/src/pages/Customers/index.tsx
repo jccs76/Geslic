@@ -1,30 +1,35 @@
+import { useContext, useEffect, useRef, useState } from 'react';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { InputText } from 'primereact/inputtext';
 import { Toast } from 'primereact/toast';
 import { Toolbar } from 'primereact/toolbar';
-import { useEffect, useRef, useState } from 'react';
-import Layout from "../../layout/layout";
-import { App } from '@/types';
-import { CustomerService } from '../../services/CustomerService';
-
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
+
+import Layout from "../../layout/layout";
+import { App, Customer } from '@/types';
+import { CustomerService } from '../../services/CustomerService';
+import { useNavigate } from 'react-router-dom';
+
+import { CustomerContext, CustomerProvider } from '../../context/CustomerContext';
 
 
 
 /* @todo Used 'as any' for types here. Will fix in next version due to onSelectionChange event type issue. */
 const Customers = () => {
 
-    let emptyCustomer: App.Customer = {
+    let emptyCustomer: Customer = {
         id: '',
         name: ''
     };
 
-    const [customer, setCustomer] = useState<App.Customer>(emptyCustomer);
+    //const { customers } = useContext(CustomerContext);
+
+    const [customer, setCustomer] = useState<Customer>(emptyCustomer);
     const [customers, setCustomers] = useState(null);
     const [selectedCustomers, setSelectedCustomers] = useState(null);
-    const [deleteDialog, setDeleteDialog] = useState(false);
+    const navigate = useNavigate();
     const [globalFilter, setGlobalFilter] = useState('');
     const toast = useRef<Toast>(null);
     const dt = useRef<DataTable<any>>(null);
@@ -37,46 +42,46 @@ const Customers = () => {
         return;
     };
 
-    const editCustomer = (customer: App.Customer) => {
+    const editCustomer = (customer: Customer) => {
         setCustomer({ ...customer });
+        navigate("/customer")
         
     };
 
-    const confirmDelete = (customer: App.Customer) => {
+    const confirmDelete = (customer: Customer) => {
         setCustomer(customer);
         showDeleteDialog();
     }
 
-    const hideDeleteDialog = () => {
-        setDeleteDialog(false);
-    };
-
-    const deleteCustomer = () => {
-        let _customers = (customers as any)?.filter((val: any) => val.id !== customer.id);
-        setCustomers(_customers);
-        CustomerService.deleteCustomer(customer.id).then((data) => setCustomer(data as any));
-        setDeleteDialog(false);
-        setCustomer(emptyCustomer);
-        toast.current?.show({
-            severity: 'success',
-            summary: 'Successful',
-            detail: 'Cliente Eliminado',
-            life: 3000
-        });
-    };
-
     const showDeleteDialog = () => {
         confirmDialog({
-            message: '¿Seguro que quiere borrar el cliente?',
+            message: `¿Seguro que quiere borrar el cliente ${customer.name}?`,
             header: 'Confirmar Borrado',
             icon: 'pi pi-info-circle',
             defaultFocus: 'reject',
             acceptClassName: 'p-button-danger',
             accept : deleteCustomer,
-            reject: hideDeleteDialog
+            reject: cancelDeleteCustomer
         });
     };
 
+
+    const deleteCustomer = () => {
+        let _customers = (customers as any)?.filter((val: any) => val.id !== customer.id);
+        setCustomers(_customers);
+        CustomerService.deleteCustomer(customer.id).then((data) => setCustomer(data as any));     
+        setCustomer(emptyCustomer);
+        toast.current?.show({
+            severity: 'success',
+            summary: 'Borrado',
+            detail: 'Cliente Eliminado',
+            life: 3000
+        });
+    };
+
+    const cancelDeleteCustomer = () => {
+        toast.current?.show({ severity: 'warn', summary: 'Cancelado', detail: 'Eliminación cancelada', life: 3000 });
+    }
     
     const toolbarStartContent = (    
             <h5 className="mt-3">Gestión de Clientes</h5>        
@@ -104,16 +109,16 @@ const Customers = () => {
         
     );
 
-    const actionBodyTemplate = (rowData: App.Customer) => {
+    const actionBodyTemplate = (rowData: Customer) => {
         return (
             <div className="flex flex-column md:flex-row md:justify-content-center md:align-items-center ">
-                <Button icon="pi pi-pencil" rounded severity="success" className="mr-2" onClick={() => editCustomer(rowData)} />
-                <Button icon="pi pi-trash" rounded severity="warning" onClick={() => confirmDelete(rowData)}/>
+                <Button icon="pi pi-pencil" rounded severity="success"  className="mr-2" onClick={() => editCustomer(rowData)} />
+                <Button icon="pi pi-trash" rounded severity="warning"  onClick={() => confirmDelete(rowData)}/>
             </div>
         );
     };
 
-    const nameBodyTemplate = (rowData: App.Customer) => {
+    const nameBodyTemplate = (rowData: Customer) => {
         return (
             <>
                 <span className="p-column-title">Nombre</span>
@@ -125,7 +130,7 @@ const Customers = () => {
 
     return (
         <Layout>
-
+        <CustomerProvider>            
         <div className="grid">
             <div className="col-12">
                 <div className="card">
@@ -158,7 +163,9 @@ const Customers = () => {
                 </div>
             </div>
         </div>
-        </Layout>
+        </CustomerProvider>
+    </Layout>
+
     );
 };
 

@@ -13,12 +13,6 @@ declare namespace App {
         [key: string]: string | string[] | number | boolean | undefined;
     };
 
-    type Customer = {
-        id?: string;
-        name: string;
-        [key: string]: string | string[] | number | boolean | undefined;
-    }
-
     type License = {
         id?: string;
         code: string;
