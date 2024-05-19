@@ -5,6 +5,12 @@ export type SortOrderType = 1 | 0 | -1;
 type SupportStatus = 'ACTIVE' | 'CANCELED' | 'EXPIRED';
 
 declare namespace App {
+    type Customer = {
+        id?: string;
+        name: string;
+        [key: string]: string | string[] | number | boolean | undefined;
+    };
+
     type Product = {
         id?: string;
         name: string;
@@ -16,10 +22,10 @@ declare namespace App {
     type License = {
         id?: string;
         code: string;
-        product: Product;
-        customer: Customer;
-        support?: Support;
-        [key: string]: string | string[] | number | boolean | undefined;
+        product?: Product | null;
+        customer?: Customer | null;
+        lastSupport?: Support | null;
+        [key: string]: string | Product |Customer | Support| undefined;
     }
 
     type Suport = {

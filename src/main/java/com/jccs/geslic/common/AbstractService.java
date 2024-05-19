@@ -2,6 +2,7 @@ package com.jccs.geslic.common;
 
 import java.util.List;
 
+
 import com.jccs.geslic.common.exception.EntityNotFoundException;
 
 public abstract class AbstractService<D extends Record, E extends AbstractEntity, M extends CommonMapper<D, E>, R extends CommonRepository<E>> implements CommonService<D> {
@@ -16,7 +17,7 @@ public abstract class AbstractService<D extends Record, E extends AbstractEntity
 
     @Override
     public List<D> getAll() {
-        return mapper.map(repository.findAll());    
+        return mapper.map(repository.findAllByOrderByIdAsc());    
     }
 
     @Override
@@ -43,6 +44,5 @@ public abstract class AbstractService<D extends Record, E extends AbstractEntity
             repository.deleteById(id);
         }
     }
-
 
 }

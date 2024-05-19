@@ -26,7 +26,7 @@ import lombok.experimental.SuperBuilder;
 @Table(name="customers")
 public class Customer extends AbstractEntity {
     String name;
-    @OneToMany(fetch = FetchType.LAZY, mappedBy="customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy="customer", cascade = CascadeType.ALL)
     @JsonManagedReference
     List<License> licenses;
 }

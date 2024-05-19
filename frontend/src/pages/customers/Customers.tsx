@@ -1,32 +1,31 @@
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { InputText } from 'primereact/inputtext';
 import { Toast } from 'primereact/toast';
 import { Toolbar } from 'primereact/toolbar';
-import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
-
 import Layout from "../../layout/layout";
-import { App, Customer } from '@/types';
+import { App } from '@/types';
 import { CustomerService } from '../../services/CustomerService';
 import { useNavigate } from 'react-router-dom';
+import { Dialog } from 'primereact/dialog';
 
-import { CustomerContext, CustomerProvider } from '../../context/CustomerContext';
 
 
 
 /* @todo Used 'as any' for types here. Will fix in next version due to onSelectionChange event type issue. */
 const Customers = () => {
 
-    let emptyCustomer: Customer = {
+    let emptyCustomer: App.Customer = {
         id: '',
         name: ''
     };
 
     //const { customers } = useContext(CustomerContext);
+    const [deleteCustomerDialog, setDeleteCustomerDialog] = useState(false);
 
-    const [customer, setCustomer] = useState<Customer>(emptyCustomer);
+    const [customer, setCustomer] = useState<App.Customer>(emptyCustomer);
     const [customers, setCustomers] = useState(null);
     const [selectedCustomers, setSelectedCustomers] = useState(null);
     const navigate = useNavigate();
@@ -34,42 +33,31 @@ const Customers = () => {
     const toast = useRef<Toast>(null);
     const dt = useRef<DataTable<any>>(null);
 
-    useEffect(() => {        
+    useEffect(() => {
         CustomerService.getCustomers().then((data) => setCustomers(data as any));
     }, []);
 
     const openNew = () => {
-        return;
+        navigate('/customer');
     };
 
-    const editCustomer = (customer: Customer) => {
-        setCustomer({ ...customer });
-        navigate("/customer")
+    const editCustomer = (c: App.Customer) => {
+
+        navigate('/customer/' + c.id );
         
     };
 
-    const confirmDelete = (customer: Customer) => {
-        setCustomer(customer);
-        showDeleteDialog();
-    }
-
-    const showDeleteDialog = () => {
-        confirmDialog({
-            message: `¿Seguro que quiere borrar el cliente ${customer.name}?`,
-            header: 'Confirmar Borrado',
-            icon: 'pi pi-info-circle',
-            defaultFocus: 'reject',
-            acceptClassName: 'p-button-danger',
-            accept : deleteCustomer,
-            reject: cancelDeleteCustomer
-        });
+    const confirmDelete = (cust: App.Customer) => {
+        setCustomer(cust);
+        setDeleteCustomerDialog(true);        
     };
 
 
     const deleteCustomer = () => {
+        CustomerService.deleteCustomer(customer.id);
         let _customers = (customers as any)?.filter((val: any) => val.id !== customer.id);
         setCustomers(_customers);
-        CustomerService.deleteCustomer(customer.id).then((data) => setCustomer(data as any));     
+        hideDeleteCustomerDialog();
         setCustomer(emptyCustomer);
         toast.current?.show({
             severity: 'success',
@@ -79,9 +67,17 @@ const Customers = () => {
         });
     };
 
-    const cancelDeleteCustomer = () => {
-        toast.current?.show({ severity: 'warn', summary: 'Cancelado', detail: 'Eliminación cancelada', life: 3000 });
-    }
+    const hideDeleteCustomerDialog = () => {
+        setDeleteCustomerDialog(false);
+    };
+
+    const deleteCustomerDialogFooter = (
+        <>
+            <Button label="No" icon="pi pi-times" text onClick={hideDeleteCustomerDialog} />
+            <Button label="Sí" icon="pi pi-check" text onClick={deleteCustomer} />
+        </>
+    );
+
     
     const toolbarStartContent = (    
             <h5 className="mt-3">Gestión de Clientes</h5>        
@@ -109,7 +105,7 @@ const Customers = () => {
         
     );
 
-    const actionBodyTemplate = (rowData: Customer) => {
+    const actionBodyTemplate = (rowData: App.Customer) => {
         return (
             <div className="flex flex-column md:flex-row md:justify-content-center md:align-items-center ">
                 <Button icon="pi pi-pencil" rounded severity="success"  className="mr-2" onClick={() => editCustomer(rowData)} />
@@ -118,7 +114,7 @@ const Customers = () => {
         );
     };
 
-    const nameBodyTemplate = (rowData: Customer) => {
+    const nameBodyTemplate = (rowData: App.Customer) => {
         return (
             <>
                 <span className="p-column-title">Nombre</span>
@@ -130,7 +126,6 @@ const Customers = () => {
 
     return (
         <Layout>
-        <CustomerProvider>            
         <div className="grid">
             <div className="col-12">
                 <div className="card">
@@ -139,10 +134,9 @@ const Customers = () => {
 
                     <DataTable
                         ref={dt}
-                        value={customers}
+                        value={customers}                        
                         selection={selectedCustomers}
                         onSelectionChange={(e) => setSelectedCustomers(e.value as any)}
-                        dataKey="id"
                         paginator
                         rows={10}
                         rowsPerPageOptions={[5, 10, 25]}
@@ -155,15 +149,24 @@ const Customers = () => {
                         emptyMessage="No hay clientes."
                         header={header}
                     >
-                        <Column field="name" header="Nombre" sortable body={nameBodyTemplate} headerStyle={{ minWidth: '30rem' }}></Column>
+                        <Column field="id" header="Id"  headerStyle={{ minWidth: '3rem' }}></Column>
+                        <Column field="name" header="Nombre" body={nameBodyTemplate} headerStyle={{ minWidth: '30rem' }}></Column>
                         <Column body={actionBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
                     </DataTable>
-                    <ConfirmDialog />
+                    <Dialog visible={deleteCustomerDialog} style={{ width: '450px' }} header="Confirmar" modal footer={deleteCustomerDialogFooter} onHide={hideDeleteCustomerDialog}>
+                        <div className="flex align-items-center justify-content-center">
+                            <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
+                            {customer && (
+                                <span>
+                                   ¿Seguro que quiere eliminar el cliente <b>{customer.name}</b>?
+                                </span>
+                            )}
+                        </div>
+                    </Dialog>
     
                 </div>
             </div>
         </div>
-        </CustomerProvider>
     </Layout>
 
     );

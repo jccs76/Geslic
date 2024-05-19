@@ -2,6 +2,7 @@ import 'primereact/resources/primereact.css';
 import 'primeflex/primeflex.css';
 import 'primeicons/primeicons.css';
 import "./styles/layout/layout.scss";
+import './styles/badges.scss';
 
 import { LayoutProvider } from "./layout/context/layoutcontext";
 import { addLocale, locale } from 'primereact/api';

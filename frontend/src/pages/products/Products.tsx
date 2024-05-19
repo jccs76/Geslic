@@ -1,0 +1,175 @@
+import { useEffect, useRef, useState } from 'react';
+import { Button } from 'primereact/button';
+import { Column } from 'primereact/column';
+import { DataTable } from 'primereact/datatable';
+import { InputText } from 'primereact/inputtext';
+import { Toast } from 'primereact/toast';
+import { Toolbar } from 'primereact/toolbar';
+import Layout from "../../layout/layout";
+import { App } from '@/types';
+import { ProductService } from '../../services/ProductService';
+import { useNavigate } from 'react-router-dom';
+import { Dialog } from 'primereact/dialog';
+
+
+
+
+/* @todo Used 'as any' for types here. Will fix in next version due to onSelectionChange event type issue. */
+const Products = () => {
+
+    let emptyProduct: App.Product = {
+        id: '',
+        name: ''
+    };
+
+    //const { products } = useContext(ProductContext);
+    const [deleteProductDialog, setDeleteProductDialog] = useState(false);
+
+    const [product, setProduct] = useState<App.Product>(emptyProduct);
+    const [products, setProducts] = useState(null);
+    const [selectedProducts, setSelectedProducts] = useState(null);
+    const navigate = useNavigate();
+    const [globalFilter, setGlobalFilter] = useState('');
+    const toast = useRef<Toast>(null);
+    const dt = useRef<DataTable<any>>(null);
+
+    useEffect(() => {
+        ProductService.getProducts().then((data) => setProducts(data as any));
+    }, []);
+
+    const openNew = () => {
+        navigate('/product');
+    };
+
+    const editProduct = (c: App.Product) => {
+
+        navigate('/product/' + c.id );
+        
+    };
+
+    const confirmDelete = (cust: App.Product) => {
+        setProduct(cust);
+        setDeleteProductDialog(true);        
+    };
+
+
+    const deleteProduct = () => {
+        ProductService.deleteProduct(product.id);
+        let _products = (products as any)?.filter((val: any) => val.id !== product.id);
+        setProducts(_products);
+        hideDeleteProductDialog();
+        setProduct(emptyProduct);
+        toast.current?.show({
+            severity: 'success',
+            summary: 'Borrado',
+            detail: 'Producto Eliminado',
+            life: 3000
+        });
+    };
+
+    const hideDeleteProductDialog = () => {
+        setDeleteProductDialog(false);
+    };
+
+    const deleteProductDialogFooter = (
+        <>
+            <Button label="No" icon="pi pi-times" text onClick={hideDeleteProductDialog} />
+            <Button label="Sí" icon="pi pi-check" text onClick={deleteProduct} />
+        </>
+    );
+
+    
+    const toolbarStartContent = (    
+            <h5 className="mt-3">Gestión de Productos</h5>        
+    );
+
+    const toolbarCenterContent = (
+        <div className="p-inputgroup">
+        <span className="p-inputgroup-addon">
+            <i className="pi pi-search" />
+        </span>
+        <InputText className="pl-2" type="search" onInput={(e) => setGlobalFilter(e.currentTarget.value)} placeholder="Buscar..." />
+    </div>
+    );
+
+    const toolbarEndContent = (
+        // <div className="flex-grow m-2">
+            <Button label="Nuevo" icon="pi pi-plus" severity="info" className=" mr-5" onClick={openNew} />
+        // </div>            
+
+    );
+    const header = (
+        <div className="flex flex-column md:flex-row md:justify-content-evenly md:align-items-center">
+            <span>Productos</span>
+        </div>
+        
+    );
+
+    const actionBodyTemplate = (rowData: App.Product) => {
+        return (
+            <div className="flex flex-column md:flex-row md:justify-content-center md:align-items-center ">
+                <Button icon="pi pi-pencil" rounded severity="success"  className="mr-2" onClick={() => editProduct(rowData)} />
+                <Button icon="pi pi-trash" rounded severity="warning"  onClick={() => confirmDelete(rowData)}/>
+            </div>
+        );
+    };
+
+    const nameBodyTemplate = (rowData: App.Product) => {
+        return (
+            <>
+                <span className="p-column-title">Nombre</span>
+                {rowData.name}
+            </>
+        );
+    };
+
+
+    return (
+        <Layout>
+        <div className="grid">
+            <div className="col-12">
+                <div className="card">
+                    <Toast ref={toast} />
+                    <Toolbar className="mb-4" start={toolbarStartContent} center={toolbarCenterContent} end={toolbarEndContent}/>
+
+                    <DataTable
+                        ref={dt}
+                        value={products}                        
+                        selection={selectedProducts}
+                        onSelectionChange={(e) => setSelectedProducts(e.value as any)}
+                        paginator
+                        rows={10}
+                        rowsPerPageOptions={[5, 10, 25]}
+                        showGridlines 
+                        stripedRows
+                        className="datatable-responsive"
+                        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords}"
+                        globalFilter={globalFilter}
+                        emptyMessage="No hay `productos."
+                        header={header}
+                    >
+                        <Column field="id" header="Id"  headerStyle={{ minWidth: '3rem' }}></Column>
+                        <Column field="name" header="Nombre" body={nameBodyTemplate} headerStyle={{ minWidth: '30rem' }}></Column>
+                        <Column body={actionBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
+                    </DataTable>
+                    <Dialog visible={deleteProductDialog} style={{ width: '450px' }} header="Confirmar" modal footer={deleteProductDialogFooter} onHide={hideDeleteProductDialog}>
+                        <div className="flex align-items-center justify-content-center">
+                            <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
+                            {product && (
+                                <span>
+                                   ¿Seguro que quiere eliminar el `producto <b>{product.name}</b>?
+                                </span>
+                            )}
+                        </div>
+                    </Dialog>
+    
+                </div>
+            </div>
+        </div>
+    </Layout>
+
+    );
+};
+
+export default Products;

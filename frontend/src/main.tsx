@@ -9,10 +9,13 @@ import 'primeicons/primeicons.css';
 
 
 import App from './App';
-import Home  from './pages/Home';
-import Customers from './pages/Customers';
-import Products from './pages/Customers';
-import Licenses from './pages/Licenses';
+import Home  from './pages/home/Home.tsx';
+import Customers from './pages/customers/Customers.tsx';
+import Products from './pages/products/Products.tsx';
+import Licenses from './pages/licenses/Licenses.tsx';
+import Customer from './pages/customer/Customer.tsx';
+import Product from './pages/product/Product.tsx';
+import License from './pages/license/License.tsx';
 
 
 
@@ -24,8 +27,14 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/customers" element={<Customers />} />
+            <Route path="/customer/" element={<Customer />} />
+            <Route path="/customer/:id" element={<Customer />} />
             <Route path="/products" element={<Products />} />
+            <Route path="/product" element={<Product />} />
+            <Route path="/product/:id" element={<Product />} />
             <Route path="/licenses" element={<Licenses />} />
+            <Route path="/license" element={<License />} />
+            <Route path="/license/:id" element={<License />} />
         </Routes>        
         </App>
       </BrowserRouter>        

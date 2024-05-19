@@ -27,8 +27,6 @@ import {
 import { App, LayoutType, SortOrderType } from './app';
 
 
-import { Customer, Customers } from './customer'
-
 type ChildContainerProps = {
     children: ReactNode;
 };
@@ -57,6 +55,5 @@ export type {
     SortOrderType,
     CustomEvent,
     AppMenuItem,
-    App,
-    Customer, Customers
+    App    
 };
