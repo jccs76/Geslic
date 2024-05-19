@@ -7,7 +7,6 @@ import "primereact/resources/primereact.css";
 import "primereact/resources/themes/lara-light-blue/theme.css";
 import 'primeicons/primeicons.css';
 
-
 import App from './App';
 import Home  from './pages/home/Home.tsx';
 import Customers from './pages/customers/Customers.tsx';

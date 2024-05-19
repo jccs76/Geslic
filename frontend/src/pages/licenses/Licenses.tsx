@@ -123,12 +123,19 @@ const Licenses = () => {
     };
 
     const statusBodyTemplate = (rowData: App.License) => {
-        console.log(rowData);
-        switch (rowData.lastSupport?.status){
-                    case 'ACTIVE' : return ( <><span className="p-column-title">Estado</span>
-                    <span className={`maintenace-badge status-${rowData.lastSupport?.status.toLowerCase()}`}>EN VIGOR</span></>);        
-                default: return (<></>);
-        };
+        return <span className={`maintenance-badge maintenance-${rowData.lastSupport?.status.toLowerCase()}`}>{(() => {
+            switch (rowData.lastSupport?.status) {
+              case 'ACTIVE':
+                return 'EN VIGOR'
+              case 'CANCELED':
+                return 'CANCELADA'
+              case 'EXPIRED':
+                return 'EXPIRADA'
+              default:
+                return null
+            }
+          })() }</span>;
+        
     };
 
 

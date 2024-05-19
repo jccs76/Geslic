@@ -5,22 +5,22 @@
     font-weight: 700;
     font-size: 12px;
     letter-spacing: .3px;
+    color: red;
 }
 
 .maintenance-badge {
-    &.status-active {
+    &.maintenance-active {
         background: #C8E6C9;
         color: #256029;
     }
 
-    &.status-cancelled {
+    &.maintenance-cancelled {
         background: #FFCDD2;
         color: #C63737;
     }
 
-    &.status-expired {
+    &.maintenance-expired {
         background: #FEEDAF;
         color: #8A5340;
     }
 }
-
