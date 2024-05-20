@@ -54,28 +54,29 @@ const Products = () => {
 
 
     const deleteProduct = () => {
-        ProductService.deleteProduct(product.id).then ((res) => console.log(res));
-        //     {
-        //     if (res.status === 409){
-        //         toast.current?.show({
-        //             severity: 'error',
-        //             summary: 'Borrado',
-        //             detail: 'Producto no puede ser eliminado',
-        //             life: 3000
-        //         });        
-        //     } else {
-        //         let _products = (products as any)?.filter((val: any) => val.id !== product.id);
-        //         setProducts(_products);
-        //         hideDeleteProductDialog();
-        //         setProduct(emptyProduct);
-        //         toast.current?.show({
-        //             severity: 'success',
-        //             summary: 'Borrado',
-        //             detail: 'Producto Eliminado',
-        //             life: 3000
-        //         });        
-        //     }
-        // });
+        ProductService.deleteProduct(product.id)
+        .then((res) =>{
+             if (res?.status == 409){                
+                toast.current?.show({
+                    severity: 'error',
+                    summary: 'Borrado',
+                    detail: 'Producto no puede ser eliminado',
+                    life: 3000
+                });        
+                hideDeleteProductDialog();
+            } else {
+                let _products = (products as any)?.filter((val: any) => val.id !== product.id);
+                setProducts(_products);
+                hideDeleteProductDialog();
+                setProduct(emptyProduct);
+                toast.current?.show({
+                    severity: 'success',
+                    summary: 'Borrado',
+                    detail: 'Producto Eliminado',
+                    life: 3000
+                });        
+            }
+        });
             
     };
 

@@ -35,7 +35,7 @@ export const ProductService = {
             .catch( (error) => console.log(error));
     },    
     deleteProduct(id : string | undefined) {        
-        return fetch(`http://localhost:8080/api/v1/products/${id}`, {method: "DELETE", headers: { 'Cache-Control': 'no-cache' } })        
+        return fetch(`http://localhost:8080/api/v1/products/${id}`, {method: "DELETE", headers: { 'Cache-Control': 'no-cache' } })    
         .catch( (error) => console.log(error));
     }
 };
