@@ -10,6 +10,8 @@ import { App } from '@/types';
 import { CustomerService } from '../../services/CustomerService';
 import { useNavigate } from 'react-router-dom';
 import { Dialog } from 'primereact/dialog';
+import { IconField } from 'primereact/iconfield';
+import { InputIcon } from 'primereact/inputicon';
 
 
 
@@ -19,7 +21,7 @@ const Customers = () => {
 
     let emptyCustomer: App.CustomerType = {
         id: '',
-        name: ''
+        name: ''        
     };
 
     let emptyCustomers : App.CustomerType[] = [emptyCustomer];
@@ -29,7 +31,6 @@ const Customers = () => {
 
     const [customer, setCustomer] = useState<App.CustomerType>(emptyCustomer);
     const [customers, setCustomers] = useState<App.CustomerType[]>(emptyCustomers);
-    const [selectedCustomers, setSelectedCustomers] = useState(null);
     const navigate = useNavigate();
     const [globalFilter, setGlobalFilter] = useState('');
     const toast = useRef<Toast>(null);
@@ -88,12 +89,13 @@ const Customers = () => {
     );
 
     const toolbarCenterContent = (
-        <div className="p-inputgroup">
-        <span className="p-inputgroup-addon">
-            <i className="pi pi-search" />
-        </span>
-        <InputText className="pl-2" type="search" onInput={(e) => setGlobalFilter(e.currentTarget.value)} placeholder="Buscar..." />
-    </div>
+        <div></div>
+    //     <div className="p-inputgroup">
+    //     <span className="p-inputgroup-addon">
+    //         <i className="pi pi-search" />
+    //     </span>
+    //     <InputText className="pl-2" type="search" onInput={(e) => setGlobalFilter(e.currentTarget.value)} placeholder="Buscar..." />
+    // </div>
     );
 
     const toolbarEndContent = (
@@ -102,19 +104,23 @@ const Customers = () => {
         // </div>            
 
     );
-    const header = (
-        <div className="flex flex-column md:flex-row md:justify-content-evenly md:align-items-center">
-            <span>Clientes</span>
+
+    const header = (        
+        <div className="flex flex-column md:flex-row md:justify-content-evenly md:align-items-baseline">
+            <h5 className="flex-grow-1 ">Clientes</h5>
+            <IconField iconPosition="left" >
+                <InputIcon className="pi pi-search" />
+                <InputText type="search"  onInput={(e) => setGlobalFilter(e.currentTarget.value)} placeholder="Buscar..." />
+            </IconField>
         </div>
-        
     );
 
     const actionBodyTemplate = (rowData: App.CustomerType) => {
         return (
             <div className="flex flex-column md:flex-row md:justify-content-center md:align-items-center ">
                 <Button icon="pi pi-pencil" rounded severity="success"  className="mr-2" onClick={() => editCustomer(rowData)} />
-                <Button icon="pi pi-trash" rounded severity="warning"  className="mr-2" onClick={() => confirmDelete(rowData)}/>
-                <Button icon="pi pi-book" label="Licencias" rounded severity="secondary"  className="mr-2" onClick={() => viewLicenses(rowData)} />
+                <Button icon="pi pi-trash" rounded severity="warning"  className="mr-4" onClick={() => confirmDelete(rowData)}/>
+                <Button icon="pi pi-book"  rounded severity="secondary"  className="mr-2" onClick={() => viewLicenses(rowData)} />
             </div>
         );
     };
@@ -140,8 +146,8 @@ const Customers = () => {
                     <DataTable
                         ref={dt}
                         value={customers}                        
-                        selection={selectedCustomers}
-                        onSelectionChange={(e) => setSelectedCustomers(e.value as any)}
+                        selection={customer}
+                        onSelectionChange={(e) => setCustomer(e.value as any)}
                         paginator
                         rows={10}
                         rowsPerPageOptions={[5, 10, 25]}
@@ -154,11 +160,13 @@ const Customers = () => {
                         emptyMessage="No hay clientes."
                         header={header}
                     >
-                        <Column field="id" header="Id"  headerStyle={{ minWidth: '3rem' }}></Column>
-                        <Column field="name" header="Nombre" body={nameBodyTemplate} headerStyle={{ minWidth: '30rem' }}></Column>
-                        <Column body={actionBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
-                        
+                        {/* <Column field="id" header="Id"  headerStyle={{ minWidth: '3rem' }}></Column> */}
+                        <Column field="name" header="Nombre" body={nameBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
+                        <Column field="email" header="Email" headerStyle={{ minWidth: '10rem' }}></Column>
+                        <Column field="phoneNumber" header="Teléfono" headerStyle={{ minWidth: '4rem' }}></Column>
+                        <Column body={actionBodyTemplate} headerStyle={{ minWidth: '2rem' }}></Column>                        
                     </DataTable>
+
                     <Dialog visible={deleteCustomerDialog} style={{ width: '450px' }} header="Confirmar" modal footer={deleteCustomerDialogFooter} onHide={hideDeleteCustomerDialog}>
                         <div className="flex align-items-center justify-content-center">
                             <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />

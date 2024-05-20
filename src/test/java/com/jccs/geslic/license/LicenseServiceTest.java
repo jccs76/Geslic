@@ -70,7 +70,7 @@ public class LicenseServiceTest {
         this.sut = new LicenseService(licenseRepository, licenseMapper, productService, customerService, supportMapper);
         
         productDTO = new ProductDTO(1l, "RMCOBOLRT1US", "Runtime RM/COBOL 1 Usuario", 120l);
-        customerDTO = new CustomerDTO(1L, "Cliente 1");
+        customerDTO = new CustomerDTO(1L, "Cliente 1","","","","","","");
 
         product = Product.builder().id(1L).name("RMCOBOLRT1US").description("Runtime RM/COBOL 1 Usuario").price(BigDecimal.valueOf(120)).build();
         customer = Customer.builder().id(1L).name("Cliente 1").build();

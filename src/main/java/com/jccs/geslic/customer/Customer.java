@@ -26,6 +26,12 @@ import lombok.experimental.SuperBuilder;
 @Table(name="customers")
 public class Customer extends AbstractEntity {
     String name;
+    String address;
+    String zipCode;
+    String province;
+    String city;
+    String phoneNumber;
+    String email;
     @OneToMany(fetch = FetchType.LAZY, mappedBy="customer", cascade = CascadeType.ALL)
     @JsonManagedReference
     List<License> licenses;

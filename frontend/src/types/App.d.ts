@@ -10,6 +10,12 @@ declare namespace App {
     type CustomerType = {
         id?: string;
         name: string;
+        address? : string;
+        zipCode? : string;
+        state? :  string;
+        city? : string;
+        phoneNumber? : string;
+        email? : string;
         [key: string]: string | string[] | number | boolean | undefined;
     };
 
@@ -19,7 +25,7 @@ declare namespace App {
         description?: string;
         price?: number;
         [key: string]: string | string[] | number | boolean | undefined;
-    } ;
+    };
 
     type LicenseType = {
         id?: string;

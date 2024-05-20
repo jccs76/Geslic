@@ -59,7 +59,7 @@ public class LicenseControllerTest {
         objectMapper.registerModule(new JavaTimeModule());
 
         productDTO = new ProductDTO(1l, "RMCOBOLRT1US", "Runtime RM/COBOL 1 Usuario", 120l);
-        customerDTO = new CustomerDTO(1L, "Cliente 1");
+        customerDTO = new CustomerDTO(1L, "Cliente 1","","","","","","");
 
         supports = List.of(new SupportDTO(1L, LocalDate.parse("2024-01-01"), LocalDate.parse("2025-01-01"), SupportStatus.ACTIVE, 1L),
                                             new SupportDTO(2L, LocalDate.parse("2024-01-01"), LocalDate.parse("2025-01-01"), SupportStatus.ACTIVE, 2L));

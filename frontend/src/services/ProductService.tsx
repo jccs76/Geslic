@@ -34,9 +34,8 @@ export const ProductService = {
             .then((d) => d as any)
             .catch( (error) => console.log(error));
     },    
-    deleteProduct(id : string | undefined) {
-        console.log(id);
-        fetch(`http://localhost:8080/api/v1/products/${id}`, {method: "DELETE", headers: { 'Cache-Control': 'no-cache' } })
+    deleteProduct(id : string | undefined) {        
+        return fetch(`http://localhost:8080/api/v1/products/${id}`, {method: "DELETE", headers: { 'Cache-Control': 'no-cache' } })        
         .catch( (error) => console.log(error));
     }
 };

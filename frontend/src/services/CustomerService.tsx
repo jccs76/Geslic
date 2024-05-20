@@ -35,7 +35,8 @@ export const CustomerService = {
             .catch( (error) => console.log(error));
     },    
     deleteCustomer(id : string | undefined) {      
-        fetch(`http://localhost:8080/api/v1/customers/${id}`, {method: "DELETE", headers: { 'Cache-Control': 'no-cache' } })
+      return fetch(`http://localhost:8080/api/v1/customers/${id}`, {method: "DELETE", headers: { 'Cache-Control': 'no-cache' } })
+        .then((d) => d as any)
         .catch( (error) => console.log(error));
     },
     getCustomerLicenses(id : string |undefined) {

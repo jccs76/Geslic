@@ -10,14 +10,14 @@ import { App } from '@/types';
 import { ProductService } from '../../services/ProductService';
 import { useNavigate } from 'react-router-dom';
 import { Dialog } from 'primereact/dialog';
-
+import { formatCurrencyES } from '../../util/Util';
 
 
 
 /* @todo Used 'as any' for types here. Will fix in next version due to onSelectionChange event type issue. */
 const Products = () => {
 
-    let emptyProduct: App.Product = {
+    let emptyProduct: App.ProductType = {
         id: '',
         name: ''
     };
@@ -25,7 +25,7 @@ const Products = () => {
     //const { products } = useContext(ProductContext);
     const [deleteProductDialog, setDeleteProductDialog] = useState(false);
 
-    const [product, setProduct] = useState<App.Product>(emptyProduct);
+    const [product, setProduct] = useState<App.ProductType>(emptyProduct);
     const [products, setProducts] = useState(null);
     const [selectedProducts, setSelectedProducts] = useState(null);
     const navigate = useNavigate();
@@ -41,30 +41,42 @@ const Products = () => {
         navigate('/product');
     };
 
-    const editProduct = (c: App.Product) => {
+    const editProduct = (c: App.ProductType) => {
 
         navigate('/product/' + c.id );
         
     };
 
-    const confirmDelete = (cust: App.Product) => {
+    const confirmDelete = (cust: App.ProductType) => {
         setProduct(cust);
         setDeleteProductDialog(true);        
     };
 
 
     const deleteProduct = () => {
-        ProductService.deleteProduct(product.id);
-        let _products = (products as any)?.filter((val: any) => val.id !== product.id);
-        setProducts(_products);
-        hideDeleteProductDialog();
-        setProduct(emptyProduct);
-        toast.current?.show({
-            severity: 'success',
-            summary: 'Borrado',
-            detail: 'Producto Eliminado',
-            life: 3000
-        });
+        ProductService.deleteProduct(product.id).then ((res) => console.log(res));
+        //     {
+        //     if (res.status === 409){
+        //         toast.current?.show({
+        //             severity: 'error',
+        //             summary: 'Borrado',
+        //             detail: 'Producto no puede ser eliminado',
+        //             life: 3000
+        //         });        
+        //     } else {
+        //         let _products = (products as any)?.filter((val: any) => val.id !== product.id);
+        //         setProducts(_products);
+        //         hideDeleteProductDialog();
+        //         setProduct(emptyProduct);
+        //         toast.current?.show({
+        //             severity: 'success',
+        //             summary: 'Borrado',
+        //             detail: 'Producto Eliminado',
+        //             life: 3000
+        //         });        
+        //     }
+        // });
+            
     };
 
     const hideDeleteProductDialog = () => {
@@ -105,7 +117,7 @@ const Products = () => {
         
     );
 
-    const actionBodyTemplate = (rowData: App.Product) => {
+    const actionBodyTemplate = (rowData: App.ProductType) => {
         return (
             <div className="flex flex-column md:flex-row md:justify-content-center md:align-items-center ">
                 <Button icon="pi pi-pencil" rounded severity="success"  className="mr-2" onClick={() => editProduct(rowData)} />
@@ -114,13 +126,19 @@ const Products = () => {
         );
     };
 
-    const nameBodyTemplate = (rowData: App.Product) => {
+    const nameBodyTemplate = (rowData: App.ProductType) => {
         return (
             <>
                 <span className="p-column-title">Nombre</span>
                 {rowData.name}
             </>
         );
+    };
+    const priceBodyTemplate = (rowData: App.ProductType) => {
+        if (rowData.price){
+            return formatCurrencyES(rowData?.price)
+        }
+        
     };
 
 
@@ -150,7 +168,11 @@ const Products = () => {
                         header={header}
                     >
                         <Column field="id" header="Id"  headerStyle={{ minWidth: '3rem' }}></Column>
-                        <Column field="name" header="Nombre" body={nameBodyTemplate} headerStyle={{ minWidth: '30rem' }}></Column>
+                        <Column field="name" header="Nombre" body={nameBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
+                        <Column field="description" header="Descripción" headerStyle={{ minWidth: '10rem' }}></Column>
+                        <Column field="price" header="Precio" body={priceBodyTemplate}></Column>
+
+
                         <Column body={actionBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
                     </DataTable>
                     <Dialog visible={deleteProductDialog} style={{ width: '450px' }} header="Confirmar" modal footer={deleteProductDialogFooter} onHide={hideDeleteProductDialog}>

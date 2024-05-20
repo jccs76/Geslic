@@ -55,8 +55,8 @@ public class CustomerServiceTest {
                                     .name("Usuario 2").build());
                             
         customersDTO = List.of(
-                    new CustomerDTO(1L,"Usuario 1"),
-                    new CustomerDTO(2L,"Usuario 2")
+                    new CustomerDTO(1L,"Usuario 1","","","","","",""),
+                    new CustomerDTO(2L,"Usuario 2","","","","","","")
         );                
 
     }
@@ -98,7 +98,7 @@ public class CustomerServiceTest {
 
     @Test
     public void givenCustomer_whenCreated_thenCallsRepositorySave(){
-        CustomerDTO customerDTO = new CustomerDTO(null,"Usuario 5");
+        CustomerDTO customerDTO = new CustomerDTO(null,"Usuario 5","","","","","","");
         when(customerMapper.toEntity(customerDTO)).thenReturn(new Customer());
         when(customerRepository.save(any(Customer.class))).thenReturn(new Customer());
 
@@ -110,7 +110,7 @@ public class CustomerServiceTest {
 
     @Test
     public void givenExistingCustomer_whenCreated_thenThrowCustomerExisting(){
-        CustomerDTO customerDTO = new CustomerDTO(null,"Usuario 5");
+        CustomerDTO customerDTO = new CustomerDTO(null,"Usuario 5","","","","","","");
         
         doThrow(new EntityExistingException(Constants.ENTITY_EXISTS)).when(customerRepository).findByName(anyString());
 
@@ -128,7 +128,7 @@ public class CustomerServiceTest {
                                         .id(id)
                                         .name("Usuario 3")
                                         .build();
-        CustomerDTO requestCustomerDTO = new CustomerDTO(id,"Usuario 3");
+        CustomerDTO requestCustomerDTO = new CustomerDTO(id,"Usuario 3","","","","","","");
         
         when(customerMapper.toEntity(requestCustomerDTO)).thenReturn(new Customer());
         when(customerMapper.toDTO(updatedCustomer)).thenReturn(requestCustomerDTO);
@@ -146,7 +146,7 @@ public class CustomerServiceTest {
     
     void givenInexistentCustomerID_whenUpdate_thenThrowCustomerNotFound() throws Exception {
         Long id = -1L;
-        CustomerDTO customerDTO = new CustomerDTO(id,"Usuario 3");
+        CustomerDTO customerDTO = new CustomerDTO(id,"Usuario 3","","","","","","");
         
         doThrow(new EntityNotFoundException(Constants.ENTITY_NOTFOUND)).when(customerRepository).findById(id);
        
