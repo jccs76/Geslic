@@ -82,12 +82,32 @@ public class LicenseService extends AbstractService<LicenseDTO, License, License
     }
 
     public LicenseDTO renewSupport(Long id) {
+        LocalDate today = LocalDate.ofInstant(Instant.now(), ZoneId.systemDefault());
         License license = getLicense(id);
         Support lastSupport = license.getLastSupport();
-        
+
         Support newSupport = new Support();
-        newSupport.setFromDate(lastSupport.getFromDate().plusYears(1));
-        newSupport.setToDate(lastSupport.getToDate().plusYears(1));
+        switch (lastSupport.getStatus()) {
+            case SupportStatus.ACTIVE:
+                    newSupport.setFromDate(lastSupport.getFromDate().plusYears(1));
+                    newSupport.setToDate(lastSupport.getToDate().plusYears(1));
+                    break;
+            case SupportStatus.EXPIRED:
+                    if(lastSupport.getToDate().plusMonths(3).isBefore(today)){
+                        newSupport.setFromDate(lastSupport.getFromDate().plusYears(1));
+                        newSupport.setToDate(lastSupport.getToDate().plusYears(1));
+                    } else {
+                        newSupport.setFromDate(today);
+                        newSupport.setToDate(today.plusYears(1));    
+                    }
+                    break;
+            case SupportStatus.CANCELED:
+                    newSupport.setFromDate(today);
+                    newSupport.setToDate(today.plusYears(1));
+                    break;
+            default:
+                break;
+        }
         newSupport.setStatus(SupportStatus.ACTIVE);
         newSupport.setLicense(license);
         license.getSupports().add(newSupport);        

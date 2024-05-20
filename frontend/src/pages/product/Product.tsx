@@ -9,7 +9,7 @@ import { Button } from "primereact/button";
 
 const Product = () => {
 
-    let emptyProduct: App.Product = {
+    let emptyProduct: App.ProductType= {
         id: '',
         name: ''
     };
@@ -18,7 +18,7 @@ const Product = () => {
 
     const {id} = useParams();    
     
-    const [product, setProduct] = useState<App.Product>(emptyProduct);    
+    const [product, setProduct] = useState<App.ProductType>(emptyProduct);    
 
     useEffect(() => {        
         {id && (
@@ -50,7 +50,7 @@ const Product = () => {
         } else {
             ProductService.createProduct(product).then((data) => setProduct(data as any))
         }
-        navigate("/products");
+        navigate(-1);
     }
 
   return (

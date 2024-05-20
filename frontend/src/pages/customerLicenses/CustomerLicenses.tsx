@@ -5,36 +5,41 @@ import { DataTable } from 'primereact/datatable';
 import { InputText } from 'primereact/inputtext';
 import { Toast } from 'primereact/toast';
 import { Toolbar } from 'primereact/toolbar';
+import { Dialog } from 'primereact/dialog';
+
 import Layout from "../../layout/layout";
 import { App } from '@/types';
+
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { CustomerService } from '../../services/CustomerService';
 import { LicenseService } from '../../services/LicenseService';
-import { useNavigate } from 'react-router-dom';
-import { Dialog } from 'primereact/dialog';
+
 import { SupportStatus } from '../../common/SupportStatus';
 
 
-
-
-/* @todo Used 'as any' for types here. Will fix in next version due to onSelectionChange event type issue. */
-const Licenses = () => {
+const CustomerLicenses = () => {
 
     let emptyLicense: App.LicenseType = {
         code: ''
     };
-    let emptyLicenses: App.LicensesType = [emptyLicense];
+    
+    const {id} = useParams(); 
+    const location = useLocation();  
 
     const [deleteLicenseDialog, setDeleteLicenseDialog] = useState(false);
 
     const [license, setLicense] = useState<App.LicenseType>(emptyLicense);
-    const [licenses, setLicenses] = useState<App.LicensesType>(emptyLicenses);
+    const [licenses, setLicenses] = useState(null);
     const [selectedLicenses, setSelectedLicenses] = useState(null);
     const navigate = useNavigate();
     const [globalFilter, setGlobalFilter] = useState('');
     const toast = useRef<Toast>(null);
     const dt = useRef<DataTable<any>>(null);
 
-    useEffect(() => {
-        LicenseService.getLicenses().then((data) => setLicenses(data as any));
+    useEffect(() => {        
+        {id && (
+            CustomerService.getCustomerLicenses(id).then((data) => setLicenses(data as any))
+        )};    
     }, []);
 
     const openNew = () => {
@@ -82,7 +87,7 @@ const Licenses = () => {
 
     
     const toolbarStartContent = (    
-            <h5 className="mt-3">Gestión de Licencias</h5>        
+            <h5 className="mt-3">Licencias de {location.state.name}</h5>        
     );
 
     const toolbarCenterContent = (
@@ -192,4 +197,4 @@ const Licenses = () => {
     );
 };
 
-export default Licenses;
+export default CustomerLicenses;

@@ -9,7 +9,7 @@ import { Button } from "primereact/button";
 
 const Customer = () => {
 
-    let emptyCustomer: App.Customer = {
+    let emptyCustomer: App.CustomerType = {
         id: '',
         name: ''
     };
@@ -18,7 +18,7 @@ const Customer = () => {
 
     const {id} = useParams();    
     
-    const [customer, setCustomer] = useState<App.Customer>(emptyCustomer);    
+    const [customer, setCustomer] = useState<App.CustomerType>(emptyCustomer);    
 
     useEffect(() => {        
         {id && (
@@ -50,7 +50,7 @@ const Customer = () => {
         } else {
             CustomerService.createCustomer(customer).then((data) => setCustomer(data as any))
         }
-        navigate("/customers");
+        navigate(-1);
     }
 
   return (

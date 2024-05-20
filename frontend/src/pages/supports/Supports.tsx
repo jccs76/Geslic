@@ -16,18 +16,28 @@ import { SupportStatus } from '../../common/SupportStatus';
 
 
 /* @todo Used 'as any' for types here. Will fix in next version due to onSelectionChange event type issue. */
-const Licenses = () => {
+const Supports = () => {
 
     let emptyLicense: App.LicenseType = {
-        code: ''
+        code: '',
+        lastSupport: {
+            status: '',
+            toDate: ''
+        }
     };
-    let emptyLicenses: App.LicensesType = [emptyLicense];
 
-    const [deleteLicenseDialog, setDeleteLicenseDialog] = useState(false);
+    let emptyLicenses = [emptyLicense];
 
-    const [license, setLicense] = useState<App.LicenseType>(emptyLicense);
+    const Action = {
+        RENEW  : 'renovar',
+        CANCEL : 'cancelar'
+    }
+
     const [licenses, setLicenses] = useState<App.LicensesType>(emptyLicenses);
-    const [selectedLicenses, setSelectedLicenses] = useState(null);
+    const [license, setLicense] = useState<App.LicenseType>(emptyLicense);
+    const [selectedRow, setSelectedRow] = useState(null);
+    const [supportDialog, setSupportDialog] = useState(false);
+    const [action, setAction] = useState('');
     const navigate = useNavigate();
     const [globalFilter, setGlobalFilter] = useState('');
     const toast = useRef<Toast>(null);
@@ -37,52 +47,49 @@ const Licenses = () => {
         LicenseService.getLicenses().then((data) => setLicenses(data as any));
     }, []);
 
-    const openNew = () => {
-        navigate('/license');
+    const formatDateEs = (value: string | Date) => {
+        return new Date(value).toLocaleDateString('es-ES', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        });
     };
-
-    const editLicense = (c: App.LicenseType) => {
-
-        navigate('/license/' + c?.id );
-        
-    };
-
-    const confirmDelete = (cust: App.LicenseType) => {
-        setLicense(cust);
-        setDeleteLicenseDialog(true);        
-    };
-
-
-    const deleteLicense = () => {
-        if (license) {
-            LicenseService.deleteLicense(license?.id);
-            let _licenses = (licenses as any)?.filter((val: any) => val.id !== license.id);
-            setLicenses(_licenses);
-            hideDeleteLicenseDialog();
-            setLicense(emptyLicense);
-            toast.current?.show({
-                severity: 'success',
-                summary: 'Borrado',
-                detail: 'Licencia Eliminado',
-                life: 3000
-            });
-        }
-    };
-
-    const hideDeleteLicenseDialog = () => {
-        setDeleteLicenseDialog(false);
-    };
-
-    const deleteLicenseDialogFooter = (
-        <>
-            <Button label="No" icon="pi pi-times" text onClick={hideDeleteLicenseDialog} />
-            <Button label="Sí" icon="pi pi-check" text onClick={deleteLicense} />
-        </>
-    );
-
     
+    
+    const renewSupport = () => {
+        if (license){
+            LicenseService.renewSupport(license.id).then((data) => {                
+                console.log(license);
+                if (licenses){
+                    licenses.map(item => item?.id === license.id ? {data} : item);
+                }
+            });
+        };
+        hideSupportDialog();
+    };
+
+    const cancelSupport = () => {
+        if (license){
+            LicenseService.cancelSupport(license.id);                        
+            license.lastSupport.status = SupportStatus.CANCELED;
+            if (licenses){
+                licenses.map(item => item?.id === license.id ? {license} : item);
+            }
+        };
+        hideSupportDialog();
+    };
+
+    const showSupportDialog = (lic: App.LicenseType, act : string) => {
+        setLicense(lic);
+        setAction(act);
+        setSupportDialog(true);        
+    };
+
+    const hideSupportDialog = () => {
+        setSupportDialog(false);
+    };
     const toolbarStartContent = (    
-            <h5 className="mt-3">Gestión de Licencias</h5>        
+            <h5 className="mt-3">Gestión de Mantenimientos</h5>        
     );
 
     const toolbarCenterContent = (
@@ -94,24 +101,20 @@ const Licenses = () => {
     </div>
     );
 
-    const toolbarEndContent = (
-        // <div className="flex-grow m-2">
-            <Button label="Nuevo" icon="pi pi-plus" severity="info" className=" mr-5" onClick={openNew} />
-        // </div>            
-
-    );
     const header = (
         <div className="flex flex-column md:flex-row md:justify-content-evenly md:align-items-center">
-            <span>Licencias</span>
+            <span>Mantenimientos</span>
         </div>
         
     );
 
-    const actionBodyTemplate = (rowData: App.LicenseType) => {
+    const actionBodyTemplate = (rowData: App.LicenseType) => {        
         return (
             <div className="flex flex-column md:flex-row md:justify-content-center md:align-items-center ">
-                <Button icon="pi pi-pencil" rounded severity="success"  className="mr-2" onClick={() => editLicense(rowData)} />
-                <Button icon="pi pi-trash" rounded severity="warning"  onClick={() => confirmDelete(rowData)}/>
+                <Button icon="pi pi-replay" label="Renovar" rounded severity="success"  className="mr-2" onClick={() => showSupportDialog(rowData, Action.RENEW)} />
+                
+                <Button icon="pi pi-times" label="Cancelar" rounded severity="warning" disabled={rowData?.lastSupport?.status == SupportStatus.CANCELED}  onClick={() => showSupportDialog(rowData, Action.CANCEL)}/>
+                
             </div>
         );
     };
@@ -125,10 +128,15 @@ const Licenses = () => {
         );
     };
 
+    const toDateBodyTemplate = (rowData: App.LicenseType) => {
+        return formatDateEs(rowData?.lastSupport.toDate);
+        
+    };
+
     const statusBodyTemplate = (rowData: App.LicenseType) => {
         return <span className={`support-badge support-${rowData?.lastSupport?.status.toLowerCase()}`}>{(() => {
             switch (rowData?.lastSupport?.status) {
-              case SupportStatus.ACTIVE: 
+              case SupportStatus.ACTIVE:
                 return 'EN VIGOR'
               case SupportStatus.CANCELED:
                 return 'CANCELADA'
@@ -141,6 +149,17 @@ const Licenses = () => {
         
     };
 
+    const supportDialogFooter = (
+        <>
+            <Button label="No" icon="pi pi-times" text onClick={hideSupportDialog} />
+            {action == 'cancelar' ?
+                <Button label="Sí" icon="pi pi-check" text onClick={cancelSupport} />
+                :
+                <Button label="Sí" icon="pi pi-check" text onClick={renewSupport} />
+            }
+            
+        </>
+    );
 
     return (
         <Layout>
@@ -148,13 +167,13 @@ const Licenses = () => {
             <div className="col-12">
                 <div className="card">
                     <Toast ref={toast} />
-                    <Toolbar className="mb-4" start={toolbarStartContent} center={toolbarCenterContent} end={toolbarEndContent}/>
+                    <Toolbar className="mb-4" start={toolbarStartContent} center={toolbarCenterContent} />
 
                     <DataTable
                         ref={dt}
                         value={licenses}                        
-                        selection={selectedLicenses}
-                        onSelectionChange={(e) => setSelectedLicenses(e.value as any)}
+                        selection={selectedRow}
+                        onSelectionChange={(e) => setSelectedRow(e.value as any)}
                         paginator
                         rows={10}
                         rowsPerPageOptions={[5, 10, 25]}
@@ -164,21 +183,22 @@ const Licenses = () => {
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                         currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords}"
                         globalFilter={globalFilter}
-                        emptyMessage="No hay licencias."
+                        emptyMessage="No hay mantenimientos."
                         header={header}
-                    >
+                    >                        
                         <Column field="id" header="Id"  headerStyle={{ minWidth: '3rem' }}></Column>
-                        <Column field="code" header="Nº Serie" body={nameBodyTemplate} headerStyle={{ minWidth: '30rem' }}></Column>
-                        <Column field="support.status" body={statusBodyTemplate} headerStyle={{ minWidth: '3rem' }}></Column>
+                        <Column field="code" header="Nº Serie" body={nameBodyTemplate} headerStyle={{ minWidth: '12rem' }}></Column>
+                        <Column field="lastSupport.toDate" header="Hasta" body={toDateBodyTemplate} headerStyle={{ minWidth: 'rem' }}></Column>
+                        <Column field="lastSupport.status"  header="Estado" body={statusBodyTemplate} headerStyle={{ minWidth: '3rem' }}></Column>
                         <Column body={actionBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
                         
                     </DataTable>
-                    <Dialog visible={deleteLicenseDialog} style={{ width: '450px' }} header="Confirmar" modal footer={deleteLicenseDialogFooter} onHide={hideDeleteLicenseDialog}>
+                    <Dialog visible={supportDialog} style={{ width: '450px' }} header="Confirmar" modal footer={supportDialogFooter} onHide={hideSupportDialog}>
                         <div className="flex align-items-center justify-content-center">
                             <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
                             {license && (
                                 <span>
-                                   ¿Seguro que quiere eliminar el licencia <b>{license.name}</b>?
+                                   ¿Seguro que quiere {action} el mantenimiento de la licencia <b>{license.code}</b>?
                                 </span>
                             )}
                         </div>
@@ -192,4 +212,4 @@ const Licenses = () => {
     );
 };
 
-export default Licenses;
+export default Supports;

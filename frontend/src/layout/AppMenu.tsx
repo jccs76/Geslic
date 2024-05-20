@@ -25,8 +25,8 @@ const AppMenu = () => {
         {
             label: 'Procesos',
             items: [
-                { label: 'Alta Licencia', icon: 'pi pi-fw pi-file-plus', to: '/licenses/create'},
-                { label: 'Cancelar Mantenimiento', icon: 'pi pi-fw pi-times',to: '/licenses/cancel'}
+                { label: 'Alta Licencia', icon: 'pi pi-fw pi-file-plus', to: '/license'},
+                { label: 'Mantenimientos', icon: 'pi pi-fw pi-times',to: '/supports'}
             ]
         }
     ];

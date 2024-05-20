@@ -1,4 +1,4 @@
-.maintenance-badge {
+.support-badge {
     border-radius: var(--border-radius);
     padding: .25em .5rem;
     text-transform: uppercase;
@@ -8,18 +8,18 @@
     color: red;
 }
 
-.maintenance-badge {
-    &.maintenance-active {
+.support-badge {
+    &.support-active {
         background: #C8E6C9;
         color: #256029;
     }
 
-    &.maintenance-cancelled {
+    &.support-canceled {
         background: #FFCDD2;
         color: #C63737;
     }
 
-    &.maintenance-expired {
+    &.support-expired {
         background: #FEEDAF;
         color: #8A5340;
     }

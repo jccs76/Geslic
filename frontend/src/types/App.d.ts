@@ -2,33 +2,37 @@ export type LayoutType = 'list' | 'grid';
 export type SortOrderType = 1 | 0 | -1;
 
 
-type SupportStatus = 'ACTIVE' | 'CANCELED' | 'EXPIRED';
 
 declare namespace App {
-    type Customer = {
+    
+    type SupportStatusType = 'ACTIVE' | 'CANCELED' | 'EXPIRED' | null;
+
+    type CustomerType = {
         id?: string;
         name: string;
         [key: string]: string | string[] | number | boolean | undefined;
     };
 
-    type Product = {
+    type ProductType = {
         id?: string;
         name: string;
         description?: string;
         price?: number;
         [key: string]: string | string[] | number | boolean | undefined;
-    };
+    } ;
 
-    type License = {
+    type LicenseType = {
         id?: string;
         code: string;
-        product?: Product | null;
-        customer?: Customer | null;
-        lastSupport?: Support | null;
-        [key: string]: string | Product |Customer | Support| undefined;
-    }
+        product?: Product ;
+        customer?: Customer ;
+        lastSupport?: Support;
+        [key: string]: string | Product |Customer | Support;
+    } | null;
 
-    type Suport = {
+    type LicensesType = LicenseType[];
+
+    type SuportType = {
         id?: string;
         fromDate: string;
         toDate: string;
@@ -44,7 +48,7 @@ declare namespace App {
             name: string;
             color: string;
         };
-    }
+    };
 
     // IconService
     type Icon = {

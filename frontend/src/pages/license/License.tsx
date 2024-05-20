@@ -4,6 +4,8 @@ import { App } from "@/types";
 import {  useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { InputText } from "primereact/inputtext";
+import { IconField } from 'primereact/iconfield';
+import { InputIcon } from 'primereact/inputicon';
 import { Button } from "primereact/button";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
@@ -13,15 +15,15 @@ import { ProductService } from "../../services/ProductService";
 
 const License = () => {
 
-    let emptyCustomer: App.Customer = {
+    let emptyCustomer: App.CustomerType = {
         name: ''
     };
 
-    let emptyProduct: App.Product = {
+    let emptyProduct: App.ProductType = {
         name: ''
     };
 
-    let emptyLicense: App.License = {
+    let emptyLicense: App.LicenseType = {
         code: ''
     };
 
@@ -32,28 +34,26 @@ const License = () => {
     
     const dtCustomers = useRef<DataTable<any>>(null);
     const dtProducts  = useRef<DataTable<any>>(null);
+    
 
-    const [customers, setCustomers] = useState<App.Customer[]>([emptyCustomer]);
+    const [customers, setCustomers] = useState<App.CustomerType[]>([emptyCustomer]);
     const [customersFilter, setCustomersFilter] = useState('');
-    const [customer, setCustomer] = useState<App.Customer>(emptyCustomer);
-    const [selectedProducts, setSelectedProducts] = useState(null);
-    const [products, setProducts] = useState<App.Product[]>([emptyProduct]);
+    const [customer, setCustomer] = useState<any>(emptyCustomer);
+    const [products, setProducts] = useState<App.ProductType[]>([emptyProduct]);
     const [productsFilter, setProductsFilter] = useState('');
-    const [product, setProduct] = useState<App.Product>(emptyProduct);
-    const [license, setLicense] = useState<App.License>(emptyLicense);    
-
+    const [product, setProduct] = useState<any>(emptyProduct);
+    const [license, setLicense] = useState<any>(emptyLicense);    
 
     useEffect(() => {  
-        if (id){
-            LicenseService.getLicense(id).then((data) => {
-                setLicense(data as App.License);
-                setCustomer(license.customer as App.Customer);                                
-                setProduct(license.product as App.Product);
-            });
-        } 
         CustomerService.getCustomers().then((data) => setCustomers(data as any));
         ProductService.getProducts().then((data) => setProducts(data as any));
-       
+        if (id){            
+            LicenseService.getLicense(id).then((data) => {
+                setLicense(data as any);
+                setCustomer(data.customer);
+                setProduct(data.product);
+            });
+        }                
     }, []);
 
     const onInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {        
@@ -63,33 +63,43 @@ const License = () => {
         const val = (e.target && e.target.value) || '';
         let _license = { ...license };
         _license[`${name}`] = val;
-
         setLicense(_license);
     };
 
-
-    
-    const handleSave = () => {
-    }
-
     const handleSubmit = (e : React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-
+        e.preventDefault();        
         let _license = { ...license, 
             customer,
             product
            };
-        setLicense(_license);
-
-        
-        if (id){
-            LicenseService.updateLicense(id, license).then((data) => setLicense(data as any))
+         if (id){
+             LicenseService.updateLicense(id, _license).then((data) => setLicense(data as any))
             
-        } else {
-            LicenseService.createLicense(license).then((data) => setLicense(data as any))
+         } else {
+            LicenseService.createLicense(_license).then((data) => setLicense(data as any))
         }
-        navigate("/licenses");
+        navigate(-1);
     }
+
+    const headerCustomer = (
+        <div className="flex gap-5 align-items-center">
+            <h5 className="m-0">Cliente</h5>
+            <IconField iconPosition="left" >
+                <InputIcon className="pi pi-search" />
+                <InputText type="search" onInput={(e) => setCustomersFilter(e.currentTarget.value)} placeholder="Buscar..." />
+            </IconField>
+        </div>
+    );    
+
+    const headerProduct = (
+        <div className="flex gap-5 align-items-center">
+            <h5 className="m-0">Producto</h5>
+            <IconField iconPosition="left" >
+                <InputIcon className="pi pi-search" />
+                <InputText type="search" onInput={(e) => setProductsFilter(e.currentTarget.value)} placeholder="Buscar..." />
+            </IconField>
+        </div>
+    );    
 
   return (
     <Layout>
@@ -99,11 +109,11 @@ const License = () => {
                 <div className="card p-fluid">
                     <form onSubmit={handleSubmit}>                                  
                     <div className="field grid">
-                        <label htmlFor="name" className="">Name</label>
-                        <InputText id="license.code" name="code"  value={license.code} autoFocus type="text" onChange={onInputChange} />
+                        <label htmlFor="code" className="">Nº Serie</label>
+                        <InputText id="code" name="code"  value={license?.code} autoFocus type="text" onChange={onInputChange} />
                     </div>
                     <div className="col-2 col-offset-5">
-                        <Button type="submit" icon="pi pi-save" label="Guardar" severity="info" onClick={handleSave} />                    
+                        <Button type="submit" icon="pi pi-save" label="Guardar" severity="info" />                    
                     </div>
                     </form>
                 </div>
@@ -113,7 +123,7 @@ const License = () => {
                         ref={dtCustomers}
                         value={customers}                        
                         selection={customer}
-                        onSelectionChange={(e) => setCustomer(e.value as any)}
+                        onSelectionChange={(e) => setCustomer(e.value as any)}                        
                         paginator
                         rows={10}
                         rowsPerPageOptions={[5, 10, 25]}
@@ -122,9 +132,9 @@ const License = () => {
                         className="datatable-responsive"
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                         currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords}"
-                        globalFilter={customersFilter}
+                        globalFilter={customersFilter}                        
                         emptyMessage="No hay clientes."
-                        header="Cliente"
+                        header={headerCustomer}
                     >
                         <Column selectionMode="single" headerStyle={{ width: '4rem' }}></Column>
                         <Column field="id" header="Id"  headerStyle={{ minWidth: '3rem' }}></Column>
@@ -145,9 +155,9 @@ const License = () => {
                         className="datatable-responsive"
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                         currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords}"
-                        globalFilter={customersFilter}
+                        globalFilter={productsFilter}
                         emptyMessage="No hay productos."
-                        header="Producto"
+                        header={headerProduct}
                     >
                         <Column selectionMode="single" headerStyle={{ width: '4rem' }}></Column>
                         <Column field="id" header="Id"  headerStyle={{ minWidth: '3rem' }}></Column>

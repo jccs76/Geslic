@@ -17,16 +17,18 @@ import { Dialog } from 'primereact/dialog';
 /* @todo Used 'as any' for types here. Will fix in next version due to onSelectionChange event type issue. */
 const Customers = () => {
 
-    let emptyCustomer: App.Customer = {
+    let emptyCustomer: App.CustomerType = {
         id: '',
         name: ''
     };
 
+    let emptyCustomers : App.CustomerType[] = [emptyCustomer];
+
     //const { customers } = useContext(CustomerContext);
     const [deleteCustomerDialog, setDeleteCustomerDialog] = useState(false);
 
-    const [customer, setCustomer] = useState<App.Customer>(emptyCustomer);
-    const [customers, setCustomers] = useState(null);
+    const [customer, setCustomer] = useState<App.CustomerType>(emptyCustomer);
+    const [customers, setCustomers] = useState<App.CustomerType[]>(emptyCustomers);
     const [selectedCustomers, setSelectedCustomers] = useState(null);
     const navigate = useNavigate();
     const [globalFilter, setGlobalFilter] = useState('');
@@ -34,20 +36,22 @@ const Customers = () => {
     const dt = useRef<DataTable<any>>(null);
 
     useEffect(() => {
-        CustomerService.getCustomers().then((data) => setCustomers(data as any));
+        CustomerService.getCustomers().then((data) => setCustomers(data as any));        
     }, []);
 
     const openNew = () => {
         navigate('/customer');
     };
 
-    const editCustomer = (c: App.Customer) => {
-
-        navigate('/customer/' + c.id );
-        
+    const editCustomer = (c: App.CustomerType) => {
+        navigate('/customer/' + c.id );        
     };
 
-    const confirmDelete = (cust: App.Customer) => {
+    const viewLicenses = (c: App.CustomerType) => {
+        navigate('/customer/' + c.id + '/licenses', {state : c} );
+    }
+
+    const confirmDelete = (cust: App.CustomerType) => {
         setCustomer(cust);
         setDeleteCustomerDialog(true);        
     };
@@ -105,16 +109,17 @@ const Customers = () => {
         
     );
 
-    const actionBodyTemplate = (rowData: App.Customer) => {
+    const actionBodyTemplate = (rowData: App.CustomerType) => {
         return (
             <div className="flex flex-column md:flex-row md:justify-content-center md:align-items-center ">
                 <Button icon="pi pi-pencil" rounded severity="success"  className="mr-2" onClick={() => editCustomer(rowData)} />
-                <Button icon="pi pi-trash" rounded severity="warning"  onClick={() => confirmDelete(rowData)}/>
+                <Button icon="pi pi-trash" rounded severity="warning"  className="mr-2" onClick={() => confirmDelete(rowData)}/>
+                <Button icon="pi pi-book" label="Licencias" rounded severity="secondary"  className="mr-2" onClick={() => viewLicenses(rowData)} />
             </div>
         );
     };
 
-    const nameBodyTemplate = (rowData: App.Customer) => {
+    const nameBodyTemplate = (rowData: App.CustomerType) => {
         return (
             <>
                 <span className="p-column-title">Nombre</span>
@@ -152,6 +157,7 @@ const Customers = () => {
                         <Column field="id" header="Id"  headerStyle={{ minWidth: '3rem' }}></Column>
                         <Column field="name" header="Nombre" body={nameBodyTemplate} headerStyle={{ minWidth: '30rem' }}></Column>
                         <Column body={actionBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
+                        
                     </DataTable>
                     <Dialog visible={deleteCustomerDialog} style={{ width: '450px' }} header="Confirmar" modal footer={deleteCustomerDialogFooter} onHide={hideDeleteCustomerDialog}>
                         <div className="flex align-items-center justify-content-center">
