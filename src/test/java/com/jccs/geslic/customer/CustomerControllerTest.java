@@ -43,8 +43,8 @@ class CustomerControllerTest {
     @BeforeEach
     void setUp() {
         customers = List.of(
-                    new CustomerDTO(1L,"Cliente 1","","","","","",""),
-                    new CustomerDTO(2L,"Cliente 2","","","","","","")
+                    new CustomerDTO(1L,"Cliente 1","","","","","","", null),
+                    new CustomerDTO(2L,"Cliente 2","","","","","","", null)
         );                
     }
 
@@ -112,8 +112,8 @@ class CustomerControllerTest {
     @Test
     @DisplayName("Create a customer and obtain the saved customer")
     void givenCustomer_whenCreated_thenIsSaved() throws Exception {
-        CustomerDTO customer = new CustomerDTO(null,"Cliente 3","","","","","","");
-        CustomerDTO customerCreated = new CustomerDTO(3L,"Cliente 3","","","","","","");
+        CustomerDTO customer = new CustomerDTO(null,"Cliente 3","","","","","","",null);
+        CustomerDTO customerCreated = new CustomerDTO(3L,"Cliente 3","","","","","","",null);
 
         String jsonResponse = """
                 {
@@ -135,7 +135,7 @@ class CustomerControllerTest {
     @Test
     @DisplayName("Create Customer without name returns invalid customer error")
     void givenBadCustomer_whenCreate_thenReturnBadRequestError() throws Exception {
-        CustomerDTO customer = new CustomerDTO(null,"Cliente 3","","","","","","");
+        CustomerDTO customer = new CustomerDTO(null,"Cliente 3","","","","","","",null);
 
         when(customerService.create(customer)).thenThrow(new EntityInvalidException(Constants.ENTITY_INVALID));
 
@@ -165,7 +165,7 @@ class CustomerControllerTest {
     @DisplayName("Update an existing customer and obtain the updated customer")
     void givenCustomer_whenUpdated_thenIsSaved() throws Exception {
         Long id = 2L;
-        CustomerDTO customer = new CustomerDTO(id,"Cliente 3","","","","","","");
+        CustomerDTO customer = new CustomerDTO(id,"Cliente 3","","","","","","",null);
 
         String jsonResponse = """
                 {
@@ -188,7 +188,7 @@ class CustomerControllerTest {
     @DisplayName("Update inexistent customer returns customer not found")
     void givenInexistentCustomerID_whenUpdate_thenReturnNotFoundError() throws Exception {
         Long id = -1L;
-        CustomerDTO customer = new CustomerDTO(id,"Cliente 3","","","","","","");
+        CustomerDTO customer = new CustomerDTO(id,"Cliente 3","","","","","","",null);
 
         when(customerService.update(id, customer)).thenThrow(new EntityNotFoundException(Constants.ENTITY_NOTFOUND));
 

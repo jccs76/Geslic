@@ -3,6 +3,7 @@ package com.jccs.geslic.license;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.math.BigDecimal;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -59,13 +60,13 @@ public class LicenseControllerTest {
         objectMapper.registerModule(new JavaTimeModule());
 
         productDTO = new ProductDTO(1l, "RMCOBOLRT1US", "Runtime RM/COBOL 1 Usuario", 120l);
-        customerDTO = new CustomerDTO(1L, "Cliente 1","","","","","","");
+        customerDTO = new CustomerDTO(1L, "Cliente 1","","","","","","",null);
 
-        supports = List.of(new SupportDTO(1L, LocalDate.parse("2024-01-01"), LocalDate.parse("2025-01-01"), SupportStatus.ACTIVE, 1L),
-                                            new SupportDTO(2L, LocalDate.parse("2024-01-01"), LocalDate.parse("2025-01-01"), SupportStatus.ACTIVE, 2L));
+        supports = List.of(new SupportDTO(1L,BigDecimal.valueOf(20L), LocalDate.parse("2024-01-01"), LocalDate.parse("2025-01-01"), SupportStatus.ACTIVE, 1L),
+                           new SupportDTO(2L,BigDecimal.valueOf(20L), LocalDate.parse("2024-01-01"), LocalDate.parse("2025-01-01"), SupportStatus.ACTIVE, 2L));
                  
-        licenses = List.of(new LicenseDTO(1L,"6A-1000-01", productDTO, customerDTO, supports.get(0)),
-                           new LicenseDTO(2L,"6A-1000-02",productDTO, customerDTO, supports.get(1)));
+        licenses = List.of(new LicenseDTO(1L, "6A-1000-01",LocalDate.parse("2024-01-01"),BigDecimal.valueOf(100), productDTO, customerDTO, supports.get(0)),
+                           new LicenseDTO(2L,"6A-1000-02",LocalDate.parse("2024-01-01"),BigDecimal.valueOf(100),productDTO, customerDTO, supports.get(1)));
 
     }
 
@@ -183,9 +184,9 @@ public class LicenseControllerTest {
     @Test
     @DisplayName("Create an license and obtain the saved license")
     void givenLicense_whenCreated_thenIsSaved() throws Exception {
-        LicenseDTO license = new LicenseDTO(null,"6A-1000-03", productDTO, customerDTO, null);        
-        SupportDTO supportCreated = new SupportDTO(3L, LocalDate.parse("2024-01-01"), LocalDate.parse("2025-01-01"), SupportStatus.ACTIVE, null);
-        LicenseDTO licenseCreated = new LicenseDTO(3L,"6A-1000-03",productDTO, customerDTO,supportCreated);
+        LicenseDTO license = new LicenseDTO(null,"6A-1000-03",LocalDate.parse("2024-01-01"),BigDecimal.valueOf(100), productDTO, customerDTO, null);        
+        SupportDTO supportCreated = new SupportDTO(3L, BigDecimal.valueOf(20),LocalDate.parse("2024-01-01"), LocalDate.parse("2025-01-01"), SupportStatus.ACTIVE, null);
+        LicenseDTO licenseCreated = new LicenseDTO(3L,"6A-1000-03",LocalDate.parse("2024-01-01"),BigDecimal.valueOf(100),productDTO, customerDTO,supportCreated);
         
         String jsonResponse = """
                 {
@@ -223,7 +224,7 @@ public class LicenseControllerTest {
     @Test
     @DisplayName("Create License without code returns invalid License error")
     void givenBadLicense_whenCreate_thenReturnBadRequestError() throws Exception {
-        LicenseDTO license = new LicenseDTO(null,"", productDTO, customerDTO,null);
+        LicenseDTO license = new LicenseDTO(null,"", null, null,productDTO, customerDTO,null);
 
         when(licenseService.create(license)).thenThrow(new EntityInvalidException(Constants.ENTITY_INVALID));
 
@@ -253,8 +254,8 @@ public class LicenseControllerTest {
     @DisplayName("Update an existing license and obtain the updated license")
     void givenLicense_whenUpdated_thenIsSaved() throws Exception {
         Long id = 2L;
-        SupportDTO lastSupport = new SupportDTO(2L, LocalDate.parse("2024-01-01"), LocalDate.parse("2025-01-01"), SupportStatus.ACTIVE, 2L);
-        LicenseDTO license = new LicenseDTO(id,"6A-1000-04", productDTO, customerDTO, lastSupport);
+        SupportDTO lastSupport = new SupportDTO(2L,BigDecimal.valueOf(100),LocalDate.parse("2024-01-01"), LocalDate.parse("2025-01-01"), SupportStatus.ACTIVE, 2L);
+        LicenseDTO license = new LicenseDTO(id,"6A-1000-04", LocalDate.parse("2024-01-01"),BigDecimal.valueOf(100),productDTO, customerDTO, lastSupport);
 
         String jsonResponse = """
                 {
@@ -294,7 +295,7 @@ public class LicenseControllerTest {
     @DisplayName("Update inexistent license returns license not found")
     void givenInexistentLicenseID_whenUpdate_thenReturnNotFoundError() throws Exception {
         Long id = -1L;
-        LicenseDTO license = new LicenseDTO(id,"6A-1000-05", null, customerDTO,null);
+        LicenseDTO license = new LicenseDTO(id,"6A-1000-05", null, null,null, customerDTO,null);
 
         when(licenseService.update(id, license)).thenThrow(new EntityNotFoundException(Constants.ENTITY_NOTFOUND));
 
@@ -380,8 +381,8 @@ public class LicenseControllerTest {
     @DisplayName("Given a License id renew its support creating a new Support")
     void givenLicenseID_whenRenewSupport_thenReturnLicenseUpdatedWithNewSupport() throws Exception { 
         Long id = 1L;
-        SupportDTO newSupport = new SupportDTO(3L, LocalDate.parse("2025-01-01"), LocalDate.parse("2026-01-01"), SupportStatus.ACTIVE, 1L);
-        LicenseDTO updatedLicense = new LicenseDTO(1L, "6A-1000-01", productDTO, customerDTO, newSupport);
+        SupportDTO newSupport = new SupportDTO(3L,BigDecimal.valueOf(20L), LocalDate.parse("2025-01-01"), LocalDate.parse("2026-01-01"), SupportStatus.ACTIVE, 1L);
+        LicenseDTO updatedLicense = new LicenseDTO(1L, "6A-1000-01",LocalDate.parse("2025-01-01"), BigDecimal.valueOf(100L), productDTO, customerDTO, newSupport);
         String jsonResponse = """
                 {
                     "id" : 1,                    
@@ -409,8 +410,8 @@ public class LicenseControllerTest {
     @DisplayName("Given a License id cancel its support setting its last support to CANCELED")
     void givenLicenseID_whenCancelSupport_thenReturnLicenseUpdatedWithLastSupportCanceled() throws Exception { 
         Long id = 1L;
-        SupportDTO lastSupport = new SupportDTO(1L, LocalDate.parse("2024-01-01"), LocalDate.parse("2025-01-01"), SupportStatus.CANCELED, 1L);
-        LicenseDTO updatedLicense = new LicenseDTO(1L, "6A-1000-01", productDTO, customerDTO, lastSupport);
+        SupportDTO lastSupport = new SupportDTO(1L, BigDecimal.valueOf(20L),LocalDate.parse("2024-01-01"), LocalDate.parse("2025-01-01"), SupportStatus.CANCELED, 1L);
+        LicenseDTO updatedLicense = new LicenseDTO(1L, "6A-1000-01", LocalDate.parse("2024-01-01"), BigDecimal.valueOf(20L),productDTO, customerDTO, lastSupport);
         String jsonResponse = """
                 {
                     "id" : 1,                    

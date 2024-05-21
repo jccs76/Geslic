@@ -38,9 +38,6 @@ const Customer = () => {
         setCustomer(_customer);
     };
 
-    const handleSave = () => {
-      
-    }
 
     const handleSubmit = (e : React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -63,34 +60,34 @@ const Customer = () => {
                     <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-6">
                             <label htmlFor="name" className="">Nombre</label>                        
-                            <InputText id="customer.name" name="name"  value={customer.name} autoFocus type="text" onChange={onInputChange} />
+                            <InputText id="name" name="name"  value={customer.name} autoFocus type="text" onChange={onInputChange} />
                         </div>
                         <div className="field col-12">                    
                             <label htmlFor="address" className="">Dirección</label>
-                            <InputText id="customer.address" name="address"  value={customer.address} type="text" onChange={onInputChange} />
+                            <InputText id="address" name="address"  value={customer.address} type="text" onChange={onInputChange} />
                         </div>
                         <div className="field col-12 md:col-2">                    
                             <label htmlFor="zipCode" className="">Código Postal</label>                    
-                            <InputText id="customer.zipCode" name="zipCode"  value={customer.zipCode} type="text" onChange={onInputChange} />
+                            <InputText id="zipCode" name="zipCode"  value={customer.zipCode} type="text" onChange={onInputChange} />
                         </div>
                         <div className="field col-12 md:col-3">
                             <label htmlFor="state" className="">Provincia</label>
-                            <InputText id="customer.state" name="state"  value={customer.state} type="text" onChange={onInputChange} />
+                            <InputText id="state" name="state"  value={customer.state} type="text" onChange={onInputChange} />
                         </div>
                         <div className="field col-12 md:col-7">
                         <label htmlFor="city" className="">Localidad</label>
-                            <InputText id="customer.city" name="city"  value={customer.city} type="text" onChange={onInputChange} />                    
+                            <InputText id="city" name="city"  value={customer.city} type="text" onChange={onInputChange} />                    
                         </div>
                         <div className="field col-12 md:col-2 lg:col-2 xl:col-2">    
                             <label htmlFor="phoneNumber" className="">Teléfono</label>
-                            <InputText id="customer.phoneNumber" name="phoneNumber"  value={customer.phoneNumber} type="text" onChange={onInputChange} />
+                            <InputText id="phoneNumber" name="phoneNumber"  value={customer.phoneNumber} type="text" onChange={onInputChange} />
                         </div>
                         <div className="field col-12 md:col-5">    
                             <label htmlFor="email" className="">E-mail</label>
-                            <InputText id="customer.email" name="email"  value={customer.email} type="text" onChange={onInputChange} />
+                            <InputText id="email" name="email"  value={customer.email} type="text" onChange={onInputChange} />
                         </div>
                         <div className="col-2 col-offset-5 mt-5">
-                            <Button type="submit" icon="pi pi-save" label="Guardar" severity="info" onClick={handleSave} />                    
+                            <Button type="submit" icon="pi pi-save" label="Guardar" severity="info" />                    
                         </div>
                     </div>
                     </form>

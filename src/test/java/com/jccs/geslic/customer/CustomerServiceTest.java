@@ -49,14 +49,27 @@ public class CustomerServiceTest {
         
         customers = List.of(Customer.builder()
                                     .id(1L)
-                                    .name("Usuario 1").build(),
+                                    .name("Usuario 1")
+                                    .address("")
+                                    .zipCode("")
+                                    .state("")
+                                    .phoneNumber("")
+                                    .email("")
+                                    .licenses(null)
+                                .build(),
                         Customer.builder()
                                     .id(2L)
-                                    .name("Usuario 2").build());
+                                    .address("")
+                                    .zipCode("")
+                                    .state("")
+                                    .phoneNumber("")
+                                    .email("")
+                                    .licenses(null)
+                                .build());
                             
-        customersDTO = List.of(
-                    new CustomerDTO(1L,"Usuario 1","","","","","",""),
-                    new CustomerDTO(2L,"Usuario 2","","","","","","")
+        customersDTO = List.of(                    
+                    new CustomerDTO(1L,"Usuario 1","","","","","", "", null),
+                    new CustomerDTO(2L,"Usuario 2","","","","","","",null)
         );                
 
     }
@@ -98,7 +111,7 @@ public class CustomerServiceTest {
 
     @Test
     public void givenCustomer_whenCreated_thenCallsRepositorySave(){
-        CustomerDTO customerDTO = new CustomerDTO(null,"Usuario 5","","","","","","");
+        CustomerDTO customerDTO = new CustomerDTO(null,"Usuario 5","","","","","","",null);
         when(customerMapper.toEntity(customerDTO)).thenReturn(new Customer());
         when(customerRepository.save(any(Customer.class))).thenReturn(new Customer());
 
@@ -110,7 +123,7 @@ public class CustomerServiceTest {
 
     @Test
     public void givenExistingCustomer_whenCreated_thenThrowCustomerExisting(){
-        CustomerDTO customerDTO = new CustomerDTO(null,"Usuario 5","","","","","","");
+        CustomerDTO customerDTO = new CustomerDTO(null,"Usuario 5","","","","","","",null);
         
         doThrow(new EntityExistingException(Constants.ENTITY_EXISTS)).when(customerRepository).findByName(anyString());
 
@@ -128,7 +141,7 @@ public class CustomerServiceTest {
                                         .id(id)
                                         .name("Usuario 3")
                                         .build();
-        CustomerDTO requestCustomerDTO = new CustomerDTO(id,"Usuario 3","","","","","","");
+        CustomerDTO requestCustomerDTO = new CustomerDTO(id,"Usuario 3","","","","","","",null);
         
         when(customerMapper.toEntity(requestCustomerDTO)).thenReturn(new Customer());
         when(customerMapper.toDTO(updatedCustomer)).thenReturn(requestCustomerDTO);
@@ -146,7 +159,7 @@ public class CustomerServiceTest {
     
     void givenInexistentCustomerID_whenUpdate_thenThrowCustomerNotFound() throws Exception {
         Long id = -1L;
-        CustomerDTO customerDTO = new CustomerDTO(id,"Usuario 3","","","","","","");
+        CustomerDTO customerDTO = new CustomerDTO(id,"Usuario 3","","","","","","",null);
         
         doThrow(new EntityNotFoundException(Constants.ENTITY_NOTFOUND)).when(customerRepository).findById(id);
        

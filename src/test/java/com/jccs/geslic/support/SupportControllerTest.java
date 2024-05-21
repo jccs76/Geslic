@@ -3,6 +3,7 @@ package com.jccs.geslic.support;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.math.BigDecimal;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -49,8 +50,8 @@ class SupportControllerTest {
         objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
 
-        supports = List.of(new SupportDTO(1L, LocalDate.parse("2024-01-01"), LocalDate.parse("2025-01-01"), SupportStatus.ACTIVE, 1L),
-                           new SupportDTO(2L, LocalDate.parse("2024-01-01"), LocalDate.parse("2025-01-01"), SupportStatus.ACTIVE, 2L));
+        supports = List.of(new SupportDTO(1L, BigDecimal.valueOf(20L), LocalDate.parse("2024-01-01"), LocalDate.parse("2025-01-01"), SupportStatus.ACTIVE, 1L),
+                           new SupportDTO(2L, BigDecimal.valueOf(20L), LocalDate.parse("2024-01-01"), LocalDate.parse("2025-01-01"), SupportStatus.ACTIVE, 2L));
         
     }
 
@@ -128,8 +129,8 @@ class SupportControllerTest {
     @Test
     @DisplayName("Create a support and obtain the saved support")
     void givenSupport_whenCreated_thenIsSaved() throws Exception {
-        SupportDTO support = new SupportDTO(null, LocalDate.parse("2025-01-01"), LocalDate.parse("2026-01-01"), SupportStatus.ACTIVE, 3L);
-        SupportDTO supportCreated = new SupportDTO(3L, LocalDate.parse("2025-01-01"), LocalDate.parse("2026-01-01"), SupportStatus.ACTIVE, 3L);
+        SupportDTO support = new SupportDTO(null,BigDecimal.valueOf(20L),LocalDate.parse("2025-01-01"), LocalDate.parse("2026-01-01"), SupportStatus.ACTIVE, 3L);
+        SupportDTO supportCreated = new SupportDTO(3L,  BigDecimal.valueOf(20L),LocalDate.parse("2025-01-01"), LocalDate.parse("2026-01-01"), SupportStatus.ACTIVE, 3L);
 
         String jsonResponse = """
             {
@@ -170,7 +171,7 @@ class SupportControllerTest {
     @DisplayName("Update an existing support and obtain the updated support")
     void givenSupport_whenUpdated_thenIsSaved() throws Exception {
         Long id = 2L;
-        SupportDTO support = new SupportDTO(1L, LocalDate.parse("2024-01-01"), LocalDate.parse("2025-01-01"), SupportStatus.CANCELED, 1L);
+        SupportDTO support = new SupportDTO(1L,BigDecimal.valueOf(20L),LocalDate.parse("2024-01-01"), LocalDate.parse("2025-01-01"), SupportStatus.CANCELED, 1L);
 
         String jsonResponse = """
             {
@@ -196,7 +197,7 @@ class SupportControllerTest {
     @DisplayName("Update inexistent support returns support not found")
     void givenInexistentSupportID_whenUpdate_thenReturnNotFoundError() throws Exception {
         Long id = -1L;
-        SupportDTO support = new SupportDTO(-1L, LocalDate.parse("2024-01-01"), LocalDate.parse("2025-01-01"), SupportStatus.ACTIVE, 1L);
+        SupportDTO support = new SupportDTO(-1L,BigDecimal.valueOf(20L), LocalDate.parse("2024-01-01"), LocalDate.parse("2025-01-01"), SupportStatus.ACTIVE, 1L);
 
         when(supportService.update(id, support)).thenThrow(new EntityNotFoundException(Constants.ENTITY_NOTFOUND));
 

@@ -11,6 +11,7 @@ import { LicenseService } from '../../services/LicenseService';
 import { useNavigate } from 'react-router-dom';
 import { Dialog } from 'primereact/dialog';
 import { SupportStatus } from '../../common/SupportStatus';
+import { formatCurrencyES } from '../../util/Util';
 
 
 
@@ -79,6 +80,10 @@ const Supports = () => {
         hideSupportDialog();
     };
 
+    const goRenewSupport = (c: App.LicenseType) => {
+        navigate('/support/' + c?.lastSupport?.id + '/renew');
+    }
+
     const showSupportDialog = (lic: App.LicenseType, act : string) => {
         setLicense(lic);
         setAction(act);
@@ -111,7 +116,8 @@ const Supports = () => {
     const actionBodyTemplate = (rowData: App.LicenseType) => {        
         return (
             <div className="flex flex-column md:flex-row md:justify-content-center md:align-items-center ">
-                <Button icon="pi pi-replay" label="Renovar" rounded severity="success"  className="mr-2" onClick={() => showSupportDialog(rowData, Action.RENEW)} />
+                {/* <Button icon="pi pi-replay" label="Renovar" rounded severity="success"  className="mr-2" onClick={() => showSupportDialog(rowData, Action.RENEW)} /> */}
+                <Button icon="pi pi-replay" label="Renovar" rounded severity="success"  className="mr-2" onClick={() => goRenewSupport(rowData)} />
                 
                 <Button icon="pi pi-times" label="Cancelar" rounded severity="warning" disabled={rowData?.lastSupport?.status == SupportStatus.CANCELED}  onClick={() => showSupportDialog(rowData, Action.CANCEL)}/>
                 
@@ -128,9 +134,20 @@ const Supports = () => {
         );
     };
 
+    const toFromDateBodyTemplate = (rowData: App.LicenseType) => {
+        return formatDateEs(rowData?.lastSupport.fromDate);
+        
+    };
+
     const toDateBodyTemplate = (rowData: App.LicenseType) => {
         return formatDateEs(rowData?.lastSupport.toDate);
         
+    };
+
+    const priceBodyTemplate = (rowData: App.LicenseType) => {
+        if (rowData?.price){
+            return formatCurrencyES(rowData?.price)
+        }        
     };
 
     const statusBodyTemplate = (rowData: App.LicenseType) => {
@@ -186,10 +203,11 @@ const Supports = () => {
                         emptyMessage="No hay mantenimientos."
                         header={header}
                     >                        
-                        <Column field="id" header="Id"  headerStyle={{ minWidth: '3rem' }}></Column>
                         <Column field="code" header="Nº Serie" body={nameBodyTemplate} headerStyle={{ minWidth: '12rem' }}></Column>
-                        <Column field="lastSupport.toDate" header="Hasta" body={toDateBodyTemplate} headerStyle={{ minWidth: 'rem' }}></Column>
-                        <Column field="lastSupport.status"  header="Estado" body={statusBodyTemplate} headerStyle={{ minWidth: '3rem' }}></Column>
+                        <Column field="lastSupport.fromDate" header="Desde" body={toFromDateBodyTemplate} headerStyle={{ minWidth: 'rem' }} className='text-center'></Column>
+                        <Column field="lastSupport.toDate" header="Hasta" body={toDateBodyTemplate} headerStyle={{ minWidth: 'rem' }} className='text-center'></Column>
+                        <Column field="lastSupport.price" header="Precio" body={priceBodyTemplate}  headerStyle={{ minWidth: '2rem'}} className='text-right'></Column>
+                        <Column field="lastSupport.status"  header="Estado" body={statusBodyTemplate} headerStyle={{ minWidth: '3rem' }} className='text-center'></Column>
                         <Column body={actionBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
                         
                     </DataTable>

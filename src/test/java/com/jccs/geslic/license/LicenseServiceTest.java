@@ -1,5 +1,6 @@
 package com.jccs.geslic.license;
 
+
 import org.junit.jupiter.api.extension.ExtendWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -15,6 +16,7 @@ import static org.mockito.Mockito.when;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.time.LocalDate;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -70,7 +72,7 @@ public class LicenseServiceTest {
         this.sut = new LicenseService(licenseRepository, licenseMapper, productService, customerService, supportMapper);
         
         productDTO = new ProductDTO(1l, "RMCOBOLRT1US", "Runtime RM/COBOL 1 Usuario", 120l);
-        customerDTO = new CustomerDTO(1L, "Cliente 1","","","","","","");
+        customerDTO = new CustomerDTO(1L, "Cliente 1","","","","","","",null);
 
         product = Product.builder().id(1L).name("RMCOBOLRT1US").description("Runtime RM/COBOL 1 Usuario").price(BigDecimal.valueOf(120)).build();
         customer = Customer.builder().id(1L).name("Cliente 1").build();
@@ -78,18 +80,22 @@ public class LicenseServiceTest {
         licenses = List.of(License.builder()
                                     .id(1L)
                                     .code("6A-1000-01")
+                                    .purchaseDate(LocalDate.parse("2024-01-01"))
+                                    .price(BigDecimal.valueOf(100L))
                                     .product(product)
                                     .customer(customer)
                                     .build(),
                         License.builder()
-                                    .id(2L)                                    
+                                    .id(2L)
+                                    .purchaseDate(LocalDate.parse("2024-01-01"))
+                                    .price(BigDecimal.valueOf(100L))
                                     .product(product)
                                     .customer(customer)
                                     .code("6A-1000-02").build());
                             
         licensesDTO = List.of(
-                    new LicenseDTO(1L,"6A-1000-01", productDTO, customerDTO,null),
-                    new LicenseDTO(2L,"6A-1000-02", productDTO, customerDTO,null)
+                    new LicenseDTO(1L,"6A-1000-01", LocalDate.parse("2024-01-01"), BigDecimal.valueOf(100L),productDTO, customerDTO,null),
+                    new LicenseDTO(2L,"6A-1000-02", LocalDate.parse("2024-01-01"), BigDecimal.valueOf(100L),productDTO, customerDTO,null)
         );                
 
     }
@@ -131,9 +137,13 @@ public class LicenseServiceTest {
 
     @Test
     public void givenLicense_whenCreated_thenCallsRepositorySave(){
-        LicenseDTO licenseDTO = new LicenseDTO(null,"6A-1000-03",productDTO, customerDTO,null);
-        when(licenseMapper.toEntity(licenseDTO)).thenReturn(new License());
-        when(licenseRepository.save(any(License.class))).thenReturn(new License());
+        License license = License.builder().id(3L).code(null).purchaseDate(LocalDate.parse("2024-01-01"))
+                                           .price(BigDecimal.valueOf(100L)).product(product).customer(customer)
+                                 .build();
+                                 
+        LicenseDTO licenseDTO = new LicenseDTO(null,"6A-1000-03",LocalDate.parse("2024-01-01"), BigDecimal.valueOf(100L),productDTO, customerDTO,null);
+        when(licenseMapper.toEntity(licenseDTO)).thenReturn(license);
+        when(licenseRepository.save(any(License.class))).thenReturn(license);
 
         sut.create(licenseDTO);
 
@@ -142,7 +152,7 @@ public class LicenseServiceTest {
 
     @Test
     public void givenExistingLicense_whenCreated_thenThrowLicenseExisting(){
-        LicenseDTO licenseDTO = new LicenseDTO(null,"6A-1000-01", productDTO, customerDTO,null);
+        LicenseDTO licenseDTO = new LicenseDTO(null,"6A-1000-01",LocalDate.parse("2024-01-01"), BigDecimal.valueOf(20L), productDTO, customerDTO,null);
         
         doThrow(new EntityExistingException(Constants.ENTITY_EXISTS)).when(licenseRepository).findByCode(anyString());
 
@@ -162,7 +172,7 @@ public class LicenseServiceTest {
                                         .product(product)
                                         .customer(customer)
                                         .build();
-        LicenseDTO requestLicenseDTO = new LicenseDTO(id,"6A-1000-03", productDTO, customerDTO,null);
+        LicenseDTO requestLicenseDTO = new LicenseDTO(id,"6A-1000-03",LocalDate.parse("2024-01-01"), BigDecimal.valueOf(20L), productDTO, customerDTO,null);
         
         when(licenseMapper.toEntity(requestLicenseDTO)).thenReturn(new License());
         when(licenseMapper.toDTO(updatedLicense)).thenReturn(requestLicenseDTO);
@@ -180,7 +190,7 @@ public class LicenseServiceTest {
     
     void givenInexistentLicenseID_whenUpdate_thenThrowLicenseNotFound() throws Exception {
         Long id = -1L;
-        LicenseDTO licenseDTO = new LicenseDTO(id,"6A-1000-05", productDTO, customerDTO,null);
+        LicenseDTO licenseDTO = new LicenseDTO(id,"6A-1000-05",LocalDate.parse("2024-01-01"), BigDecimal.valueOf(20L), productDTO, customerDTO,null);
         
         doThrow(new EntityNotFoundException(Constants.ENTITY_NOTFOUND)).when(licenseRepository).findById(id);
        

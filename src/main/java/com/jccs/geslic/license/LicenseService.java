@@ -9,6 +9,8 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 
+import java.math.BigDecimal;
+
 import com.jccs.geslic.common.AbstractService;
 import com.jccs.geslic.common.Constants;
 import com.jccs.geslic.common.exception.EntityExistingException;
@@ -26,7 +28,7 @@ import com.jccs.geslic.support.SupportStatus;
 @Service
 public class LicenseService extends AbstractService<LicenseDTO, License, LicenseMapper, LicenseRepository> {
     
-    
+    private final long PORCENTAJE  = 
     private final ProductService productService;
     
     private final CustomerService customerService;
@@ -54,8 +56,11 @@ public class LicenseService extends AbstractService<LicenseDTO, License, License
         license.setCustomer(customer);
         List<Support> supports = new ArrayList<>();
         Support firstSupport = new Support();
-        firstSupport.setFromDate(LocalDate.ofInstant(Instant.now(), ZoneId.systemDefault()));
-        firstSupport.setToDate(firstSupport.getFromDate().plusYears(1));
+        BigDecimal supportPrice = license.getPrice().multiply(BigDecimal.valueOf(0.20));
+        firstSupport.setPrice(supportPrice);
+        //firstSupport.setFromDate(LocalDate.ofInstant(Instant.now(), ZoneId.systemDefault()));        
+        firstSupport.setFromDate(license.getPurchaseDate());
+        firstSupport.setToDate(license.getPurchaseDate().plusYears(1));
         firstSupport.setStatus(SupportStatus.ACTIVE);
         firstSupport.setLicense(license);        
         supports.add(firstSupport);
@@ -87,6 +92,7 @@ public class LicenseService extends AbstractService<LicenseDTO, License, License
         Support lastSupport = license.getLastSupport();
 
         Support newSupport = new Support();
+        newSupport.setPrice(lastSupport.getPrice());
         switch (lastSupport.getStatus()) {
             case SupportStatus.ACTIVE:
                     newSupport.setFromDate(lastSupport.getFromDate().plusYears(1));

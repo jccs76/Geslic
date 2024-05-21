@@ -16,8 +16,9 @@ interface RootLayoutProps {
 }
 
 export default function App({ children }: RootLayoutProps) {
-  addLocale('es', localeEs.es);
-  locale("es");
+  addLocale('es-ES', localeEs.es);
+  locale("es-ES");
+  
   
   return (
     <LayoutProvider>{children}</LayoutProvider>

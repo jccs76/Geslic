@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.math.BigDecimal;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -77,8 +78,8 @@ public class SupportServiceTest {
                     
         );                
         supportsDTO = List.of(
-                            new SupportDTO(1L, LocalDate.parse("2024-01-01"), LocalDate.parse("2025-01-01"), SupportStatus.ACTIVE, 1L),
-                            new SupportDTO(2L, LocalDate.parse("2024-01-01"), LocalDate.parse("2025-01-01"), SupportStatus.ACTIVE, 2L));
+                            new SupportDTO(1L,BigDecimal.valueOf(20L),LocalDate.parse("2024-01-01"), LocalDate.parse("2025-01-01"), SupportStatus.ACTIVE, 1L),
+                            new SupportDTO(2L,BigDecimal.valueOf(20L), LocalDate.parse("2024-01-01"), LocalDate.parse("2025-01-01"), SupportStatus.ACTIVE, 2L));
         
 
     }
@@ -120,7 +121,7 @@ public class SupportServiceTest {
 
     @Test
     public void givenSupport_whenCreated_thenCallsRepositorySave(){
-        SupportDTO supportDTO = new SupportDTO(null, LocalDate.parse("2024-01-01"), LocalDate.parse("2025-01-01"), SupportStatus.ACTIVE, 1L);
+        SupportDTO supportDTO = new SupportDTO(null,BigDecimal.valueOf(20L),LocalDate.parse("2024-01-01"), LocalDate.parse("2025-01-01"), SupportStatus.ACTIVE, 1L);
         when(supportMapper.toEntity(supportDTO)).thenReturn(new Support());
         when(supportRepository.save(any(Support.class))).thenReturn(new Support());
 
@@ -141,7 +142,7 @@ public class SupportServiceTest {
                                         .status(SupportStatus.CANCELED)
                                         .license(licenses.get(0))
                                         .build();
-        SupportDTO requestSupportDTO = new SupportDTO(1L, LocalDate.parse("2024-01-01"), LocalDate.parse("2025-01-01"), SupportStatus.CANCELED, 1L);
+        SupportDTO requestSupportDTO = new SupportDTO(1L,BigDecimal.valueOf(20L), LocalDate.parse("2024-01-01"), LocalDate.parse("2025-01-01"), SupportStatus.CANCELED, 1L);
         
         when(supportMapper.toEntity(requestSupportDTO)).thenReturn(new Support());
         when(supportMapper.toDTO(updatedSupport)).thenReturn(requestSupportDTO);
@@ -159,7 +160,7 @@ public class SupportServiceTest {
     
     void givenInexistentSupportID_whenUpdate_thenThrowSupportNotFound() throws Exception {
         Long id = -1L;
-        SupportDTO supportDTO =  new SupportDTO(id, LocalDate.parse("2024-01-01"), LocalDate.parse("2025-01-01"), SupportStatus.ACTIVE, 1L);
+        SupportDTO supportDTO =  new SupportDTO(id,BigDecimal.valueOf(20L),LocalDate.parse("2024-01-01"), LocalDate.parse("2025-01-01"), SupportStatus.ACTIVE, 1L);
         
         doThrow(new EntityNotFoundException(Constants.ENTITY_NOTFOUND)).when(supportRepository).findById(id);
        

@@ -30,6 +30,8 @@ declare namespace App {
     type LicenseType = {
         id?: string;
         code: string;
+        purchaseDate? : string;
+        price?: number;        
         product?: Product ;
         customer?: Customer ;
         lastSupport?: Support;
@@ -40,6 +42,7 @@ declare namespace App {
 
     type SuportType = {
         id?: string;
+        price: number;        
         fromDate: string;
         toDate: string;
         status: SupportStatus;

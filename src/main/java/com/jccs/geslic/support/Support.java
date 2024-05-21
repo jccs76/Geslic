@@ -1,6 +1,7 @@
 package com.jccs.geslic.support;
 
 import java.time.LocalDate;
+import java.math.BigDecimal;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.jccs.geslic.common.AbstractEntity;
@@ -30,9 +31,10 @@ public class Support extends AbstractEntity{
 
     private LocalDate fromDate;
     private LocalDate toDate;
-    
-     @Enumerated(EnumType.STRING)
-     private SupportStatus status;
+    private BigDecimal price;
+
+    @Enumerated(EnumType.STRING)
+    private SupportStatus status;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="license_id", nullable=false)

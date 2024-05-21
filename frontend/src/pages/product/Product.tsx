@@ -13,7 +13,8 @@ const Product = () => {
     let emptyProduct: App.ProductType= {
         id: '',
         name: '',
-        description: ''
+        description: '',
+        price: 0
     };
 
 

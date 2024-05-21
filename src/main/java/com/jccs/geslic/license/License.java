@@ -1,6 +1,8 @@
 package com.jccs.geslic.license;
 
 import java.util.List;
+import java.time.LocalDate;
+import java.math.BigDecimal;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -32,6 +34,8 @@ import lombok.experimental.SuperBuilder;
 @Table(name="licenses")
 public class License extends AbstractEntity {
     private String code;
+    private LocalDate purchaseDate;
+    private BigDecimal price;
     
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "product_id", referencedColumnName = "id")
@@ -46,7 +50,7 @@ public class License extends AbstractEntity {
     @JoinColumn(name = "lastsupport_id", referencedColumnName = "id")
     private Support lastSupport;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy="license", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy="license", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<Support> supports;
 
