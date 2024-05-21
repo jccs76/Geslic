@@ -6,6 +6,7 @@ import com.jccs.geslic.common.AbstractController;
 import com.jccs.geslic.support.SupportDTO;
 
 import java.util.List;
+import java.time.LocalDate;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,5 +40,12 @@ public class LicenseController extends AbstractController<LicenseDTO, LicenseSer
     public  ResponseEntity<LicenseDTO> cancelSupport(@PathVariable("id") Long id) {
         return ResponseEntity.ok(super.getService().cancelSupport(id));
     }
+
+    @GetMapping("/lastmonth")
+    public ResponseEntity<List<LicenseDTO>> getLastMonth() {
+        LocalDate testDate = LocalDate.parse("2024-05-31");
+        return ResponseEntity.ok(super.getService().getLicensesBetween(testDate));
+    }
+
 
 }

@@ -138,4 +138,8 @@ public class LicenseService extends AbstractService<LicenseDTO, License, License
         return getLicense(id).getSupports();
     }
 
+    public List<LicenseDTO> getLicensesBetween(LocalDate date){
+        LocalDate ld = LocalDate.of(2024, 6, 30);
+        return mapper.map(repository.findByLastSupportToDateBefore(ld));
+    }
 }
