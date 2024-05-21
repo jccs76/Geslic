@@ -28,7 +28,8 @@ import com.jccs.geslic.support.SupportStatus;
 @Service
 public class LicenseService extends AbstractService<LicenseDTO, License, LicenseMapper, LicenseRepository> {
     
-    private final long PORCENTAJE  = 
+    private static final double PERCENTAGE  = 20;
+
     private final ProductService productService;
     
     private final CustomerService customerService;
@@ -56,7 +57,7 @@ public class LicenseService extends AbstractService<LicenseDTO, License, License
         license.setCustomer(customer);
         List<Support> supports = new ArrayList<>();
         Support firstSupport = new Support();
-        BigDecimal supportPrice = license.getPrice().multiply(BigDecimal.valueOf(0.20));
+        BigDecimal supportPrice = license.getPrice().multiply(BigDecimal.valueOf(PERCENTAGE/100));
         firstSupport.setPrice(supportPrice);
         //firstSupport.setFromDate(LocalDate.ofInstant(Instant.now(), ZoneId.systemDefault()));        
         firstSupport.setFromDate(license.getPurchaseDate());

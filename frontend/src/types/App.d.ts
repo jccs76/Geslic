@@ -40,7 +40,7 @@ declare namespace App {
 
     type LicensesType = LicenseType[];
 
-    type SuportType = {
+    type SupportType = {
         id?: string;
         price: number;        
         fromDate: string;

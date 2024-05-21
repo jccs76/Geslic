@@ -19,14 +19,8 @@ const AppMenu = () => {
             items: [
                 { label: 'Clientes', icon: 'pi pi-fw pi-id-card', to: '/customers' },
                 { label: 'Productos', icon: 'pi pi-fw pi-box', to: '/products' },
-                { label: 'Licencias', icon: 'pi pi-fw pi-key', to: '/licenses' },
-            ]
-        },
-        {
-            label: 'Procesos',
-            items: [
-                { label: 'Alta Licencia', icon: 'pi pi-fw pi-file-plus', to: '/license'},
-                { label: 'Mantenimientos', icon: 'pi pi-fw pi-times',to: '/supports'}
+                { label: 'Licencias', icon: 'pi pi-fw pi-key', to: '/licenses' },                
+                { label: 'Mantenimientos', icon: 'pi pi-fw pi-briefcase',to: '/supports'}
             ]
         }
     ];

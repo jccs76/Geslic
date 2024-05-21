@@ -27,7 +27,19 @@ const Product = () => {
 
     useEffect(() => {        
         {id && (
-            ProductService.getProduct(id).then((data) => setProduct(data as any))
+            ProductService.getProduct(id)
+           .then((data) => {setProduct(data as any)                  
+            }).catch( (error) => console.log(error))
+
+            // .then((res) =>{
+            //     if (res?.status == 409){                
+            //        toast.current?.show({
+            //            severity: 'error',
+            //            summary: 'Borrado',
+            //            detail: 'Producto no puede ser eliminado',
+            //            life: 3000
+            //        });        
+            //        hideDeleteProductDialog();            
         )};    
     }, []);
 
@@ -63,6 +75,7 @@ const Product = () => {
 
   return (
     <Layout>
+ 
     <div className="grid">
             <div className="col-12">
                 <h5>{id ? 'Editar' : 'Nuevo'} Producto</h5>

@@ -38,8 +38,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             <Route path="/licenses" element={<Licenses />} />
             <Route path="/license" element={<License />} />
             <Route path="/license/:id" element={<License />} />
+            <Route path="/license/:id/support" element={<Supports/>} />
             <Route path="/supports" element={<Supports />} />
-            <Route path="/support/:id/renew" element={<Support />} />
+            <Route path="/support/:id" element={<Support />} />
         </Routes>        
         </App>
       </BrowserRouter>        

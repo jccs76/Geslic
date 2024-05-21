@@ -10,7 +10,7 @@ import { App } from '@/types';
 import { LicenseService } from '../../services/LicenseService';
 import { useNavigate } from 'react-router-dom';
 import { Dialog } from 'primereact/dialog';
-import { SupportStatus } from '../../common/SupportStatus';
+import { getStatusText } from '../../common/SupportStatus';
 import { formatCurrencyES, formatDateEs } from '../../util/Util';
 
 
@@ -140,19 +140,26 @@ const Licenses = () => {
 
 
     const statusBodyTemplate = (rowData: App.LicenseType) => {
-        return <span className={`support-badge support-${rowData?.lastSupport?.status.toLowerCase()}`}>{(() => {
-            switch (rowData?.lastSupport?.status) {
-              case SupportStatus.ACTIVE: 
-                return 'EN VIGOR'
-              case SupportStatus.CANCELED:
-                return 'CANCELADA'
-              case SupportStatus.EXPIRED:
-                return 'EXPIRADA'
-              default:
-                return null
-            }
-          })() }</span>;
-        
+        const labelText = getStatusText (rowData?.lastSupport?.status);
+        return (
+                <Button label={labelText} className={`support-badge support-${rowData?.lastSupport?.status.toLowerCase()}`}
+                onClick={() => navigate('/license/' + rowData?.id + '/support' )}
+                />
+
+
+        // <span className={`support-badge support-${rowData?.lastSupport?.status.toLowerCase()}`}>{(() => {
+        //     switch (rowData?.lastSupport?.status) {
+        //       case SupportStatus.ACTIVE: 
+        //         return 'EN VIGOR'
+        //       case SupportStatus.CANCELED:
+        //         return 'CANCELADA'
+        //       case SupportStatus.EXPIRED:
+        //         return 'EXPIRADA'
+        //       default:
+        //         return null
+        //     }
+        //   })() }</span>;        
+    )  
     };
 
 

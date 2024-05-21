@@ -1,32 +1,21 @@
 import Layout from "../../layout/layout";
-import { LicenseService } from "../../services/LicenseService";
 import { App } from "@/types";
 import {  useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { InputText } from "primereact/inputtext";
-import { IconField } from 'primereact/iconfield';
-import { InputIcon } from 'primereact/inputicon';
 import { Button } from "primereact/button";
-import { DataTable } from "primereact/datatable";
-import { Column } from "primereact/column";
-import { CustomerService } from "../../services/CustomerService";
-import { ProductService } from "../../services/ProductService";
 import { InputNumber } from "primereact/inputnumber";
-import { convertDatetoISOString, formatCurrencyES} from "../../util/Util";
+import { convertDatetoISOString} from "../../util/Util";
 import {Calendar} from "primereact/calendar";
 import { Nullable } from "primereact/ts-helpers";
+import { SupportService } from "../..//services/SupportService";
+import { SupportStatus } from "../../common/SupportStatus";
+import { LicenseService } from "../../services/LicenseService";
 
 const Support = () => {
 
-    
-    const emptyCustomer: App.CustomerType = {
-        name: ''
-    };
 
-    const emptyProduct: App.ProductType = {
-        name: ''
-    };
-
+    const navigate = useNavigate();
 
     const emptyLicense: App.LicenseType = {
         code: '',
@@ -34,96 +23,99 @@ const Support = () => {
         price: 0
     };
 
-
-    const navigate = useNavigate();
+    const emptySupport: App.SupportType = {
+        price: 0,       
+        fromDate: '',
+        toDate: '',
+        status: SupportStatus.ACTIVE,
+        licenseId : ''    
+    };
 
     const {id} = useParams();    
     
-
-    const [fecha, setFecha] = useState<Nullable<Date>>(null);
     const [license, setLicense] = useState<any>(emptyLicense);    
+    const [support, setSupport] = useState<App.SupportType>(emptySupport);    
+    
+    const [frmFromDate, setFrmFromDate] = useState<Nullable<Date>>(null);
+    const [frmToDate, setFrmToDate] = useState<Nullable<Date>>(null);
+    const [frmPrice, setFrmPrice] = useState<Nullable<number>>(0);
+
 
     useEffect(() => {  
         if (id){            
-            LicenseService.getLicense(id).then((data) => 
-                setLicense(data as any))
-        } else {
-            setLicense(emptyLicense);
-        }                
+            SupportService.getSupport(id).then((data) => {
+                setSupport(data as any);
+                setFrmFromDate(new Date(data.fromDate));
+                setFrmToDate(new Date(data.toDate));
+                setFrmPrice(data.price);
+                LicenseService.getLicense(data.licenseId).then((data) => setLicense(data as any))              
+        })}
     }, []);
 
     useEffect(() => {
-        let _fecha = convertDatetoISOString(fecha) ;
+        let _date = convertDatetoISOString(frmFromDate) ;
+        setSupport((prevState: any) => (
+            { ...prevState, fromDate : _date}
+        ));
+    }, [frmFromDate]);
 
-    }, [fecha])
+    useEffect(() => {
+        let _date = convertDatetoISOString(frmToDate) ;
+        setSupport((prevState: any) => (
+            { ...prevState, toDate : _date}
+        ));
+    }, [frmToDate]);
 
-    const onInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {        
-        e.preventDefault();
+    useEffect(() => {
+        setSupport((prevState: any) => (
+            { ...prevState, price : frmPrice}
+        ));
+    }, [frmPrice])
 
-        const name = e.target.name;
-        const val = (e.target && e.target.value) || '';
-        let _license = { ...license };
-        _license[`${name}`] = val;
-        setLicense(_license);
-    };
-
-    const onInputNumberChange = (e : any) => {
-        let _license = { ...license};
-        _license['price'] = e.value.price;
-        setLicense(_license);
-    }
-
+ 
 
     const handleSave = (e : any) => {
         e.preventDefault();
-        console.log(license);        
-        let _license = { ...license, 
-           };
-         if (id){
-             LicenseService.updateLicense(id, _license).then((data) => setLicense(data as any))
-            
-         } else {
-            LicenseService.createLicense(_license).then((data) => setLicense(data as any))
-        }
-        navigate(-1);
+        console.log(support);        
+        SupportService.updateSupport(id as string, support).then((data) => setSupport(data as any))
+         navigate(-1);
     }
 
 
 
-    const priceBodyTemplate = (rowData: App.ProductType) => {
-        if (rowData.price){
-            return formatCurrencyES(rowData?.price)
-        }
-        
-    };
 
   return (
     <Layout>
     <div className="grid">
             <div className="col-12">
-                <h5>Renovar Soporte</h5>
+                <div className="flex justify-content-start align-items-baseline">
+                    <Button className="mr-2"  icon="pi pi-chevron-left" rounded text onClick={() => navigate(-1)} />                    
+                    <h5 className="">Modificar Mantenimiento</h5>
+                </div>
                 <div className="card p-fluid">                                        
                     <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-4">
                             <label htmlFor="code" className="">Nº Serie</label>
-                            <InputText id="code" name="code"  value={license?.code} autoFocus type="text" onChange={onInputChange} />                        
+                            <InputText id="code" name="code"  value={license.code}  disabled type="text"  />                        
                         </div>
                         <div className="field col-12 md:col-3">
                             <label htmlFor="fromDate" className="">Desde</label>
-                            <Calendar id="lastSupport.fromDate" selectionMode="single"  locale="es-ES"  value={fecha} onChange={(e) => setFecha(e.value)} />
+                            <Calendar id="fromDate" name="fromDate" selectionMode="single"  locale="es-ES"  value={frmFromDate} onChange={(e) => setFrmFromDate(e.value)} />
                         </div>
                         <div className="field col-12 md:col-3">
                             <label htmlFor="toDate" className="">Hasta</label>
-                            <Calendar id="lastSupport.toDate" selectionMode="single"  locale="es-ES"  value={fecha} onChange={(e) => setFecha(e.value)} />
+                            <Calendar id="toDate" name="toDate" selectionMode="single"  locale="es-ES"  value={frmToDate} onChange={(e) => setFrmToDate(e.value)} />
                         </div>
                         <div className="field col-12 md:col-2">
-                            <label htmlFor="lastSupport.price" className="">Precio</label>                
-                            <InputNumber inputId="price" value={license?.price} mode="currency" currency="EUR" locale="es-ES" inputClassName="text-right" onValueChange={onInputNumberChange}/>
+                            <label htmlFor="price" className="">Precio</label>                
+                            <InputNumber inputId="price" name="price" value={frmPrice} mode="currency" currency="EUR" locale="es-ES" inputClassName="text-right" onValueChange={(e) => setFrmPrice(e.value)}/>
                         </div>
                     </div>
                     <div className="col-2 col-offset-5">
-                        <Button type="button" icon="pi pi-save" label="Guardar" severity="info" onClick={handleSave} />                    
+                        <Button type="button" icon="pi pi-save" severity="info"  label="Guardar"  onClick={handleSave} />                    
                     </div>
+
+
                     
                 </div>
             </div>        

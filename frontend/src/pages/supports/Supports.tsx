@@ -8,7 +8,7 @@ import { Toolbar } from 'primereact/toolbar';
 import Layout from "../../layout/layout";
 import { App } from '@/types';
 import { LicenseService } from '../../services/LicenseService';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Dialog } from 'primereact/dialog';
 import { SupportStatus } from '../../common/SupportStatus';
 import { formatCurrencyES } from '../../util/Util';
@@ -34,6 +34,8 @@ const Supports = () => {
         CANCEL : 'cancelar'
     }
 
+    const {id} = useParams();    
+
     const [licenses, setLicenses] = useState<App.LicensesType>(emptyLicenses);
     const [license, setLicense] = useState<App.LicenseType>(emptyLicense);
     const [selectedRow, setSelectedRow] = useState(null);
@@ -45,7 +47,11 @@ const Supports = () => {
     const dt = useRef<DataTable<any>>(null);
 
     useEffect(() => {
-        LicenseService.getLicenses().then((data) => setLicenses(data as any));
+        if (!id){                    
+            LicenseService.getLicenses().then((data) => setLicenses(data as any));
+        } else {
+            LicenseService.getLicense(id).then((data) => setLicenses([data] as any));
+        }
     }, []);
 
     const formatDateEs = (value: string | Date) => {
@@ -62,8 +68,9 @@ const Supports = () => {
             LicenseService.renewSupport(license.id).then((data) => {                
                 console.log(license);
                 if (licenses){
-                    licenses.map(item => item?.id === license.id ? {data} : item);
-                }
+                    console.log(data)
+                    licenses.map(item => item?.id === license.id ? {data} : item);                    
+                }                    
             });
         };
         hideSupportDialog();
@@ -80,8 +87,8 @@ const Supports = () => {
         hideSupportDialog();
     };
 
-    const goRenewSupport = (c: App.LicenseType) => {
-        navigate('/support/' + c?.lastSupport?.id + '/renew');
+    const editSupport = (c: App.LicenseType) => {
+        navigate('/support/' + c?.lastSupport?.id);
     }
 
     const showSupportDialog = (lic: App.LicenseType, act : string) => {
@@ -98,12 +105,12 @@ const Supports = () => {
     );
 
     const toolbarCenterContent = (
-        <div className="p-inputgroup">
-        <span className="p-inputgroup-addon">
-            <i className="pi pi-search" />
-        </span>
-        <InputText className="pl-2" type="search" onInput={(e) => setGlobalFilter(e.currentTarget.value)} placeholder="Buscar..." />
-    </div>
+            <div className="p-inputgroup">
+                <span className="p-inputgroup-addon">
+                    <i className="pi pi-search" />
+                </span>
+                <InputText className="pl-2" type="search" onInput={(e) => setGlobalFilter(e.currentTarget.value)} placeholder="Buscar..." />
+            </div>
     );
 
     const header = (
@@ -116,10 +123,9 @@ const Supports = () => {
     const actionBodyTemplate = (rowData: App.LicenseType) => {        
         return (
             <div className="flex flex-column md:flex-row md:justify-content-center md:align-items-center ">
-                {/* <Button icon="pi pi-replay" label="Renovar" rounded severity="success"  className="mr-2" onClick={() => showSupportDialog(rowData, Action.RENEW)} /> */}
-                <Button icon="pi pi-replay" label="Renovar" rounded severity="success"  className="mr-2" onClick={() => goRenewSupport(rowData)} />
-                
-                <Button icon="pi pi-times" label="Cancelar" rounded severity="warning" disabled={rowData?.lastSupport?.status == SupportStatus.CANCELED}  onClick={() => showSupportDialog(rowData, Action.CANCEL)}/>
+                <Button icon="pi pi-replay" label="Renovar" rounded severity="success"  className="mr-2" onClick={() => showSupportDialog(rowData, Action.RENEW)} />                            
+                <Button icon="pi pi-times" label="Cancelar" rounded severity="warning" className="mr-2" disabled={rowData?.lastSupport?.status == SupportStatus.CANCELED}  onClick={() => showSupportDialog(rowData, Action.CANCEL)}/>
+                <Button icon="pi pi-save" label="Modificar" rounded severity="info"  disabled={rowData?.lastSupport?.status == SupportStatus.CANCELED} onClick={() => editSupport(rowData)} />
                 
             </div>
         );
@@ -146,7 +152,7 @@ const Supports = () => {
 
     const priceBodyTemplate = (rowData: App.LicenseType) => {
         if (rowData?.price){
-            return formatCurrencyES(rowData?.price)
+            return formatCurrencyES(rowData?.lastSupport.price);
         }        
     };
 
@@ -184,7 +190,7 @@ const Supports = () => {
             <div className="col-12">
                 <div className="card">
                     <Toast ref={toast} />
-                    <Toolbar className="mb-4" start={toolbarStartContent} center={toolbarCenterContent} />
+                    <Toolbar className="mb-4" start={toolbarStartContent} center={!id && toolbarCenterContent} />
 
                     <DataTable
                         ref={dt}
@@ -211,6 +217,12 @@ const Supports = () => {
                         <Column body={actionBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
                         
                     </DataTable>
+                    {id &&
+                            <div className="col-2 col-offset-5 mt-5">
+                                <Button type="button" icon="pi pi-chevron-left" severity="secondary"  label="Volver"  onClick={() => navigate(-1)} />                    
+                            </div>
+                
+                    }
                     <Dialog visible={supportDialog} style={{ width: '450px' }} header="Confirmar" modal footer={supportDialogFooter} onHide={hideSupportDialog}>
                         <div className="flex align-items-center justify-content-center">
                             <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />

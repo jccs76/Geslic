@@ -46,11 +46,13 @@ const License = () => {
     const [fecha, setFecha] = useState<Nullable<Date>>(null);
     const [customers, setCustomers] = useState<App.CustomerType[]>([emptyCustomer]);
     const [customersFilter, setCustomersFilter] = useState('');
-    const [customer, setCustomer] = useState<any>(emptyCustomer);
+    const [customer, setCustomer] = useState<any>(null);
     const [products, setProducts] = useState<App.ProductType[]>([emptyProduct]);
     const [productsFilter, setProductsFilter] = useState('');
-    const [product, setProduct] = useState<any>(emptyProduct);
-    const [license, setLicense] = useState<any>(emptyLicense);    
+    const [product, setProduct] = useState<any>(null);
+    const [license, setLicense] = useState<any>(emptyLicense);
+    
+    const [isComplete, setIsComplete] = useState<boolean>(false);
 
     useEffect(() => {  
         CustomerService.getCustomers().then((data) => setCustomers(data as any));
@@ -63,14 +65,21 @@ const License = () => {
                 setFecha(new Date(data.purchaseDate));});
         } else {
             setLicense(emptyLicense);
-            setCustomer(emptyCustomer);
-            setProduct(emptyProduct);
+            setCustomer(null);
+            setProduct(null);
             setFecha(new Date());
         }                
     }, []);
 
     useEffect(() => {
+        (license.code && customer && product) ?
+            setIsComplete(true)
+        :
+            setIsComplete(false);
+        
+    }, [license, customer, product])
 
+    useEffect(() => {        
         let _fecha = convertDatetoISOString(fecha) ;
         setLicense((prevState: any) => (
                 { ...prevState, purchaseDate : _fecha}
@@ -80,17 +89,18 @@ const License = () => {
 
     const onInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {        
         e.preventDefault();
-
+        
         const name = e.target.name;
         const val = (e.target && e.target.value) || '';
         let _license = { ...license };
         _license[`${name}`] = val;
         setLicense(_license);
+
     };
 
-    const onInputNumberChange = (e : any) => {
+    const onInputNumberChange = (e : any) => {        
         let _license = { ...license};
-        _license['price'] = e.value.price;
+        _license['price'] = e.value;
         setLicense(_license);
     }
 
@@ -164,7 +174,10 @@ const License = () => {
     <Layout>
     <div className="grid">
             <div className="col-12">
-                <h5>{id ? 'Editar' : 'Nueva'} Licencia</h5>
+                <div className="flex justify-content-start align-items-baseline">
+                    <Button className="mr-2"  icon="pi pi-chevron-left" rounded text onClick={() => navigate(-1)} />                    
+                    <h5>{id ? 'Editar' : 'Nueva'} Licencia</h5>
+                </div>
                 <div className="card p-fluid">                                        
                     <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-6">
@@ -181,7 +194,7 @@ const License = () => {
                         </div>
                     </div>
                     <div className="col-2 col-offset-5">
-                        <Button type="button" icon="pi pi-save" label="Guardar" severity="info" onClick={handleSave} />                    
+                        <Button type="button" icon="pi pi-save" disabled={!isComplete} label="Guardar" severity="info" onClick={handleSave} />                    
                     </div>
                     
                 </div>
