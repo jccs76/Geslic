@@ -5,13 +5,19 @@ import {  useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
-
+import { InputMask } from "primereact/inputmask";
 
 const Customer = () => {
 
     let emptyCustomer: App.CustomerType = {
         id: '',
-        name: ''
+        name: '',
+        address: '',
+        zipCode: '',
+        state: '',
+        city: '',
+        phoneNumber: '',
+        email: ''
     };
     
     const navigate = useNavigate();
@@ -27,7 +33,7 @@ const Customer = () => {
     }, []);
 
 
-    const onInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {        
+    const onInputChange = (e: any) => {        
         e.preventDefault();
 
         const name = e.target.name;
@@ -39,7 +45,7 @@ const Customer = () => {
     };
 
 
-    const handleSubmit = (e : React.FormEvent<HTMLFormElement>) => {
+    const  handleSave = (e : any) => {
         e.preventDefault();
         if (id){
             CustomerService.updateCustomer(id, customer).then((data) => setCustomer(data as any))
@@ -47,7 +53,7 @@ const Customer = () => {
         } else {
             CustomerService.createCustomer(customer).then((data) => setCustomer(data as any))
         }
-        navigate(-1);
+        navigate('/customers');
     }
 
   return (
@@ -58,8 +64,7 @@ const Customer = () => {
                 <Button className="mr-2"  icon="pi pi-chevron-left" rounded text onClick={() => navigate('/customers')} />                    
                 <h5>{id ? 'Editar' : 'Nuevo'} Cliente</h5>
             </div>
-                <div className="card p-fluid">
-                    <form onSubmit={handleSubmit}>                                  
+                <div className="card p-fluid">                   
                     <div className="p-fluid formgrid grid">
                         <div className="field col-12 md:col-6">
                             <label htmlFor="name" className="">Nombre</label>                        
@@ -71,7 +76,7 @@ const Customer = () => {
                         </div>
                         <div className="field col-12 md:col-2">                    
                             <label htmlFor="zipCode" className="">Código Postal</label>                    
-                            <InputText id="zipCode" name="zipCode"  value={customer.zipCode} type="text" onChange={onInputChange} />
+                            <InputMask id="zipCode" name="zipCode" mask="99999" value={customer.zipCode} type="text" onChange={onInputChange} />
                         </div>
                         <div className="field col-12 md:col-3">
                             <label htmlFor="state" className="">Provincia</label>
@@ -83,17 +88,16 @@ const Customer = () => {
                         </div>
                         <div className="field col-12 md:col-2 lg:col-2 xl:col-2">    
                             <label htmlFor="phoneNumber" className="">Teléfono</label>
-                            <InputText id="phoneNumber" name="phoneNumber"  value={customer.phoneNumber} type="text" onChange={onInputChange} />
+                            <InputMask id="phoneNumber" name="phoneNumber" mask="999999999" value={customer.phoneNumber} type="text" onChange={onInputChange} />
                         </div>
                         <div className="field col-12 md:col-5">    
                             <label htmlFor="email" className="">E-mail</label>
                             <InputText id="email" name="email"  value={customer.email} type="text" onChange={onInputChange} />
                         </div>
                         <div className="col-2 col-offset-5 mt-5">
-                            <Button type="submit" icon="pi pi-save" label="Guardar" severity="info" />                    
+                            <Button type="button" icon="pi pi-save" label="Guardar" severity="info" onClick={handleSave} />                    
                         </div>
-                    </div>
-                    </form>
+                    </div>                   
                 </div>
             </div>        
     </div>

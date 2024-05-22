@@ -126,9 +126,9 @@ const Supports = () => {
     const actionBodyTemplate = (rowData: App.LicenseType) => {        
         return (
             <div className="flex flex-column md:flex-row md:justify-content-center md:align-items-center ">
-                <Button icon="pi pi-replay" label="Renovar" rounded severity="success"  className="mr-2" onClick={() => showSupportDialog(rowData, Action.RENEW)} />                            
-                <Button icon="pi pi-times" label="Cancelar" rounded severity="warning" className="mr-2" disabled={rowData?.lastSupport?.status == SupportStatus.CANCELED}  onClick={() => showSupportDialog(rowData, Action.CANCEL)}/>
-                <Button icon="pi pi-save" label="Modificar" rounded severity="info"  disabled={rowData?.lastSupport?.status == SupportStatus.CANCELED} onClick={() => editSupport(rowData)} />
+                <Button icon="pi pi-replay" tooltip="Renovar" rounded severity="success"  className="mr-2" onClick={() => showSupportDialog(rowData, Action.RENEW)} />                            
+                <Button icon="pi pi-times" tooltip="Cancelar" rounded severity="danger" className="mr-2" disabled={rowData?.lastSupport?.status == SupportStatus.CANCELED}  onClick={() => showSupportDialog(rowData, Action.CANCEL)}/>
+                <Button icon="pi pi-pencil" tooltip="Modificar" rounded severity="info"  disabled={rowData?.lastSupport?.status == SupportStatus.CANCELED} onClick={() => editSupport(rowData)} />
                 
             </div>
         );

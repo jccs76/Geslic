@@ -56,4 +56,10 @@ export const LicenseService = {
             .then((d) => d as any)
             .catch( (error) => console.log(error));
     },
+    getLicensesSupportBetweenDates(fromDate : string | undefined, toDate : string | undefined){
+        return fetch(`http://localhost:8080/api/v1/licenses/from/${fromDate}/to/${toDate}` , { headers: { 'Cache-Control': 'no-cache' } })
+            .then((res) => res.json())
+            .then((d) => d as any)
+            .catch( (error) => console.log(error));
+    }
 };

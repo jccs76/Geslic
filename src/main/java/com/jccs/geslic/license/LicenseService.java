@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.time.ZoneId;
 import java.util.ArrayList;
 
@@ -138,8 +139,13 @@ public class LicenseService extends AbstractService<LicenseDTO, License, License
         return getLicense(id).getSupports();
     }
 
-    public List<LicenseDTO> getLicensesBetween(LocalDate date){
-        LocalDate ld = LocalDate.of(2024, 6, 30);
-        return mapper.map(repository.findByLastSupportToDateBefore(ld));
+    public List<LicenseDTO> getLicensesLastSupportBetween(LocalDate dateAfter, LocalDate dateBefore){        
+        return mapper.map(repository.findByLastSupportFromDateAfterToDateBefore(dateAfter, dateBefore));
+    }
+
+    public List<LicenseDTO> getLicensesLastSupportThisMonth(){
+        LocalDate firstDayOfMonth = YearMonth.from(Instant.now().atZone(ZoneId.systemDefault())).atDay(1);
+        LocalDate lastDayOfMonth = YearMonth.from(Instant.now().atZone(ZoneId.systemDefault())).atEndOfMonth();
+        return mapper.map(repository.findByLastSupportFromDateAfterToDateBefore(firstDayOfMonth, lastDayOfMonth));
     }
 }

@@ -125,7 +125,7 @@ const License = () => {
          } else {
             LicenseService.createLicense(_license).then((data) => setLicense(data as any))
         }
-        navigate(-1);
+        navigate('/licenses');
     }
 
     const handleSubmit = (e : React.FormEvent<HTMLFormElement>) => {

@@ -8,7 +8,7 @@ import { LicenseService } from "../../services/LicenseService";
 import { SupportStatus } from "../../common/SupportStatus";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
-import { formatCurrencyES, getFirstDayOfMonth, getLastDayOfMonth } from "../../util/Util";
+import { convertDatetoISOString, formatCurrencyES, getFirstDayOfMonth, getLastDayOfMonth } from "../../util/Util";
 import { Toolbar } from "primereact/toolbar";
 import { Column } from "primereact/column";
 import { Dialog } from "primereact/dialog";
@@ -16,6 +16,7 @@ import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { Calendar } from "primereact/calendar";
 import { Nullable } from "primereact/ts-helpers";
+import { Password } from "primereact/password";
 
 export const Dashboard =() => {
 
@@ -60,8 +61,11 @@ export const Dashboard =() => {
         if (searchFromDate && searchToDate) {
             if (searchFromDate > searchToDate){
                 setSearchFromDate(searchToDate);
-            }                    
-        }
+            }
+            LicenseService.getLicensesSupportBetweenDates(convertDatetoISOString(searchFromDate), 
+                                                          convertDatetoISOString(searchToDate))
+                          .then((data) => setLicenses(data as any));
+        }        
     }, [searchFromDate]);
 
     useEffect(() => {
@@ -69,9 +73,13 @@ export const Dashboard =() => {
             if (searchToDate < searchFromDate){
                 setSearchToDate(searchFromDate);
             }                    
+            LicenseService.getLicensesSupportBetweenDates(convertDatetoISOString(searchFromDate), 
+                                                          convertDatetoISOString(searchToDate))
+                          .then((data) => setLicenses(data as any));
         }
     }, [searchToDate]);
 
+    
     const formatDateEs = (value: string | Date) => {
         return new Date(value).toLocaleDateString('es-ES', {
             day: '2-digit',
@@ -123,7 +131,8 @@ export const Dashboard =() => {
   );
 
   const toolbarEndContent = (
-    <div className="flex gap-3">
+    <div className="flex gap-3">                                    
+
         <div className="flex-auto">
             <label htmlFor="searchFromDate" className="font-bold block mb-2">Desde</label>
             <Calendar id="searchFromDate" name="searchFromDate" selectionMode="single"  locale="es-ES"  value={searchFromDate} onChange={(e) => setSearchFromDate(e.value)} />
@@ -149,8 +158,8 @@ export const Dashboard =() => {
       return (
           <div className="flex flex-column md:flex-row md:justify-content-center md:align-items-center ">
               <Button icon="pi pi-replay" tooltip="Renovar" rounded severity="success"  className="mr-2" onClick={() => showSupportDialog(rowData, Action.RENEW)} />                            
-              <Button icon="pi pi-times" tooltip="Cancelar" rounded severity="warning" className="mr-2" disabled={rowData?.lastSupport?.status == SupportStatus.CANCELED}  onClick={() => showSupportDialog(rowData, Action.CANCEL)}/>
-              <Button icon="pi pi-save" tooltip="Modificar" rounded severity="info"  disabled={rowData?.lastSupport?.status == SupportStatus.CANCELED} onClick={() => editSupport(rowData)} />
+              <Button icon="pi pi-times" tooltip="Cancelar" rounded severity="danger" className="mr-2" disabled={rowData?.lastSupport?.status == SupportStatus.CANCELED}  onClick={() => showSupportDialog(rowData, Action.CANCEL)}/>
+              <Button icon="pi pi-pencil" tooltip="Modificar" rounded severity="info"  disabled={rowData?.lastSupport?.status == SupportStatus.CANCELED} onClick={() => editSupport(rowData)} />
               
           </div>
       );

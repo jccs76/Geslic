@@ -61,7 +61,7 @@ const Product = () => {
     }
 
     
-    const handleSubmit = (e : React.FormEvent<HTMLFormElement>) => {
+    const handleSave = (e : any) => {
         e.preventDefault();
         console.log(product);
         if (id){
@@ -70,7 +70,7 @@ const Product = () => {
         } else {
             ProductService.createProduct(product).then((data) => setProduct(data as any))
         }
-        navigate(-1);
+        navigate('/products');
     }
 
   return (
@@ -82,8 +82,7 @@ const Product = () => {
                     <Button className="mr-2"  icon="pi pi-chevron-left" rounded text onClick={() => navigate('/')} />                    
                     <h5>{id ? 'Editar' : 'Nuevo'} Producto</h5>
                 </div>
-                <div className="card p-fluid">
-                    <form onSubmit={handleSubmit}>
+                <div className="card p-fluid">                   
                         <div className="p-fluid formgrid grid">
                             <div className="field col-12 md:col-6">
                                 <label htmlFor="name" className="">Nombre</label>                        
@@ -99,9 +98,9 @@ const Product = () => {
                             </div>                                                          
                         </div>
                         <div className="col-2 col-offset-5">
-                                <Button type="submit" icon="pi pi-save" label="Guardar" severity="info"  />                    
-                            </div>
-                    </form>
+                                <Button type="submit" icon="pi pi-save" label="Guardar" severity="info" onClick={handleSave} />                    
+                        </div>
+
                 </div>
             </div>        
     </div>

@@ -11,12 +11,13 @@ import Dashboard  from './pages/home/Dashboard.tsx';
 import Customers from './pages/customers/Customers.tsx';
 import Products from './pages/products/Products.tsx';
 import Licenses from './pages/licenses/Licenses.tsx';
-import Customer from './pages/customer/Customer.tsx';
-import Product from './pages/product/Product.tsx';
-import License from './pages/license/License.tsx';
+import Customer from './pages/customers/Customer.tsx';
+import Product from './pages/products/Product.tsx';
+import License from './pages/licenses/License.tsx';
 import Supports from './pages/supports/Supports.tsx';
-import CustomerLicenses from './pages/customerLicenses/CustomerLicenses.tsx';
-import Support from './pages/support/Support.tsx';
+import CustomerLicenses from './pages/customers/CustomerLicenses.tsx';
+import Support from './pages/supports/Support.tsx';
+import Login from './pages/auth/Login.tsx';
 
 
 
@@ -43,6 +44,8 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             <Route path="/license/:id/support" element={<Supports/>} />
             <Route path="/supports" element={<Supports />} />
             <Route path="/support/:id" element={<Support />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/logout" element={<Login />} />
             <Route path="*" element={<Dashboard />} />
         </Routes>        
         </App>

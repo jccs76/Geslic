@@ -130,8 +130,8 @@ const Products = () => {
     const actionBodyTemplate = (rowData: App.ProductType) => {
         return (
             <div className="flex flex-column md:flex-row md:justify-content-center md:align-items-center ">
-                <Button icon="pi pi-pencil" rounded severity="success"  className="mr-2" onClick={() => editProduct(rowData)} />
-                <Button icon="pi pi-trash" rounded severity="warning"  onClick={() => confirmDelete(rowData)}/>
+                <Button icon="pi pi-pencil" tooltip="Modificar" rounded severity="info"  className="mr-2" onClick={() => editProduct(rowData)} />
+                <Button icon="pi pi-trash" tooltip="Eliminar" rounded severity="warning"  onClick={() => confirmDelete(rowData)}/>
             </div>
         );
     };

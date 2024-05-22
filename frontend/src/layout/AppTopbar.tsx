@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 
-import {Link} from 'react-router-dom';
+import {Link, NavLink} from 'react-router-dom';
 import { classNames } from 'primereact/utils';
 import { forwardRef, useContext, useImperativeHandle, useRef } from 'react';
 import { AppTopbarRef } from '@/types';
@@ -48,6 +48,12 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                         <span>Settings</span>
                     </button>
                 </Link> */}
+                <NavLink to='/logout'>
+                    <button type="button" className="p-link layout-topbar-button">
+                        <i className="pi pi-sign-out"></i>
+                        <span>Salir</span>
+                    </button>
+                </NavLink>
             </div>
         </div>
     );

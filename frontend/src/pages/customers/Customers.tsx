@@ -127,9 +127,9 @@ const Customers = () => {
     const actionBodyTemplate = (rowData: App.CustomerType) => {
         return (
             <div className="flex flex-column md:flex-row md:justify-content-center md:align-items-center ">
-                <Button icon="pi pi-pencil" rounded severity="success"  className="mr-2" onClick={() => editCustomer(rowData)} />
-                <Button icon="pi pi-trash" rounded severity="warning"  className="mr-2" onClick={() => confirmDelete(rowData)}/>
-                <Button icon="pi pi-book"  rounded severity="secondary"  className="mr-2" onClick={() => viewLicenses(rowData)} />
+                <Button icon="pi pi-pencil" tooltip="Modificar" rounded severity="info"  className="mr-2" onClick={() => editCustomer(rowData)} />
+                <Button icon="pi pi-trash" tooltip="Eliminar" rounded severity="warning"  className="mr-2" onClick={() => confirmDelete(rowData)}/>
+                <Button icon="pi pi-book"  tooltip="Licencias" rounded severity="secondary"  className="mr-2" onClick={() => viewLicenses(rowData)} />
             </div>
         );
     };

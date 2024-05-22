@@ -34,10 +34,11 @@ const Layout = ({ children }: ChildContainerProps) => {
 
     // const pathname = useLocation();
     // const searchParams = useSearchParams();
-    // useEffect(() => {
-    //     hideMenu();
-    //     hideProfileMenu();
-    // }, [pathname, searchParams]);
+     useEffect(() => {        
+         hideMenu();
+         hideProfileMenu();
+     //}, [pathname, searchParams]);
+     }, []);
 
     const [bindProfileMenuOutsideClickListener, unbindProfileMenuOutsideClickListener] = useEventListener({
         type: 'click',

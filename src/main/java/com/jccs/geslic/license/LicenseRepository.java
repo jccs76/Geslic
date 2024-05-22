@@ -1,6 +1,5 @@
 package com.jccs.geslic.license;
 
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -14,7 +13,7 @@ import java.time.LocalDate;
 interface LicenseRepository extends CommonRepository<License>{
     Optional<License> findByCode(String code);
   
-    @Query("select l from License l where l.lastSupport.toDate <= ?1")
-    List<License> findByLastSupportToDateBefore(LocalDate date);
+    @Query("select l from License l where lastSupport.toDate >= ?1 and lastSupport.toDate <= ?2")
+    List<License> findByLastSupportFromDateAfterToDateBefore(LocalDate dateAfter, LocalDate dateBefore);
 
 }

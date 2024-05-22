@@ -5,9 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import com.jccs.geslic.customer.Customer;
 import com.jccs.geslic.product.Product;
@@ -90,8 +87,8 @@ public class LicenseRepositoryTest {
 
     @Test
     public void findByLastSupportToDateBefore_thenLicensesAreReturned() {
-        List<License> result = repository.findByLastSupportToDateBefore(
-          LocalDate.parse("2024-05-31"));
+        List<License> result = repository.findByLastSupportFromDateAfterToDateBefore(
+          LocalDate.parse("2024-05-01"), LocalDate.parse("2024-05-31") );
           assertNotNull(result);
           assertEquals (licenses.get(0).getId(), result.get(0).getId());
   
