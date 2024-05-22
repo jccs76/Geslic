@@ -14,7 +14,8 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { CustomerService } from '../../services/CustomerService';
 import { LicenseService } from '../../services/LicenseService';
 
-import { SupportStatus } from '../../common/SupportStatus';
+import { getStatusText } from '../../common/SupportStatus';
+import { formatCurrencyES, formatDateEs } from '../../util/Util';
 
 
 const CustomerLicenses = () => {
@@ -86,8 +87,11 @@ const CustomerLicenses = () => {
     );
 
     
-    const toolbarStartContent = (    
-            <h5 className="mt-3">Licencias de {location.state.name}</h5>        
+    const toolbarStartContent = (
+        <div className="flex justify-content-start align-items-baseline">
+            <Button className="mr-2"  icon="pi pi-chevron-left" rounded text onClick={() => navigate('/customers')} /> 
+            <h5 className="mt-3">Licencias de {location.state.name}</h5>
+        </div>
     );
 
     const toolbarCenterContent = (
@@ -121,31 +125,34 @@ const CustomerLicenses = () => {
         );
     };
 
+    
     const nameBodyTemplate = (rowData: App.LicenseType) => {
-        return (
-            <>
-                <span className="p-column-title">Nº Serie</span>
-                {rowData?.code}
-            </>
+        return (            
+            <Button link label={rowData?.code} className="text-color" onClick={() => navigate('/licenses/' + rowData?.id) }/>            
         );
     };
-
-    const statusBodyTemplate = (rowData: App.LicenseType) => {
-        return <span className={`support-badge support-${rowData?.lastSupport?.status.toLowerCase()}`}>{(() => {
-            switch (rowData?.lastSupport?.status) {
-              case SupportStatus.ACTIVE: 
-                return 'EN VIGOR'
-              case SupportStatus.CANCELED:
-                return 'CANCELADA'
-              case SupportStatus.EXPIRED:
-                return 'EXPIRADA'
-              default:
-                return null
-            }
-          })() }</span>;
-        
+    
+    const priceBodyTemplate = (rowData: App.LicenseType) => {
+        if (rowData?.price){
+            return formatCurrencyES(rowData?.price)
+        }        
     };
 
+    const purchaseDateBodyTemplate = (rowData: App.LicenseType) => {
+        if (rowData?.purchaseDate){
+            return formatDateEs(rowData?.purchaseDate)
+        }        
+    };
+
+
+    const statusBodyTemplate = (rowData: App.LicenseType) => {
+        const labelText = getStatusText (rowData?.lastSupport?.status);
+        return (
+                <Button link label={labelText} className={`support-badge support-${rowData?.lastSupport?.status.toLowerCase()}`}
+                onClick={() => navigate('/license/' + rowData?.id + '/support' )}
+                />
+        );
+    }
 
     return (
         <Layout>
@@ -172,9 +179,11 @@ const CustomerLicenses = () => {
                         emptyMessage="No hay licencias."
                         header={header}
                     >
-                        <Column field="id" header="Id"  headerStyle={{ minWidth: '3rem' }}></Column>
-                        <Column field="code" header="Nº Serie" body={nameBodyTemplate} headerStyle={{ minWidth: '30rem' }}></Column>
-                        <Column field="support.status" body={statusBodyTemplate} headerStyle={{ minWidth: '3rem' }}></Column>
+                        <Column field="code" header="Nº Serie" body={nameBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
+                        <Column field="product.name" header="Producto"  headerStyle={{ minWidth: '4rem' }}></Column>
+                        <Column field="purchaseDate" header="FechaCompra" body={purchaseDateBodyTemplate} headerStyle={{ minWidth: '2rem'}} className='text-center'></Column>
+                        <Column field="price" header="Precio" body={priceBodyTemplate}  headerStyle={{ minWidth: '2rem'}} className='text-right'></Column>
+                        <Column field="support.status" header="Estado" body={statusBodyTemplate} headerStyle={{ minWidth: '3rem' }} className='text-center'></Column>
                         <Column body={actionBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
                         
                     </DataTable>

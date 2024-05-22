@@ -21,3 +21,14 @@ export const convertDatetoISOString = (value: Nullable<Date>) => {
       return value.toLocaleDateString("fr-CA").replace(" ", "T").split(".")[0];
     }
 };
+
+export const getFirstDayOfMonth = (value :  Date) => {
+    return new Date(
+                    value.getFullYear(),
+                    value.getMonth(),
+                    1);
+}
+
+export const getLastDayOfMonth = (value : Date) => {
+   return new Date(value.getFullYear(), value.getMonth() + 1, 0);
+}

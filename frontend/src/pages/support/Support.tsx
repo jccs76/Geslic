@@ -1,6 +1,6 @@
 import Layout from "../../layout/layout";
 import { App } from "@/types";
-import {  useEffect, useRef, useState } from "react";
+import {  useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
@@ -89,7 +89,7 @@ const Support = () => {
     <div className="grid">
             <div className="col-12">
                 <div className="flex justify-content-start align-items-baseline">
-                    <Button className="mr-2"  icon="pi pi-chevron-left" rounded text onClick={() => navigate(-1)} />                    
+                    <Button className="mr-2"  icon="pi pi-chevron-left" rounded text onClick={() => navigate('/supports')} />                    
                     <h5 className="">Modificar Mantenimiento</h5>
                 </div>
                 <div className="card p-fluid">                                        

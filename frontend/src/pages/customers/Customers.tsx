@@ -8,7 +8,7 @@ import { Toolbar } from 'primereact/toolbar';
 import Layout from "../../layout/layout";
 import { App } from '@/types';
 import { CustomerService } from '../../services/CustomerService';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Dialog } from 'primereact/dialog';
 import { IconField } from 'primereact/iconfield';
 import { InputIcon } from 'primereact/inputicon';
@@ -36,8 +36,14 @@ const Customers = () => {
     const toast = useRef<Toast>(null);
     const dt = useRef<DataTable<any>>(null);
 
+    const {id} = useParams();
+
     useEffect(() => {
-        CustomerService.getCustomers().then((data) => setCustomers(data as any));        
+        if (!id) {
+            CustomerService.getCustomers().then((data) => setCustomers(data as any));        
+        } else {
+            CustomerService.getCustomer(id).then((data) => setCustomers([data] as any));        
+        }        
     }, []);
 
     const openNew = () => {
@@ -85,7 +91,10 @@ const Customers = () => {
 
     
     const toolbarStartContent = (    
-            <h5 className="mt-3">Gestión de Clientes</h5>        
+        <div className="flex justify-content-start align-items-baseline">
+            <Button className="mr-2"  icon="pi pi-chevron-left" rounded text onClick={() => navigate('/')} />                    
+            <h5 className="mt-3">Gestión de Clientes</h5> 
+        </div>       
     );
 
     const toolbarCenterContent = (
@@ -119,7 +128,7 @@ const Customers = () => {
         return (
             <div className="flex flex-column md:flex-row md:justify-content-center md:align-items-center ">
                 <Button icon="pi pi-pencil" rounded severity="success"  className="mr-2" onClick={() => editCustomer(rowData)} />
-                <Button icon="pi pi-trash" rounded severity="warning"  className="mr-4" onClick={() => confirmDelete(rowData)}/>
+                <Button icon="pi pi-trash" rounded severity="warning"  className="mr-2" onClick={() => confirmDelete(rowData)}/>
                 <Button icon="pi pi-book"  rounded severity="secondary"  className="mr-2" onClick={() => viewLicenses(rowData)} />
             </div>
         );

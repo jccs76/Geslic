@@ -100,8 +100,11 @@ const Supports = () => {
     const hideSupportDialog = () => {
         setSupportDialog(false);
     };
-    const toolbarStartContent = (    
-            <h5 className="mt-3">Gestión de Mantenimientos</h5>        
+    const toolbarStartContent = ( 
+        <div className="flex justify-content-start align-items-baseline">
+            <Button className="mr-2"  icon="pi pi-chevron-left" rounded text onClick={() => navigate('/')} />                       
+            <h5 className="mt-3">Gestión de Mantenimientos</h5>
+        </div>
     );
 
     const toolbarCenterContent = (

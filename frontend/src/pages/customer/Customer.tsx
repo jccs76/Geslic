@@ -54,7 +54,10 @@ const Customer = () => {
     <Layout>
     <div className="grid">
             <div className="col-12">
+            <div className="flex justify-content-start align-items-baseline">
+                <Button className="mr-2"  icon="pi pi-chevron-left" rounded text onClick={() => navigate('/customers')} />                    
                 <h5>{id ? 'Editar' : 'Nuevo'} Cliente</h5>
+            </div>
                 <div className="card p-fluid">
                     <form onSubmit={handleSubmit}>                                  
                     <div className="p-fluid formgrid grid">

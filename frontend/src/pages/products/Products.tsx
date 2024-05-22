@@ -8,7 +8,7 @@ import { Toolbar } from 'primereact/toolbar';
 import Layout from "../../layout/layout";
 import { App } from '@/types';
 import { ProductService } from '../../services/ProductService';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Dialog } from 'primereact/dialog';
 import { formatCurrencyES } from '../../util/Util';
 
@@ -33,8 +33,14 @@ const Products = () => {
     const toast = useRef<Toast>(null);
     const dt = useRef<DataTable<any>>(null);
 
+    const {id} = useParams();    
+
     useEffect(() => {
-        ProductService.getProducts().then((data) => setProducts(data as any));
+        if (!id) {
+            ProductService.getProducts().then((data) => setProducts(data as any));
+        } else {
+            ProductService.getProduct(id).then((data) => setProducts([data] as any));
+        }
     }, []);
 
     const openNew = () => {
@@ -92,8 +98,11 @@ const Products = () => {
     );
 
     
-    const toolbarStartContent = (    
+    const toolbarStartContent = ( 
+        <div className="flex justify-content-start align-items-baseline">
+            <Button className="mr-2"  icon="pi pi-chevron-left" rounded text onClick={() => navigate('/')} />                       
             <h5 className="mt-3">Gestión de Productos</h5>        
+        </div>
     );
 
     const toolbarCenterContent = (

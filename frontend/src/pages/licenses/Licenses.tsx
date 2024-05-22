@@ -8,7 +8,7 @@ import { Toolbar } from 'primereact/toolbar';
 import Layout from "../../layout/layout";
 import { App } from '@/types';
 import { LicenseService } from '../../services/LicenseService';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Dialog } from 'primereact/dialog';
 import { getStatusText } from '../../common/SupportStatus';
 import { formatCurrencyES, formatDateEs } from '../../util/Util';
@@ -34,8 +34,15 @@ const Licenses = () => {
     const toast = useRef<Toast>(null);
     const dt = useRef<DataTable<any>>(null);
 
+    const {id} = useParams();    
+
     useEffect(() => {
-        LicenseService.getLicenses().then((data) => setLicenses(data as any));
+        if (!id){      
+            LicenseService.getLicenses().then((data) => setLicenses(data as any));
+        } else {
+            LicenseService.getLicense(id).then((data) => setLicenses([data] as any));
+        }
+
     }, []);
 
     const openNew = () => {
@@ -82,8 +89,11 @@ const Licenses = () => {
     );
 
     
-    const toolbarStartContent = (    
+    const toolbarStartContent = (
+        <div className="flex justify-content-start align-items-baseline">
+            <Button className="mr-2"  icon="pi pi-chevron-left" rounded text onClick={() => navigate('/')} />                        
             <h5 className="mt-3">Gestión de Licencias</h5>        
+        </div>
     );
 
     const toolbarCenterContent = (
@@ -142,7 +152,7 @@ const Licenses = () => {
     const statusBodyTemplate = (rowData: App.LicenseType) => {
         const labelText = getStatusText (rowData?.lastSupport?.status);
         return (
-                <Button label={labelText} className={`support-badge support-${rowData?.lastSupport?.status.toLowerCase()}`}
+                <Button link label={labelText} className={`support-badge support-${rowData?.lastSupport?.status.toLowerCase()}`}
                 onClick={() => navigate('/license/' + rowData?.id + '/support' )}
                 />
 

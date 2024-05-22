@@ -1,4 +1,3 @@
-import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { PrimeReactProvider } from 'primereact/api';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
@@ -8,7 +7,7 @@ import "primereact/resources/themes/lara-light-blue/theme.css";
 import 'primeicons/primeicons.css';
 
 import App from './App';
-import Home  from './pages/home/Home.tsx';
+import Dashboard  from './pages/home/Dashboard.tsx';
 import Customers from './pages/customers/Customers.tsx';
 import Products from './pages/products/Products.tsx';
 import Licenses from './pages/licenses/Licenses.tsx';
@@ -22,28 +21,32 @@ import Support from './pages/support/Support.tsx';
 
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode> 
+  // <React.StrictMode> 
      <PrimeReactProvider>
       <BrowserRouter>
         <App>
         <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<Dashboard />} />
             <Route path="/customers" element={<Customers />} />
-            <Route path="/customer/" element={<Customer />} />
+            <Route path="/customers/:id" element={<Customers />} />            
+            <Route path="/customer/" element={<Customer />} />            
             <Route path="/customer/:id" element={<Customer />} />
             <Route path="/customer/:id/licenses" element={<CustomerLicenses/>} />
             <Route path="/products" element={<Products />} />
+            <Route path="/products/:id" element={<Products />} />
             <Route path="/product" element={<Product />} />
             <Route path="/product/:id" element={<Product />} />
             <Route path="/licenses" element={<Licenses />} />
-            <Route path="/license" element={<License />} />
+            <Route path="/licenses/:id" element={<Licenses />} />
+            <Route path="/license" element={<License />} />            
             <Route path="/license/:id" element={<License />} />
             <Route path="/license/:id/support" element={<Supports/>} />
             <Route path="/supports" element={<Supports />} />
             <Route path="/support/:id" element={<Support />} />
+            <Route path="*" element={<Dashboard />} />
         </Routes>        
         </App>
       </BrowserRouter>        
     </PrimeReactProvider>   
-  </React.StrictMode>,
+  // </React.StrictMode>
 )
