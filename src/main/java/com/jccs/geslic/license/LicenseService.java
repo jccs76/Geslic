@@ -30,7 +30,7 @@ import com.jccs.geslic.support.SupportStatus;
 public class LicenseService extends AbstractService<LicenseDTO, License, LicenseMapper, LicenseRepository> {
     
     private static final double PERCENTAGE  = 20;
-
+    
     private final ProductService productService;
     
     private final CustomerService customerService;

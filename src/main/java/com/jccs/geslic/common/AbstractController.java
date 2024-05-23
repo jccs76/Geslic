@@ -23,7 +23,7 @@ public abstract class AbstractController <E extends Record, S extends CommonServ
     }
 
     @Override
-    public ResponseEntity<List<E>> getAll() {
+    public ResponseEntity<List<E>> getAll() {       
         return ResponseEntity.ok(service.getAll());
     }
 

@@ -1,5 +1,6 @@
 package com.jccs.geslic.user;
 
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -10,7 +11,7 @@ import com.jccs.geslic.common.exception.EntityInvalidException;
 
 
 @Service
-class UserService extends AbstractService<UserDTO, User, UserMapper, UserRepository>{
+public class UserService extends AbstractService<UserDTO, User, UserMapper, UserRepository>{
     
     public UserService(UserRepository repository, UserMapper mapper) {
         super(repository, mapper);
@@ -18,7 +19,7 @@ class UserService extends AbstractService<UserDTO, User, UserMapper, UserReposit
 
     @Override
     public UserDTO create(UserDTO dto) {
-        repository.findByName(dto.name())
+        repository.findByEmail(dto.email())
                               .ifPresent ( p -> {throw new EntityExistingException (Constants.ENTITY_EXISTS);});
         
         return super.create(dto);
@@ -30,6 +31,9 @@ class UserService extends AbstractService<UserDTO, User, UserMapper, UserReposit
                 return super.update(id, dto);
         }
         throw new EntityInvalidException(Constants.ENTITY_INVALID);
+    }    
+
+    public Optional<User> getByEmail(String email) {
+        return repository.findByEmail(email);            
     }
-    
 }

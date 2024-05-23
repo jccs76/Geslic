@@ -41,8 +41,8 @@ public class UserControllerTest {
     @BeforeEach
     void setUp() {
         users = List.of(
-                    new UserDTO(1L,"Usuario1"),
-                    new UserDTO(2L,"Usuario2")
+                    new UserDTO(1L,"Usuario1", "", "usuario1@email.com", "pass"),
+                    new UserDTO(2L,"Usuario2",  "", "usuario2@email.com", "pass")
         );                
     }
 
@@ -54,11 +54,17 @@ public class UserControllerTest {
             [
                 {
                     "id":1,
-                    "name":"Usuario1"
+                    "firstName":"Usuario1",
+                    "lastName":"",
+                    "email":"usuario1@email.com",
+                    "password":"pass"
                 },
                 {
                     "id":2,
-                    "name":"Usuario2"
+                    "firstName":"Usuario2",
+                    "lastName":"",
+                    "email":"usuario1@email.com",
+                    "password":"pass"
                 }
             ]
             """;
@@ -81,7 +87,7 @@ public class UserControllerTest {
         String jsonResponse = """
                 {
                     "id" : 1,                    
-                    "name":"Usuario1"                
+                    "firstName":"Usuario1"                
                 }
                 """;
                 
@@ -111,13 +117,14 @@ public class UserControllerTest {
     @Test
     @DisplayName("Create an user and obtain the saved user")
     void givenUser_whenCreated_thenIsSaved() throws Exception {
-        UserDTO user = new UserDTO(null,"Usuario 3");
-        UserDTO userCreated = new UserDTO(3L,"Usuario 3");
+        UserDTO user = new UserDTO(null,"Usuario 3", "", "usuario3@email.com", "pass");
+        UserDTO userCreated = new UserDTO(3L,"Usuario 3","", "usuario3@email.com", "pass");
         
         String jsonResponse = """
                 {
                     "id" : 3,                    
-                    "name":"Usuario 3"
+                    "firstName":"Usuario 3",
+
                 }
                 """;
                 
@@ -134,7 +141,7 @@ public class UserControllerTest {
     @Test
     @DisplayName("Create User without name returns invalid User error")
     void givenBadUser_whenCreate_thenReturnBadRequestError() throws Exception {
-        UserDTO user = new UserDTO(null,"");
+        UserDTO user = new UserDTO(null,"","", "usuario2@email.com", "pass");
 
         when(userService.create(user)).thenThrow(new EntityInvalidException(Constants.ENTITY_INVALID));
 
@@ -164,12 +171,15 @@ public class UserControllerTest {
     @DisplayName("Update an existing user and obtain the updated user")
     void givenUser_whenUpdated_thenIsSaved() throws Exception {
         Long id = 2L;
-        UserDTO user = new UserDTO(id,"Usuario 3");
+        UserDTO user = new UserDTO(id,"Usuario 3","", "usuario2@email.com", "pass");
 
         String jsonResponse = """
                 {
                     "id" : 2,                    
-                    "name":"Usuario 3"
+                    "firstName":"Usuario 3",
+                    "lastName" : "",
+                    "email": "usuario3@email.com",
+                    "password": "pass"
                 }
                 """;
                 
@@ -187,7 +197,7 @@ public class UserControllerTest {
     @DisplayName("Update inexistent user returns user not found")
     void givenInexistentUserID_whenUpdate_thenReturnNotFoundError() throws Exception {
         Long id = -1L;
-        UserDTO user = new UserDTO(id,"Usuario 3");
+        UserDTO user = new UserDTO(id,"Usuario 3","", "usuario2@email.com", "pass");
 
         when(userService.update(id, user)).thenThrow(new EntityNotFoundException(Constants.ENTITY_NOTFOUND));
 

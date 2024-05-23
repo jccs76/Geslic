@@ -45,14 +45,20 @@ public class UserServiceTest {
         
         users = List.of(User.builder()
                                     .id(1L)
-                                    .name("Usuario 1").build(),
+                                    .firstName("Usuario 1")
+                                    .email("usuario1@email.com")
+                                    .password("pass")
+                                    .build(),
                         User.builder()
                                     .id(2L)
-                                    .name("Usuario 2").build());
+                                    .firstName("Usuario 1")
+                                    .email("usuario1@email.com")
+                                    .password("pass")
+                                    .build());
                             
         usersDTO = List.of(
-                    new UserDTO(1L,"Usuario 1"),
-                    new UserDTO(2L,"Usuario 2")
+                    new UserDTO(1L,"Usuario 1","", "usuario1@email.com", "pass"),
+                    new UserDTO(2L,"Usuario 2","", "usuario2@email.com", "pass")
         );                
 
     }
@@ -94,7 +100,7 @@ public class UserServiceTest {
 
     @Test
     public void givenUser_whenCreated_thenCallsRepositorySave(){
-        UserDTO userDTO = new UserDTO(null,"Usuario 5");
+        UserDTO userDTO = new UserDTO(null,"Usuario 5","", "usuario5@email.com", "pass");
         when(userMapper.toEntity(userDTO)).thenReturn(new User());
         when(userRepository.save(any(User.class))).thenReturn(new User());
 
@@ -106,9 +112,9 @@ public class UserServiceTest {
 
     @Test
     public void givenExistingUser_whenCreated_thenThrowUserExisting(){
-        UserDTO userDTO = new UserDTO(null,"Usuario 5");
+        UserDTO userDTO = new UserDTO(null,"Usuario 5","", "usuario5@email.com", "pass");
         
-        doThrow(new EntityExistingException(Constants.ENTITY_EXISTS)).when(userRepository).findByName(anyString());
+        doThrow(new EntityExistingException(Constants.ENTITY_EXISTS)).when(userRepository).findByEmail(anyString());
 
         assertThrows(EntityExistingException.class, () ->sut.create(userDTO));
         
@@ -122,9 +128,11 @@ public class UserServiceTest {
         User formerUser = users.get(0);
         User updatedUser = User.builder()
                                         .id(id)
-                                        .name("Usuario 3")
+                                        .firstName("Usuario 3")                                        
+                                        .email("usuario3@email.com")
+                                        .password("pass")
                                         .build();
-        UserDTO requestUserDTO = new UserDTO(id,"Usuario 3");
+        UserDTO requestUserDTO = new UserDTO(id,"Usuario 3","", "usuario3@email.com", "pass");
         
         when(userMapper.toEntity(requestUserDTO)).thenReturn(new User());
         when(userMapper.toDTO(updatedUser)).thenReturn(requestUserDTO);
@@ -135,14 +143,14 @@ public class UserServiceTest {
 
         verify(userRepository, times(1)).save(any(User.class));
         assertEquals(id, responseUserDTO.id());
-        assertNotEquals(formerUser.getName(), responseUserDTO.name());
+        assertNotEquals(formerUser.getFirstName(), responseUserDTO.firstName());
     }
 
     @Test
     
     void givenInexistentUserID_whenUpdate_thenThrowUserNotFound() throws Exception {
         Long id = -1L;
-        UserDTO userDTO = new UserDTO(id,"Usuario 3");
+        UserDTO userDTO = new UserDTO(id,"Usuario 3", "", "usuario2@email.com", "pass");
         
         doThrow(new EntityNotFoundException(Constants.ENTITY_NOTFOUND)).when(userRepository).findById(id);
        
