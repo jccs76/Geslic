@@ -1,23 +1,24 @@
 import { App } from "@/types";
+import { API_URL, authHeader } from "./Common";
 
 
 export const CustomerService = {
     getCustomers() {
-        return fetch('http://localhost:8080/api/v1/customers', { headers: { 'Cache-Control': 'no-cache' } })
+        return fetch(API_URL + '/customers', { headers: authHeader() })
             .then((res) => res.json())
             .then((d) => d as any)
             .catch( (error) => console.log(error));
     },
     getCustomer(id : string | undefined) {
-        return fetch(`http://localhost:8080/api/v1/customers/${id}`, { headers: { 'Cache-Control': 'no-cache' } })
+        return fetch(`${API_URL}/customers/${id}`, { headers: authHeader() })
             .then((res) => res.json())
             .then((d) => d as any)
             .catch( (error) => console.log(error));
     },
     createCustomer(customer : App.CustomerType) {
-        return fetch('http://localhost:8080/api/v1/customers', 
+        return fetch(API_URL + '/customers', 
             {   method: 'POST', 
-                headers: {'Content-Type': 'application/json'},
+                headers: authHeader() ,
                 body: JSON.stringify(customer)
             })
             .then((res) => res.json())
@@ -25,9 +26,9 @@ export const CustomerService = {
             .catch( (error) => console.log(error));
     },    
     updateCustomer(id: string, customer : App.CustomerType) {
-        return fetch(`http://localhost:8080/api/v1/customers/${id}`, 
+        return fetch(`${API_URL}/customers/${id}`, 
             {   method: 'PUT', 
-                headers: {'Content-Type': 'application/json'},
+                headers: authHeader(),
                 body: JSON.stringify(customer)
             })
             .then((res) => res.json())
@@ -35,12 +36,12 @@ export const CustomerService = {
             .catch( (error) => console.log(error));
     },    
     deleteCustomer(id : string | undefined) {      
-      return fetch(`http://localhost:8080/api/v1/customers/${id}`, {method: "DELETE", headers: { 'Cache-Control': 'no-cache' } })
+      return fetch(`${API_URL}/customers/${id}`, {method: "DELETE", headers: authHeader() })
         .then((d) => d as any)
         .catch( (error) => console.log(error));
     },
     getCustomerLicenses(id : string |undefined) {
-        return fetch(`http://localhost:8080/api/v1/customers/${id}/licenses`, { headers: { 'Cache-Control': 'no-cache' } })
+        return fetch(`${API_URL}/customers/${id}/licenses`, { headers: authHeader() })
             .then((res) => res.json())
             .then((d) => d as any)
             .catch( (error) => console.log(error));

@@ -1,17 +1,18 @@
 import { App } from "@/types";
+import { API_URL, authHeader } from "./Common";
 
 
 export const SupportService = {
     getSupport(id : string | undefined) {
-        return fetch(`http://localhost:8080/api/v1/supports/${id}`, { headers: { 'Cache-Control': 'no-cache' } })
+        return fetch(`${API_URL}/supports/${id}`, { headers: authHeader() })
             .then((res) => res.json())
             .then((d) => d as any)
             .catch( (error) => console.log(error));
     },    
     updateSupport(id: string, support : App.SupportType) {        
-        return fetch(`http://localhost:8080/api/v1/supports/${id}`, 
+        return fetch(`${API_URL}/supports/${id}`, 
             {   method: 'PUT', 
-                headers: {'Content-Type': 'application/json'},
+                headers: authHeader(),
                 body: JSON.stringify(support)
             })
             .then((res) => res.json())

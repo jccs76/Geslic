@@ -1,24 +1,25 @@
 import { App } from "@/types";
+import { API_URL, authHeader } from "./Common";
 
 
 export const LicenseService = {
     getLicenses() {
-        return fetch('http://localhost:8080/api/v1/licenses', { headers: { 'Cache-Control': 'no-cache' } })
+        return fetch(API_URL + '/licenses', { headers: authHeader() })
             .then((res) => res.json())
             .then((d) => d as any)
             .catch( (error) => console.log(error));
     },
     getLicense(id : string | undefined) {
-        return fetch(`http://localhost:8080/api/v1/licenses/${id}`, { headers: { 'Cache-Control': 'no-cache' } })
+        return fetch(`${API_URL}/licenses/${id}`, { headers: authHeader() })
             .then((res) => res.json())
             .then((d) => d as any)
             .catch( (error) => console.log(error));
     },
     createLicense(license : App.LicenseType) {
         console.log(license);
-        return fetch('http://localhost:8080/api/v1/licenses', 
+        return fetch('${API_URL}/licenses', 
             {   method: 'POST', 
-                headers: {'Content-Type': 'application/json'},
+                headers: authHeader(),
                 body: JSON.stringify(license)
             })
             .then((res) => res.json())
@@ -26,9 +27,9 @@ export const LicenseService = {
             .catch( (error) => console.log(error));
     },    
     updateLicense(id: string, license : App.LicenseType) {        
-        return fetch(`http://localhost:8080/api/v1/licenses/${id}`, 
+        return fetch(`${API_URL}/licenses/${id}`, 
             {   method: 'PUT', 
-                headers: {'Content-Type': 'application/json'},
+                headers: authHeader(),
                 body: JSON.stringify(license)
             })
             .then((res) => res.json())
@@ -36,28 +37,28 @@ export const LicenseService = {
             .catch( (error) => console.log(error));
     },    
     deleteLicense(id : string | undefined) {
-        fetch(`http://localhost:8080/api/v1/licenses/${id}`, {method: "DELETE", headers: { 'Cache-Control': 'no-cache' } })
+        fetch(`${API_URL}/licenses/${id}`, {method: "DELETE", headers: authHeader() })
         .catch( (error) => console.log(error));
     },
     cancelSupport(id: string | undefined){
-        return fetch(`http://localhost:8080/api/v1/licenses/${id}/supports/last/cancel`, { headers: { 'Cache-Control': 'no-cache' } })
+        return fetch(`${API_URL}/licenses/${id}/supports/last/cancel`, { headers: authHeader() })
             .then( (res) => res.json())
             .catch( (error) => console.log(error));
     },
     renewSupport(id: string | undefined){
-        return fetch(`http://localhost:8080/api/v1/licenses/${id}/supports/last/renew`, { headers: { 'Cache-Control': 'no-cache' } })
+        return fetch(`${API_URL}/licenses/${id}/supports/last/renew`, { headers: authHeader() })
                     .then((res) => res.json())
                     .then((d) => d as any)  
                     .catch( (error) => console.log(error));  
     },
     getLicensesSupportThisMonth() {
-        return fetch('http://localhost:8080/api/v1/licenses/thismonth', { headers: { 'Cache-Control': 'no-cache' } })
+        return fetch(API_URL + '/licenses/thismonth', { headers: authHeader() })
             .then((res) => res.json())
             .then((d) => d as any)
             .catch( (error) => console.log(error));
     },
     getLicensesSupportBetweenDates(fromDate : string | undefined, toDate : string | undefined){
-        return fetch(`http://localhost:8080/api/v1/licenses/from/${fromDate}/to/${toDate}` , { headers: { 'Cache-Control': 'no-cache' } })
+        return fetch(`${API_URL}/licenses/from/${fromDate}/to/${toDate}` , { headers: authHeader() })
             .then((res) => res.json())
             .then((d) => d as any)
             .catch( (error) => console.log(error));

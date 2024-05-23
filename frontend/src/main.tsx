@@ -17,7 +17,7 @@ import License from './pages/licenses/License.tsx';
 import Supports from './pages/supports/Supports.tsx';
 import CustomerLicenses from './pages/customers/CustomerLicenses.tsx';
 import Support from './pages/supports/Support.tsx';
-import Login from './pages/auth/Login.tsx';
+import LoginPage from './pages/auth/LoginPage.tsx';
 
 
 
@@ -44,8 +44,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             <Route path="/license/:id/support" element={<Supports/>} />
             <Route path="/supports" element={<Supports />} />
             <Route path="/support/:id" element={<Support />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/logout" element={<Login />} />
+            <Route path="/login" element={<LoginPage />} />
             <Route path="*" element={<Dashboard />} />
         </Routes>        
         </App>

@@ -1,6 +1,5 @@
 package com.jccs.geslic.auth;
 
-import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;

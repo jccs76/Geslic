@@ -1,5 +1,4 @@
 package com.jccs.geslic.user;
 
-public record UserLoginDTO(Long id, 
-                           String email,
+public record UserLoginDTO(String email,
                            String password) {}

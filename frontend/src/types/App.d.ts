@@ -48,7 +48,12 @@ declare namespace App {
         status: SupportStatus;
         licenseId? : string;
         [key: string]: string | string[] | number | boolean | undefined;
-    };
+    }
+
+    type LoginType =  {
+        email : string;
+        password : string;
+    }
 
     interface Event extends EventInput {
         location?: string;
@@ -56,7 +61,7 @@ declare namespace App {
         tag?: {
             name: string;
             color: string;
-        };
+        }
     };
 
     // IconService

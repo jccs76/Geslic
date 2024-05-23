@@ -1,23 +1,24 @@
 import { App } from "@/types";
+import { API_URL, authHeader } from "./Common";
 
 
 export const ProductService = {
     getProducts() {
-        return fetch('http://localhost:8080/api/v1/products', { headers: { 'Cache-Control': 'no-cache' } })
+        return fetch(API_URL + '/products', { headers: authHeader() })
             .then((res) => res.json())
             .then((d) => d as any)
             .catch( (error) => console.log(error));
     },
     getProduct(id : string | undefined) {
-        return fetch(`http://localhost:8080/api/v1/products/${id}`, { headers: { 'Cache-Control': 'no-cache' } })
+        return fetch(`${API_URL}/products/${id}`, { headers: authHeader() })
             .then((res) => res.json())
             .then((d) => d as any)
             .catch( (error) => console.log(error));
     },
     createProduct(product : App.ProductType) {
-        return fetch('http://localhost:8080/api/v1/products', 
+        return fetch(`${API_URL}/products`, 
             {   method: 'POST', 
-                headers: {'Content-Type': 'application/json'},
+                headers: authHeader(),
                 body: JSON.stringify(product)
             })
             .then((res) => res.json())
@@ -25,9 +26,9 @@ export const ProductService = {
             .catch( (error) => console.log(error));
     },    
     updateProduct(id: string, product : App.ProductType) {
-        return fetch(`http://localhost:8080/api/v1/products/${id}`, 
+        return fetch(`${API_URL}/products/${id}`, 
             {   method: 'PUT', 
-                headers: {'Content-Type': 'application/json'},
+                headers: authHeader(),
                 body: JSON.stringify(product)
             })
             .then((res) => res.json())
@@ -35,7 +36,7 @@ export const ProductService = {
             .catch( (error) => console.log(error));
     },    
     deleteProduct(id : string | undefined) {        
-        return fetch(`http://localhost:8080/api/v1/products/${id}`, {method: "DELETE", headers: { 'Cache-Control': 'no-cache' } })    
+        return fetch(`${API_URL}/products/${id}`, {method: "DELETE", headers: authHeader() })    
         .catch( (error) => console.log(error));
     }
 };
