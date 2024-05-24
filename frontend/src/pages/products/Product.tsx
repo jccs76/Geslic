@@ -1,4 +1,3 @@
-import Layout from "../../layout/layout";
 import { ProductService } from "../../services/ProductService";
 import { App } from "@/types";
 import {  useEffect, useState } from "react";

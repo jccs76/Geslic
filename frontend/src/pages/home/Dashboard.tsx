@@ -1,5 +1,4 @@
 import { useNavigate, useParams } from "react-router-dom";
-import Layout from "../../layout/layout";
 import { useEffect, useRef, useState } from "react";
 import { App } from "@/types";
 import { Toast } from "primereact/toast";
@@ -16,7 +15,6 @@ import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { Calendar } from "primereact/calendar";
 import { Nullable } from "primereact/ts-helpers";
-import { Password } from "primereact/password";
 
 export const Dashboard =() => {
 

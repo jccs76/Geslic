@@ -8,7 +8,7 @@ import { LayoutContext } from './context/layoutcontext';
 import { AuthContext } from '../context/AuthContext';
 
 
-const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
+const AppTopbar = forwardRef<AppTopbarRef>((_props, ref) => {
     const { layoutConfig, layoutState, onMenuToggle, showProfileSidebar } = useContext(LayoutContext);
     const menubuttonRef = useRef(null);
     const topbarmenuRef = useRef(null);
@@ -23,7 +23,7 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
         topbarmenubutton: topbarmenubuttonRef.current
     }));
 
-    const handleLogout = () => {  
+    const handleLogout = () => {          
         logout();
         navigate('/login');
     }

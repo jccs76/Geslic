@@ -5,7 +5,6 @@ import { DataTable } from 'primereact/datatable';
 import { InputText } from 'primereact/inputtext';
 import { Toast } from 'primereact/toast';
 import { Toolbar } from 'primereact/toolbar';
-import Layout from "../../layout/layout";
 import { App } from '@/types';
 import { ProductService } from '../../services/ProductService';
 import { useNavigate, useParams } from 'react-router-dom';

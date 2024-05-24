@@ -5,7 +5,6 @@ import { DataTable } from 'primereact/datatable';
 import { InputText } from 'primereact/inputtext';
 import { Toast } from 'primereact/toast';
 import { Toolbar } from 'primereact/toolbar';
-import Layout from "../../layout/layout";
 import { App } from '@/types';
 import { LicenseService } from '../../services/LicenseService';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -188,7 +187,6 @@ const Supports = () => {
     );
 
     return (
-        <Layout>
         <div className="grid">
             <div className="col-12">
                 <div className="card">
@@ -240,8 +238,6 @@ const Supports = () => {
                 </div>
             </div>
         </div>
-    </Layout>
-
     );
 };
 

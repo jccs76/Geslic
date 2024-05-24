@@ -13,9 +13,9 @@ const AppConfig = (props: AppConfigProps) => {
     const { layoutConfig, setLayoutConfig, layoutState, setLayoutState } = useContext(LayoutContext);
     const { setRipple, changeTheme } = useContext(PrimeReactContext);
 
-    const onConfigButtonClick = () => {
-        setLayoutState((prevState: LayoutState) => ({ ...prevState, configSidebarVisible: true }));
-    };
+    // const onConfigButtonClick = () => {
+    //     setLayoutState((prevState: LayoutState) => ({ ...prevState, configSidebarVisible: true }));
+    // };
 
     const onConfigSidebarHide = () => {
         setLayoutState((prevState: LayoutState) => ({ ...prevState, configSidebarVisible: false }));

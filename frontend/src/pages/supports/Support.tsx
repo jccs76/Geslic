@@ -1,4 +1,3 @@
-import Layout from "../../layout/layout";
 import { App } from "@/types";
 import {  useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";

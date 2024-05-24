@@ -7,7 +7,6 @@ import { Toast } from 'primereact/toast';
 import { Toolbar } from 'primereact/toolbar';
 import { Dialog } from 'primereact/dialog';
 
-import Layout from "../../layout/layout";
 import { App } from '@/types';
 
 import { useLocation, useNavigate, useParams } from 'react-router-dom';

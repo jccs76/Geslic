@@ -23,7 +23,7 @@ import com.jccs.geslic.common.exception.EntityInvalidException;
 import com.jccs.geslic.common.exception.EntityNotFoundException;
 
 import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.security.SignatureException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {

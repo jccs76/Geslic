@@ -1,4 +1,3 @@
-import Layout from "../../layout/layout";
 import { LicenseService } from "../../services/LicenseService";
 import { App } from "@/types";
 import {  useEffect, useRef, useState } from "react";
@@ -128,20 +127,20 @@ const License = () => {
         navigate('/licenses');
     }
 
-    const handleSubmit = (e : React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();        
-        let _license = { ...license, 
-            customer,
-            product
-           };
-         if (id){
-             LicenseService.updateLicense(id, _license).then((data) => setLicense(data as any))
+    // const handleSubmit = (e : React.FormEvent<HTMLFormElement>) => {
+    //     e.preventDefault();        
+    //     let _license = { ...license, 
+    //         customer,
+    //         product
+    //        };
+    //      if (id){
+    //          LicenseService.updateLicense(id, _license).then((data) => setLicense(data as any))
             
-         } else {
-            LicenseService.createLicense(_license).then((data) => setLicense(data as any))
-        }
-        navigate(-1);
-    }
+    //      } else {
+    //         LicenseService.createLicense(_license).then((data) => setLicense(data as any))
+    //     }
+    //     navigate(-1);
+    // }
 
     const headerCustomer = (
         <div className="flex gap-5 align-items-center">

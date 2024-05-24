@@ -1,4 +1,3 @@
-import Layout from "../../layout/layout";
 import { CustomerService } from "../../services/CustomerService";
 import { App } from "@/types";
 import {  useEffect, useState } from "react";

@@ -6,20 +6,17 @@ import { LayoutContext } from '../../layout/context/layoutcontext';
 import { InputText } from 'primereact/inputtext';
 import { classNames } from 'primereact/utils';
 import AppConfig from '../../layout/AppConfig';
-import { App } from '@/types';
-import { Message } from 'primereact/message';
 import { LoginService } from '../../services/LoginService';
 import { Toast } from 'primereact/toast';
-import useAuth from '../../hooks/UseAuth';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 
 const LoginPage = () => {
 
-    const defaultValues : App.LoginType = {
-        email : '',
-        password : ''
-    };
+    // const defaultValues : App.LoginType = {
+    //     email : '',
+    //     password : ''
+    // };
 
     const {login} =  useContext(AuthContext);
 
@@ -33,24 +30,24 @@ const LoginPage = () => {
 
     const containerClassName = classNames('surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden', { 'p-input-filled': layoutConfig.inputStyle === 'filled' });
 
-    const validate = (data : App.LoginType) => {
-        let errors = { email : '', password: ''};
+    // const validate = (data : App.LoginType) => {
+    //     let errors = { email : '', password: ''};
 
-        if (!data.email) {
-            errors.email = 'E-mail obligatorio';
-        }  else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(data.email)) {
-            errors.email = 'Email incorrecto. Ej: usuario@email.com';
-        }
+    //     if (!data.email) {
+    //         errors.email = 'E-mail obligatorio';
+    //     }  else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(data.email)) {
+    //         errors.email = 'Email incorrecto. Ej: usuario@email.com';
+    //     }
 
-        if (!data.password) {
-            errors.password= 'Password obligatorio';
-        }
+    //     if (!data.password) {
+    //         errors.password= 'Password obligatorio';
+    //     }
       
-        return errors;
-    };
+    //     return errors;
+    // };
 
   
-    const handleLogin = (e : any) => { 
+    const handleLogin = () => { 
             if (!loginEmail || !loginPassword) { 
                 return; 
             }
@@ -89,7 +86,7 @@ const LoginPage = () => {
                         <div className="text-center mb-5">
                         <img src={`/layout/images/logo-${layoutConfig.colorScheme === 'light' ? 'dark' : 'white'}.svg`} alt="GesLic" className="mb-5 w-6rem flex-shrink-0" />                            
                             <div className="text-900 text-3xl font-medium mb-3">GesLic</div>
-                            <span className="text-600 font-medium">Introduzca su usuario</span>
+                            <span className="text-600 font-medium">Introduzca usuario</span>
                         </div>
 
                         <div className="mb-5">

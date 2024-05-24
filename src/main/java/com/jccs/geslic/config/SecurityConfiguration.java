@@ -35,6 +35,8 @@ public class SecurityConfiguration {
         http.csrf(AbstractHttpConfigurer::disable)
             .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests((authorizeHttpRequests) ->
+                                    authorizeHttpRequests.requestMatchers("/*", "/assets/**", "/layout/**").permitAll())
+            .authorizeHttpRequests((authorizeHttpRequests) ->
              				        authorizeHttpRequests.requestMatchers("/auth/*").permitAll())
             .authorizeHttpRequests((authorizeHttpRequests) -> 
                                     authorizeHttpRequests.requestMatchers("/api/**").hasRole("ADMIN")
