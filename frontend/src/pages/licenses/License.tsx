@@ -171,7 +171,6 @@ const License = () => {
     };
 
   return (
-    <Layout>
     <div className="grid">
             <div className="col-12">
                 <div className="flex justify-content-start align-items-baseline">
@@ -247,7 +246,6 @@ const License = () => {
                     </div>
             </div>        
     </div>
-    </Layout>
   )
 }
 

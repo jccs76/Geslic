@@ -155,7 +155,6 @@ const CustomerLicenses = () => {
     }
 
     return (
-        <Layout>
         <div className="grid">
             <div className="col-12">
                 <div className="card">
@@ -201,7 +200,6 @@ const CustomerLicenses = () => {
                 </div>
             </div>
         </div>
-    </Layout>
 
     );
 };

@@ -145,7 +145,6 @@ const Customers = () => {
 
 
     return (
-        <Layout>
         <div className="grid">
             <div className="col-12">
                 <div className="card">
@@ -190,8 +189,6 @@ const Customers = () => {
                 </div>
             </div>
         </div>
-    </Layout>
-
     );
 };
 

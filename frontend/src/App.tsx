@@ -8,8 +8,7 @@ import localeEs from "primelocale/es.json";
 import { addLocale, locale } from 'primereact/api';
 
 import { LayoutProvider } from "./layout/context/layoutcontext";
-
-
+import { AuthProvider } from './context/AuthContext';
 
 interface RootLayoutProps {
     children: React.ReactNode;
@@ -21,6 +20,8 @@ export default function App({ children }: RootLayoutProps) {
   
   
   return (
-    <LayoutProvider>{children}</LayoutProvider>
+    <AuthProvider>
+      <LayoutProvider>{children}</LayoutProvider>
+    </AuthProvider>
   );
 }

@@ -10,6 +10,8 @@ import javax.crypto.SecretKey;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import com.jccs.geslic.user.User;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -29,8 +31,10 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
-    public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails);
+    public String generateToken(User authenticatedUser) {
+        Map<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("user", authenticatedUser.getFirstName());
+        return generateToken(extraClaims, authenticatedUser);
     }
 
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
@@ -45,7 +49,7 @@ public class JwtService {
             Map<String, Object> extraClaims,
             UserDetails userDetails,
             long expiration
-    ) {
+    ) {        
         return Jwts
                 .builder()
                 .claims(extraClaims)

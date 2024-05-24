@@ -1,10 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
 
-import {Link, NavLink} from 'react-router-dom';
+import {Link, NavLink, useNavigate} from 'react-router-dom';
 import { classNames } from 'primereact/utils';
 import { forwardRef, useContext, useImperativeHandle, useRef } from 'react';
 import { AppTopbarRef } from '@/types';
 import { LayoutContext } from './context/layoutcontext';
+import { AuthContext } from '../context/AuthContext';
+
 
 const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
     const { layoutConfig, layoutState, onMenuToggle, showProfileSidebar } = useContext(LayoutContext);
@@ -12,14 +14,18 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
     const topbarmenuRef = useRef(null);
     const topbarmenubuttonRef = useRef(null);
 
+    const {logout, userName} = useContext(AuthContext);
+    const navigate = useNavigate();
+
     useImperativeHandle(ref, () => ({
         menubutton: menubuttonRef.current,
         topbarmenu: topbarmenuRef.current,
         topbarmenubutton: topbarmenubuttonRef.current
     }));
 
-    const handleLogout = () => {        
-        localStorage.removeItem("token");    
+    const handleLogout = () => {  
+        logout();
+        navigate('/login');
     }
 
     return (
@@ -42,9 +48,9 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                     <i className="pi pi-calendar"></i>
                     <span>Calendar</span>
                 </button> */}
+                <span className="flex flex-nowrap align-items-center">{userName}</span>                
                 <button type="button" className="p-link layout-topbar-button">
-                    <i className="pi pi-user"></i>
-                    <span>Usuario</span>
+                    <i className="pi pi-user"></i>                    
                 </button>
                 {/* <Link to="/documentation">
                     <button type="button" className="p-link layout-topbar-button">

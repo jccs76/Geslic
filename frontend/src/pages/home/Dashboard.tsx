@@ -229,7 +229,7 @@ export const Dashboard =() => {
   );
 
   return (
-      <Layout>
+
       <div className="grid">
           <div className="col-12">
               <div className="card">
@@ -282,7 +282,6 @@ export const Dashboard =() => {
               </div>
           </div>
       </div>
-  </Layout>
 
   );
 };

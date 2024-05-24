@@ -10,15 +10,21 @@ import { App } from '@/types';
 import { Message } from 'primereact/message';
 import { LoginService } from '../../services/LoginService';
 import { Toast } from 'primereact/toast';
+import useAuth from '../../hooks/UseAuth';
+import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../context/AuthContext';
 
 const LoginPage = () => {
-    
+
     const defaultValues : App.LoginType = {
         email : '',
         password : ''
     };
 
-    
+    const {login} =  useContext(AuthContext);
+
+    const navigate = useNavigate();
+
     const [loginEmail, setLoginEmail] = useState('');
     const [loginPassword, setLoginPassword] = useState('');
 
@@ -42,6 +48,8 @@ const LoginPage = () => {
       
         return errors;
     };
+
+  
     const handleLogin = (e : any) => { 
             if (!loginEmail || !loginPassword) { 
                 return; 
@@ -57,9 +65,9 @@ const LoginPage = () => {
                         detail: 'Usuario o contraseña incorrectos',
                         life: 3000
                         });        
-                    } else {
-
-                        localStorage.setItem("token", data.token);
+                    } else {                        
+                        login(data.token);
+                        navigate('/');
                     }
 
                 })

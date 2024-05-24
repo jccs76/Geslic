@@ -56,8 +56,7 @@ const Customer = () => {
         navigate('/customers');
     }
 
-  return (
-    <Layout>
+  return (    
     <div className="grid">
             <div className="col-12">
             <div className="flex justify-content-start align-items-baseline">
@@ -101,7 +100,7 @@ const Customer = () => {
                 </div>
             </div>        
     </div>
-    </Layout>
+
   )
 }
 
