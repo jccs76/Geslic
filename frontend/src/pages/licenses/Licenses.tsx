@@ -20,13 +20,14 @@ const Licenses = () => {
 
     let emptyLicense: App.LicenseType = {
         code: '',
+
     };
-    let emptyLicenses: App.LicensesType = [emptyLicense];
 
     const [deleteLicenseDialog, setDeleteLicenseDialog] = useState(false);
 
     const [license, setLicense] = useState<App.LicenseType | null>(null);
     const [licenses, setLicenses] = useState<App.LicensesType | null>(null);
+
     const navigate = useNavigate();
     const [globalFilter, setGlobalFilter] = useState('');
     const toast = useRef<Toast>(null);
@@ -36,9 +37,9 @@ const Licenses = () => {
 
     useEffect(() => {
         if (!id){      
-            LicenseService.getLicenses().then((data) => 
-                {setLicenses(data);
-
+            LicenseService.getLicenses().then((data) => {
+                let _licenses : App.LicensesType = data;
+                setLicenses(_licenses);            
             });
             
         } else {            
@@ -175,7 +176,7 @@ const Licenses = () => {
                         ref={dt}
                         value={licenses}
                         selection={license}
-                        onSelectionChange={(e) => setLicense(e.value as App.LicenseType)}
+                        onSelectionChange={(e) => setLicense(e.value as any)}
                         paginator
                         rows={10}
                         rowsPerPageOptions={[5, 10, 25]}

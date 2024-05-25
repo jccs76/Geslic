@@ -36,7 +36,11 @@ const Products = () => {
 
     useEffect(() => {
         if (!id) {
-            ProductService.getProducts().then((data) => setProducts(data));
+            ProductService.getProducts().then((data) => {
+                let _products : App.ProductsType  = data;
+                setProducts(_products);
+
+            });
         } else {
             
             ProductService.getProduct(id).then((data) => {

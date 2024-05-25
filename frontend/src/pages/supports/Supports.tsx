@@ -26,7 +26,6 @@ const Supports = () => {
         }
     };
 
-    let emptyLicenses = [emptyLicense];
 
     const Action = {
         RENEW  : 'renovar',
@@ -36,7 +35,7 @@ const Supports = () => {
     const {id} = useParams();    
 
     const [licenses, setLicenses] = useState<App.LicensesType | null>(null);
-    const [license, setLicense] = useState<App.LicenseType>(null);
+    const [license, setLicense] = useState<App.LicenseType | null>(null);
     const [selectedRow, setSelectedRow] = useState(null);
     const [supportDialog, setSupportDialog] = useState(false);
     const [action, setAction] = useState('');
@@ -71,7 +70,7 @@ const Supports = () => {
         if (license){
             LicenseService.renewSupport(license.id).then((data) => {            
                 if (licenses){
-                   let _licenses  = licenses.map((item : any) => item?.id === license.id ? data : item);
+                   let _licenses : any  = licenses.map((item : any) => item?.id === license.id ? data : item);
                   setLicenses(_licenses);
                 } 
             });

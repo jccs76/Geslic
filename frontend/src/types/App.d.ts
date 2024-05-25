@@ -39,7 +39,7 @@ declare namespace App {
         product?: Product ;
         customer?: Customer ;
         lastSupport?: Support;
-        [key: string]: string | Product |Customer | Support;
+        [key: string]: string | Product |Customer | Support | undefined;
     } | null;
 
     type LicensesType = [LicenseType] | null;

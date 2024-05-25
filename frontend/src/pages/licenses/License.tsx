@@ -43,10 +43,10 @@ const License = () => {
     
 
     const [fecha, setFecha] = useState<Nullable<Date>>(null);
-    const [customers, setCustomers] = useState<App.CustomerType[]>([emptyCustomer]);
+    const [customers, setCustomers] = useState<App.CustomersType>([emptyCustomer]);
     const [customersFilter, setCustomersFilter] = useState('');
     const [customer, setCustomer] = useState<any>(null);
-    const [products, setProducts] = useState<App.ProductType[]>([emptyProduct]);
+    const [products, setProducts] = useState<App.ProductsType>([emptyProduct]);
     const [productsFilter, setProductsFilter] = useState('');
     const [product, setProduct] = useState<any>(null);
     const [license, setLicense] = useState<any>(emptyLicense);
@@ -105,10 +105,12 @@ const License = () => {
 
 
     const onProductChange = (e : any) => {
-        setProduct(e.value as any);        
-        let _license = { ...license};
-        _license['price'] = e.value.price;
-        setLicense(_license);
+        if (e.value){
+            setProduct(e.value as any);        
+            let _license = { ...license};
+            _license['price'] = e.value.price;
+            setLicense(_license);
+        }
     }
 
     const handleSave = (e : any) => {
@@ -172,7 +174,7 @@ const License = () => {
     <div className="grid">
             <div className="col-12">
                 <div className="flex justify-content-start align-items-baseline">
-                    <Button className="mr-2"  icon="pi pi-chevron-left" rounded text onClick={() => navigate(-1)} />                    
+                    <Button className="mr-2"  icon="pi pi-chevron-left" rounded text onClick={() => navigate("/licenses")} />                    
                     <h5>{id ? 'Editar' : 'Nueva'} Licencia</h5>
                 </div>
                 <div className="card p-fluid">                                        

@@ -38,7 +38,11 @@ const Customers = () => {
 
     useEffect(() => {
         if (!id) {
-            CustomerService.getCustomers().then((data) => setCustomers(data));        
+            
+            CustomerService.getCustomers().then((data) => {
+                let _customers : App.CustomersType = data;
+                setCustomers(_customers);
+            });        
         } else {
             CustomerService.getCustomer(id).then((data) => {
                 let _customers : App.CustomersType = [data];
