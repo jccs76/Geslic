@@ -19,15 +19,14 @@ import { formatCurrencyES, formatDateEs } from '../../util/Util';
 const Licenses = () => {
 
     let emptyLicense: App.LicenseType = {
-        code: ''
+        code: '',
     };
     let emptyLicenses: App.LicensesType = [emptyLicense];
 
     const [deleteLicenseDialog, setDeleteLicenseDialog] = useState(false);
 
-    const [license, setLicense] = useState<App.LicenseType>(emptyLicense);
-    const [licenses, setLicenses] = useState<App.LicensesType>(emptyLicenses);
-    const [selectedLicenses, setSelectedLicenses] = useState(null);
+    const [license, setLicense] = useState<App.LicenseType | null>(null);
+    const [licenses, setLicenses] = useState<App.LicensesType | null>(null);
     const navigate = useNavigate();
     const [globalFilter, setGlobalFilter] = useState('');
     const toast = useRef<Toast>(null);
@@ -37,11 +36,17 @@ const Licenses = () => {
 
     useEffect(() => {
         if (!id){      
-            LicenseService.getLicenses().then((data) => setLicenses(data as any));
-        } else {
-            LicenseService.getLicense(id).then((data) => setLicenses([data] as any));
-        }
+            LicenseService.getLicenses().then((data) => 
+                {setLicenses(data);
 
+            });
+            
+        } else {            
+            LicenseService.getLicense(id).then((data) => {
+                let _licenses : App.LicensesType = [data];
+                setLicenses(_licenses);
+            });
+        }
     }, []);
 
     const openNew = () => {
@@ -155,19 +160,6 @@ const Licenses = () => {
                 onClick={() => navigate('/license/' + rowData?.id + '/support' )}
                 />
 
-
-        // <span className={`support-badge support-${rowData?.lastSupport?.status.toLowerCase()}`}>{(() => {
-        //     switch (rowData?.lastSupport?.status) {
-        //       case SupportStatus.ACTIVE: 
-        //         return 'EN VIGOR'
-        //       case SupportStatus.CANCELED:
-        //         return 'CANCELADA'
-        //       case SupportStatus.EXPIRED:
-        //         return 'EXPIRADA'
-        //       default:
-        //         return null
-        //     }
-        //   })() }</span>;        
     )  
     };
 
@@ -181,9 +173,9 @@ const Licenses = () => {
 
                     <DataTable
                         ref={dt}
-                        value={licenses}                        
-                        selection={selectedLicenses}
-                        onSelectionChange={(e) => setSelectedLicenses(e.value as any)}
+                        value={licenses}
+                        selection={license}
+                        onSelectionChange={(e) => setLicense(e.value as App.LicenseType)}
                         paginator
                         rows={10}
                         rowsPerPageOptions={[5, 10, 25]}

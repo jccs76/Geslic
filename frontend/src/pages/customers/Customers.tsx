@@ -23,13 +23,12 @@ const Customers = () => {
         name: ''        
     };
 
-    let emptyCustomers : App.CustomerType[] = [emptyCustomer];
 
     //const { customers } = useContext(CustomerContext);
     const [deleteCustomerDialog, setDeleteCustomerDialog] = useState(false);
 
-    const [customer, setCustomer] = useState<App.CustomerType>(emptyCustomer);
-    const [customers, setCustomers] = useState<App.CustomerType[]>(emptyCustomers);
+    const [customer, setCustomer] = useState<App.CustomerType | null>(null);
+    const [customers, setCustomers] = useState<App.CustomersType | null>(null);
     const navigate = useNavigate();
     const [globalFilter, setGlobalFilter] = useState('');
     const toast = useRef<Toast>(null);
@@ -39,10 +38,13 @@ const Customers = () => {
 
     useEffect(() => {
         if (!id) {
-            CustomerService.getCustomers().then((data) => setCustomers(data as any));        
+            CustomerService.getCustomers().then((data) => setCustomers(data));        
         } else {
-            CustomerService.getCustomer(id).then((data) => setCustomers([data] as any));        
-        }        
+            CustomerService.getCustomer(id).then((data) => {
+                let _customers : App.CustomersType = [data];
+                setCustomers(_customers);
+            });                    
+        }
     }, []);
 
     const openNew = () => {
@@ -50,11 +52,11 @@ const Customers = () => {
     };
 
     const editCustomer = (c: App.CustomerType) => {
-        navigate('/customer/' + c.id );        
+        navigate('/customer/' + c?.id );        
     };
 
     const viewLicenses = (c: App.CustomerType) => {
-        navigate('/customer/' + c.id + '/licenses', {state : c} );
+        navigate('/customer/' + c?.id + '/licenses', {state : c} );
     }
 
     const confirmDelete = (cust: App.CustomerType) => {
@@ -64,8 +66,8 @@ const Customers = () => {
 
 
     const deleteCustomer = () => {
-        CustomerService.deleteCustomer(customer.id);
-        let _customers = (customers as any)?.filter((val: any) => val.id !== customer.id);
+        CustomerService.deleteCustomer(customer?.id);
+        let _customers = (customers as any)?.filter((val: any) => val.id !== customer?.id);
         setCustomers(_customers);
         hideDeleteCustomerDialog();
         setCustomer(emptyCustomer);
@@ -137,7 +139,7 @@ const Customers = () => {
         return (
             <>
                 <span className="p-column-title">Nombre</span>
-                {rowData.name}
+                {rowData?.name}
             </>
         );
     };
@@ -152,7 +154,8 @@ const Customers = () => {
 
                     <DataTable
                         ref={dt}
-                        value={customers}                        
+                        value={customers}
+                        dataKey="id"                        
                         selection={customer}
                         onSelectionChange={(e) => setCustomer(e.value as any)}
                         paginator

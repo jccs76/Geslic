@@ -22,7 +22,7 @@ const Product = () => {
 
     const {id} = useParams();    
     
-    const [product, setProduct] = useState<App.ProductType>(emptyProduct);    
+    const [product, setProduct] = useState(emptyProduct);    
 
     useEffect(() => {        
         {id && (

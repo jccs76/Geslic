@@ -113,16 +113,15 @@ const License = () => {
 
     const handleSave = (e : any) => {
         e.preventDefault();
-        console.log(license);        
         let _license = { ...license, 
             customer,
             product
            };
          if (id){
-             LicenseService.updateLicense(id, _license).then((data) => setLicense(data as any))
+             LicenseService.updateLicense(id, _license).then((data) => setLicense(data))
             
          } else {
-            LicenseService.createLicense(_license).then((data) => setLicense(data as any))
+            LicenseService.createLicense(_license).then((data) => setLicense(data))
         }
         navigate('/licenses');
     }
@@ -163,7 +162,7 @@ const License = () => {
     );    
 
     const priceBodyTemplate = (rowData: App.ProductType) => {
-        if (rowData.price){
+        if (rowData?.price){
             return formatCurrencyES(rowData?.price)
         }
         
@@ -190,11 +189,7 @@ const License = () => {
                             <label htmlFor="price" className="">Precio</label>                
                             <InputNumber inputId="price" value={license?.price} mode="currency" currency="EUR" locale="es-ES" inputClassName="text-right" onValueChange={onInputNumberChange}/>
                         </div>
-                    </div>
-                    <div className="col-2 col-offset-5">
-                        <Button type="button" icon="pi pi-save" disabled={!isComplete} label="Guardar" severity="info" onClick={handleSave} />                    
-                    </div>
-                    
+                    </div>                    
                 </div>
                 <div className="card p-fluid">
 
@@ -242,6 +237,9 @@ const License = () => {
                         <Column field="name" header="Nombre" headerStyle={{ minWidth: '30rem' }}></Column>
                         <Column field="price" header="Precio" body={priceBodyTemplate}></Column>
                     </DataTable>
+                    </div>
+                    <div className="col-2 col-offset-5">
+                        <Button type="button" icon="pi pi-save" disabled={!isComplete} label="Guardar" severity="info" onClick={handleSave} />                    
                     </div>
             </div>        
     </div>

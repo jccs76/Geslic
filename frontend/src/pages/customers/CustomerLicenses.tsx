@@ -30,7 +30,7 @@ const CustomerLicenses = () => {
 
     const [license, setLicense] = useState<App.LicenseType>(emptyLicense);
     const [licenses, setLicenses] = useState(null);
-    const [selectedLicenses, setSelectedLicenses] = useState(null);
+    const [selectedLicenses, setSelectedLicenses] = useState<App.LicenseType>(null);
     const navigate = useNavigate();
     const [globalFilter, setGlobalFilter] = useState('');
     const toast = useRef<Toast>(null);

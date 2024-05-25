@@ -35,8 +35,8 @@ const Supports = () => {
 
     const {id} = useParams();    
 
-    const [licenses, setLicenses] = useState<App.LicensesType>(emptyLicenses);
-    const [license, setLicense] = useState<App.LicenseType>(emptyLicense);
+    const [licenses, setLicenses] = useState<App.LicensesType | null>(null);
+    const [license, setLicense] = useState<App.LicenseType>(null);
     const [selectedRow, setSelectedRow] = useState(null);
     const [supportDialog, setSupportDialog] = useState(false);
     const [action, setAction] = useState('');
@@ -47,9 +47,13 @@ const Supports = () => {
 
     useEffect(() => {
         if (!id){                    
-            LicenseService.getLicenses().then((data) => setLicenses(data as any));
+            LicenseService.getLicenses().then((data) => setLicenses(data));
         } else {
-            LicenseService.getLicense(id).then((data) => setLicenses([data] as any));
+            
+            LicenseService.getLicense(id).then((data) => {
+                let _licenses : App.LicensesType = [data];
+                setLicenses(_licenses);
+            });
         }
     }, []);
 
@@ -62,14 +66,14 @@ const Supports = () => {
     };
     
     
-    const renewSupport = () => {
+    const renewSupport = (e : any) => {        
+        e.preventDefault();
         if (license){
-            LicenseService.renewSupport(license.id).then((data) => {                
-                console.log(license);
+            LicenseService.renewSupport(license.id).then((data) => {            
                 if (licenses){
-                    console.log(data)
-                    licenses.map(item => item?.id === license.id ? {data} : item);                    
-                }                    
+                   let _licenses  = licenses.map((item : any) => item?.id === license.id ? data : item);
+                  setLicenses(_licenses);
+                } 
             });
         };
         hideSupportDialog();
@@ -80,7 +84,7 @@ const Supports = () => {
             LicenseService.cancelSupport(license.id);                        
             license.lastSupport.status = SupportStatus.CANCELED;
             if (licenses){
-                licenses.map(item => item?.id === license.id ? {license} : item);
+                licenses.map((item : App.LicenseType) => item?.id === license.id ? {license} : item);
             }
         };
         hideSupportDialog();
@@ -195,7 +199,8 @@ const Supports = () => {
 
                     <DataTable
                         ref={dt}
-                        value={licenses}                        
+                        value={licenses}  
+                        dataKey="id"                      
                         selection={selectedRow}
                         onSelectionChange={(e) => setSelectedRow(e.value as any)}
                         paginator

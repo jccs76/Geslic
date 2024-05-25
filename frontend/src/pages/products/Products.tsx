@@ -24,8 +24,8 @@ const Products = () => {
     //const { products } = useContext(ProductContext);
     const [deleteProductDialog, setDeleteProductDialog] = useState(false);
 
-    const [product, setProduct] = useState<App.ProductType>(emptyProduct);
-    const [products, setProducts] = useState(null);
+    const [product, setProduct] = useState<App.ProductType | null>(null);
+    const [products, setProducts] = useState<App.ProductsType | null>(null);
     const [selectedProducts, setSelectedProducts] = useState(null);
     const navigate = useNavigate();
     const [globalFilter, setGlobalFilter] = useState('');
@@ -36,9 +36,13 @@ const Products = () => {
 
     useEffect(() => {
         if (!id) {
-            ProductService.getProducts().then((data) => setProducts(data as any));
+            ProductService.getProducts().then((data) => setProducts(data));
         } else {
-            ProductService.getProduct(id).then((data) => setProducts([data] as any));
+            
+            ProductService.getProduct(id).then((data) => {
+                let _products : App.ProductsType  = [data];
+                setProducts(_products);
+            })
         }
     }, []);
 
@@ -48,7 +52,7 @@ const Products = () => {
 
     const editProduct = (c: App.ProductType) => {
 
-        navigate('/product/' + c.id );
+        navigate('/product/' + c?.id );
         
     };
 
@@ -59,7 +63,7 @@ const Products = () => {
 
 
     const deleteProduct = () => {
-        ProductService.deleteProduct(product.id)
+        ProductService.deleteProduct(product?.id)
         .then((res) =>{
              if (res?.status == 409){                
                 toast.current?.show({
@@ -70,7 +74,7 @@ const Products = () => {
                 });        
                 hideDeleteProductDialog();
             } else {
-                let _products = (products as any)?.filter((val: any) => val.id !== product.id);
+                let _products = (products as any)?.filter((val: any) => val.id !== product?.id);
                 setProducts(_products);
                 hideDeleteProductDialog();
                 setProduct(emptyProduct);
@@ -139,12 +143,12 @@ const Products = () => {
         return (
             <>
                 <span className="p-column-title">Nombre</span>
-                {rowData.name}
+                {rowData?.name}
             </>
         );
     };
     const priceBodyTemplate = (rowData: App.ProductType) => {
-        if (rowData.price){
+        if (rowData?.price){
             return formatCurrencyES(rowData?.price)
         }
         

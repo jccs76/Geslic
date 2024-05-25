@@ -88,13 +88,14 @@ export const Dashboard =() => {
     
   
   const renewSupport = () => {
+
       if (license){
           LicenseService.renewSupport(license.id).then((data) => {                
               console.log(license);
               if (licenses){
-                  console.log(data)
-                  licenses.map(item => item?.id === license.id ? {data} : item);                    
-              }                    
+                let _licenses  = licenses.map((item : any) => item?.id === license.id ? data : item);
+                setLicenses(_licenses);
+            }                    
           });
       };
       hideSupportDialog();

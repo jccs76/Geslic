@@ -17,7 +17,7 @@ export const LicenseService = {
     },
     createLicense(license : App.LicenseType) {
         console.log(license);
-        return fetch('${API_URL}/licenses', 
+        return fetch(`${API_URL}/licenses`, 
             {   method: 'POST', 
                 headers: authHeader(),
                 body: JSON.stringify(license)
@@ -33,7 +33,7 @@ export const LicenseService = {
                 body: JSON.stringify(license)
             })
             .then((res) => res.json())
-            .then((d) => console.log(d as any))
+            .then((d) => d as any)
             .catch( (error) => console.log(error));
     },    
     deleteLicense(id : string | undefined) {

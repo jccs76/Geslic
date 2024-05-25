@@ -17,7 +17,9 @@ declare namespace App {
         phoneNumber? : string;
         email? : string;
         [key: string]: string | string[] | number | boolean | undefined;
-    };
+    } | null;
+
+    type CustomersType = [CustomerType] | null;
 
     type ProductType = {
         id?: string;
@@ -25,7 +27,9 @@ declare namespace App {
         description?: string;
         price?: number;
         [key: string]: string | string[] | number | boolean | undefined;
-    };
+    } | null;
+
+    type ProductsType = [ProducType] | null;
 
     type LicenseType = {
         id?: string;
@@ -38,7 +42,7 @@ declare namespace App {
         [key: string]: string | Product |Customer | Support;
     } | null;
 
-    type LicensesType = LicenseType[];
+    type LicensesType = [LicenseType] | null;
 
     type SupportType = {
         id?: string;
@@ -48,12 +52,14 @@ declare namespace App {
         status: SupportStatus;
         licenseId? : string;
         [key: string]: string | string[] | number | boolean | undefined;
-    }
+    } | null;
+
+    type SupportsType = [SupportType] | null;
 
     type LoginType =  {
         email : string;
         password : string;
-    }
+    };
 
     interface Event extends EventInput {
         location?: string;
