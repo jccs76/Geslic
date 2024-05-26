@@ -1,0 +1,61 @@
+name: cicd-demo
+on:
+  push:
+    branches:
+      - '*'
+jobs:
+  build-job:
+    name: Build Job
+    runs-on: ubuntu-latest
+    env:
+      OCI_CLI_USER: ${{ secrets.OCI_CLI_USER }}
+      OCI_CLI_TENANCY: ${{ secrets.OCI_CLI_TENANCY }}
+      OCI_CLI_FINGERPRINT: ${{ secrets.OCI_CLI_FINGERPRINT }}
+      OCI_CLI_KEY_CONTENT: ${{ secrets.OCI_CLI_KEY_CONTENT }}
+      OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
+    steps:
+      - name: 'Start build job'
+        run: |
+          echo "Starting the build job."    
+      - name: Checkout
+        uses: actions/checkout@v2.7.0
+
+      - name: 'Setup Java JDK'
+        uses: actions/setup-java@v2.5.1
+        with:
+          distribution: 'adopt'
+          java-version: '21'      
+      - name: 'Check Java Version'
+        run: |
+          java --version
+      - name: 'Assemble JAR'
+        run: |
+          ./gradlew assemble
+      - name: 'Get Version Number'
+        run: |
+          echo "VERSION=$(./gradlew properties -q | grep "version:" | awk '{print $2}')" >> $GITHUB_ENV          
+      - name: 'Test'
+        run: |
+          echo $GITHUB_ENV
+          echo ${{env.VERSION}}
+      - name: 'Publish JAR'
+        uses: actions/upload-artifact@v2-preview
+        with:
+          name: 'cicd-demo-${{env.VERSION}}-all.jar'
+          path: build/libs/*-all.jar
+      - name: Retrieve the OCID of a named compartment in tenancy
+        uses: oracle-actions/run-oci-cli-command@v1.1.1
+        id: find-compartment-id
+        with:
+          command: 'iam compartment list --compartment-id-in-subtree=true'
+          query: "data[*].id"          
+      - name: Run an Oracle Cloud Infrastructure (OCI) CLI command
+        uses: oracle-actions/run-oci-cli-command@v1.1.1
+        id: find-instances
+        with:
+          command: 'compute instance list --compartment-id ${{ steps.find-compartment-id.outputs.raw_output }}'
+          query: 'data[*].{name: \"display-name\", shape: shape}'
+
+      - name: List the display name and shape of the instances in my compartment
+        run: |
+          echo ${{ steps.find-instances.outputs.output }} | jq .
