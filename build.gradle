@@ -2,7 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.3.0'
 	id 'io.spring.dependency-management' version '1.1.5'
-	id "com.github.node-gradle.node" version "7.0.2"
+	// id "com.github.node-gradle.node" version "7.0.2"
 }
 
 group = 'com.jccs'
@@ -61,18 +61,18 @@ tasks.named('processResources') {
 }
 
 
-// Configure the plugin to download and use specific Node version
-node {
-    download = true
-    version = "20.11.1"
-}
+// // Configure the plugin to download and use specific Node version
+// node {
+//     download = true
+//     version = "20.11.1"
+// }
 
-//Register NpmTask that will do what "npm run build" command does.
-tasks.register('npmBuild', NpmTask) {
-	workingDir = file("$projectDir/frontend")
-    args = [ 'run', 'build' ]
-}
+// //Register NpmTask that will do what "npm run build" command does.
+// tasks.register('npmBuild', NpmTask) {
+// 	workingDir = file("$projectDir/frontend")
+//     args = [ 'run', 'build' ]
+// }
 
-tasks.named('compileJava') {
- dependsOn('npmBuild')
-}
+// tasks.named('compileJava') {
+//  dependsOn('npmBuild')
+// }
