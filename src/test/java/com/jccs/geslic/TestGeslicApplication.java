@@ -1,7 +1,6 @@
 package com.jccs.geslic;
 
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.devtools.restart.RestartScope;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.context.annotation.Bean;
@@ -14,12 +13,12 @@ public class TestGeslicApplication {
 	@SuppressWarnings("resource")
 	@Bean
 	@ServiceConnection
-	@RestartScope
 	OracleContainer oracleFreeContainer() {
 		return new OracleContainer(DockerImageName.parse("gvenzl/oracle-xe:21-slim-faststart"))
 			.withDatabaseName("geslicdb")
 			.withUsername("testuser")
-			.withPassword(("testpwd"));        
+			.withPassword(("testpwd"))
+			.withReuse(true);        
 
 	}
 

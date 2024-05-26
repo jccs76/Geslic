@@ -16,16 +16,7 @@ import {Calendar} from "primereact/calendar";
 import { Nullable } from "primereact/ts-helpers";
 
 const License = () => {
-
     
-    const emptyCustomer: App.CustomerType = {
-        name: ''
-    };
-
-    const emptyProduct: App.ProductType = {
-        name: ''
-    };
-
 
     const emptyLicense: App.LicenseType = {
         code: '',
@@ -43,10 +34,10 @@ const License = () => {
     
 
     const [fecha, setFecha] = useState<Nullable<Date>>(null);
-    const [customers, setCustomers] = useState<App.CustomersType>([emptyCustomer]);
+    const [customers, setCustomers] = useState<App.CustomersType>(null);
     const [customersFilter, setCustomersFilter] = useState('');
     const [customer, setCustomer] = useState<any>(null);
-    const [products, setProducts] = useState<App.ProductsType>([emptyProduct]);
+    const [products, setProducts] = useState<App.ProductsType>(null);
     const [productsFilter, setProductsFilter] = useState('');
     const [product, setProduct] = useState<any>(null);
     const [license, setLicense] = useState<any>(emptyLicense);
@@ -54,11 +45,11 @@ const License = () => {
     const [isComplete, setIsComplete] = useState<boolean>(false);
 
     useEffect(() => {  
-        CustomerService.getCustomers().then((data) => setCustomers(data as any));
-        ProductService.getProducts().then((data) => setProducts(data as any));
+        CustomerService.getCustomers().then((data) => setCustomers(data));
+        ProductService.getProducts().then((data) => setProducts(data));
         if (id){            
             LicenseService.getLicense(id).then((data) => {
-                setLicense(data as any);
+                setLicense(data);
                 setCustomer(data.customer);
                 setProduct(data.product);
                 setFecha(new Date(data.purchaseDate));});
@@ -120,12 +111,12 @@ const License = () => {
             product
            };
          if (id){
-             LicenseService.updateLicense(id, _license).then((data) => setLicense(data))
+             LicenseService.updateLicense(id, _license).then((data) => {setLicense(data); navigate('/licenses');})
             
          } else {
-            LicenseService.createLicense(_license).then((data) => setLicense(data))
+            LicenseService.createLicense(_license).then((data) => {setLicense(data); navigate('/licenses');})
         }
-        navigate('/licenses');
+        
     }
 
     // const handleSubmit = (e : React.FormEvent<HTMLFormElement>) => {

@@ -13,8 +13,6 @@ import { IconField } from 'primereact/iconfield';
 import { InputIcon } from 'primereact/inputicon';
 
 
-
-
 /* @todo Used 'as any' for types here. Will fix in next version due to onSelectionChange event type issue. */
 const Customers = () => {
 
@@ -40,6 +38,7 @@ const Customers = () => {
         if (!id) {
             
             CustomerService.getCustomers().then((data) => {
+                console.log(data);
                 let _customers : App.CustomersType = data;
                 setCustomers(_customers);
             });        

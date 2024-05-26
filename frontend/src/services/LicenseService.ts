@@ -3,10 +3,10 @@ import { API_URL, authHeader } from "./Common";
 
 
 export const LicenseService = {
-    getLicenses() {
-        return fetch(API_URL + '/licenses', { headers: authHeader() })
+    getLicenses() {        
+        return fetch(API_URL + '/licenses', { headers : authHeader()})
             .then((res) => res.json())
-            .then((d) => d as any)
+            .then((d) => {console.log(d);return d as any;})
             .catch( (error) => console.log(error));
     },
     getLicense(id : string | undefined) {

@@ -27,8 +27,8 @@ const Product = () => {
     useEffect(() => {        
         {id && (
             ProductService.getProduct(id)
-           .then((data) => {setProduct(data as any)                  
-            }).catch( (error) => console.log(error))
+           .then((data) => {setProduct(data as any)})                  
+            .catch( (error) => console.log(error))
 
             // .then((res) =>{
             //     if (res?.status == 409){                
@@ -64,19 +64,18 @@ const Product = () => {
         e.preventDefault();
         console.log(product);
         if (id){
-            ProductService.updateProduct(id, product).then((data) => setProduct(data as any))
+            ProductService.updateProduct(id, product).then((data) => {setProduct(data as any); navigate(-1);})
             
         } else {
-            ProductService.createProduct(product).then((data) => setProduct(data as any))
+            ProductService.createProduct(product).then((data) => {setProduct(data as any); navigate(-1);})
         }
-        navigate('/products');
     }
 
   return (
     <div className="grid">
             <div className="col-12">
                 <div className="flex justify-content-start align-items-baseline">
-                    <Button className="mr-2"  icon="pi pi-chevron-left" rounded text onClick={() => navigate('/')} />                    
+                    <Button className="mr-2"  icon="pi pi-chevron-left" rounded text onClick={() => navigate('/products')} />                    
                     <h5>{id ? 'Editar' : 'Nuevo'} Producto</h5>
                 </div>
                 <div className="card p-fluid">                   

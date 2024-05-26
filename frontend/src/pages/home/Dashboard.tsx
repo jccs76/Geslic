@@ -18,16 +18,6 @@ import { Nullable } from "primereact/ts-helpers";
 
 export const Dashboard =() => {
 
-    let emptyLicense: App.LicenseType = {
-        code: '',
-        lastSupport: {
-            status: '',
-            toDate: ''
-        }
-    };
-
-    let emptyLicenses = [emptyLicense];
-
     const Action = {
         RENEW  : 'renovar',
         CANCEL : 'cancelar'
@@ -35,8 +25,8 @@ export const Dashboard =() => {
 
     const {id} = useParams();    
 
-    const [licenses, setLicenses] = useState<App.LicensesType>(emptyLicenses);
-    const [license, setLicense] = useState<App.LicenseType>(emptyLicense);
+    const [licenses, setLicenses] = useState<App.LicensesType | null>(null);
+    const [license, setLicense] = useState<App.LicenseType>(null);
 
     const [searchFromDate, setSearchFromDate] = useState<Nullable<Date>>(null);
     const [searchToDate, setSearchToDate] = useState<Nullable<Date>>(null);
@@ -62,7 +52,7 @@ export const Dashboard =() => {
             }
             LicenseService.getLicensesSupportBetweenDates(convertDatetoISOString(searchFromDate), 
                                                           convertDatetoISOString(searchToDate))
-                          .then((data) => setLicenses(data as any));
+                          .then((data) => setLicenses(data));
         }        
     }, [searchFromDate]);
 
@@ -73,7 +63,7 @@ export const Dashboard =() => {
             }                    
             LicenseService.getLicensesSupportBetweenDates(convertDatetoISOString(searchFromDate), 
                                                           convertDatetoISOString(searchToDate))
-                          .then((data) => setLicenses(data as any));
+                          .then((data) => setLicenses(data));
         }
     }, [searchToDate]);
 
@@ -90,12 +80,11 @@ export const Dashboard =() => {
   const renewSupport = () => {
 
       if (license){
-          LicenseService.renewSupport(license.id).then((data) => {                
-              console.log(license);
+          LicenseService.renewSupport(license.id).then((data) => {                              
               if (licenses){
-                let _licenses  = licenses.map((item : any) => item?.id === license.id ? data : item);
+                let _licenses : any  = licenses.map((item : any) => item?.id === license.id ? data : item);
                 setLicenses(_licenses);
-            }                    
+                }                    
           });
       };
       hideSupportDialog();

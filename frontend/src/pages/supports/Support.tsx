@@ -76,8 +76,8 @@ const Support = () => {
     const handleSave = (e : any) => {
         e.preventDefault();
         console.log(support);        
-        SupportService.updateSupport(id as string, support).then((data) => setSupport(data as any))
-         navigate('/supports');
+        SupportService.updateSupport(id as string, support).then((data) => {setSupport(data as any);navigate('/supports');})
+         
     }
 
 

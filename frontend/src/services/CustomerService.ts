@@ -6,7 +6,7 @@ export const CustomerService = {
     getCustomers() {
         return fetch(API_URL + '/customers', { headers: authHeader() })
             .then((res) => res.json())
-            .then((d) => d as any)
+            .then((d) => {console.log(d);return d as any;})
             .catch( (error) => console.log(error));
     },
     getCustomer(id : string | undefined) {

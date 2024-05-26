@@ -35,7 +35,7 @@ const Licenses = () => {
 
     const {id} = useParams();    
 
-    useEffect(() => {
+    useEffect(() => {      
         if (!id){      
             LicenseService.getLicenses().then((data) => {
                 let _licenses : App.LicensesType = data;

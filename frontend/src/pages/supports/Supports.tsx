@@ -18,14 +18,6 @@ import { formatCurrencyES } from '../../util/Util';
 /* @todo Used 'as any' for types here. Will fix in next version due to onSelectionChange event type issue. */
 const Supports = () => {
 
-    let emptyLicense: App.LicenseType = {
-        code: '',
-        lastSupport: {
-            status: '',
-            toDate: ''
-        }
-    };
-
 
     const Action = {
         RENEW  : 'renovar',

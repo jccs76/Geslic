@@ -46,12 +46,12 @@ const Customer = () => {
     const  handleSave = (e : any) => {
         e.preventDefault();
         if (id){
-            CustomerService.updateCustomer(id, customer).then((data) => setCustomer(data as any))
+            CustomerService.updateCustomer(id, customer).then((data) => {setCustomer(data as any);  navigate(-1);})
             
         } else {
-            CustomerService.createCustomer(customer).then((data) => setCustomer(data as any))
+            CustomerService.createCustomer(customer).then((data) => {setCustomer(data as any);  navigate(-1);})
         }
-        navigate('/customers');
+       
     }
 
   return (    
