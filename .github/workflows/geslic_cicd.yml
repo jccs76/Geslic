@@ -28,6 +28,8 @@ jobs:
       - name: 'Check Java Version'
         run: |
           java --version
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
       - name: 'Assemble JAR'
         run: |
           ./gradlew assemble
