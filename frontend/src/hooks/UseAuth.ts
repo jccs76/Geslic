@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 function useAuth() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [userName, setUserName] = useState('');
 
   function login(token : string) {
@@ -9,7 +10,8 @@ function useAuth() {
     const tokenSplit = token.split('.');
     const tokenDecoded = JSON.parse(atob(tokenSplit[1]));                        
     localStorage.setItem("user", tokenDecoded.user);    
-    setUserName(tokenDecoded.user)
+    setUserName(tokenDecoded.user);
+    setIsAdmin(tokenDecoded.isAdmin);
     setIsAuthenticated(true);    
   }
 
@@ -20,7 +22,7 @@ function useAuth() {
     setIsAuthenticated(false);
   }
 
-  return { isAuthenticated, userName, login, logout };
+  return { isAuthenticated, isAdmin, userName, login, logout };
 }
 
 export default useAuth;

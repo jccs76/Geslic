@@ -57,8 +57,8 @@ public class UserServiceTest {
                                     .build());
                             
         usersDTO = List.of(
-                    new UserDTO(1L,"Usuario 1","", "usuario1@email.com", "pass"),
-                    new UserDTO(2L,"Usuario 2","", "usuario2@email.com", "pass")
+                    new UserDTO(1L,"Usuario 1","", "usuario1@email.com", "pass",false),
+                    new UserDTO(2L,"Usuario 2","", "usuario2@email.com", "pass", false)
         );                
 
     }
@@ -100,7 +100,7 @@ public class UserServiceTest {
 
     @Test
     public void givenUser_whenCreated_thenCallsRepositorySave(){
-        UserDTO userDTO = new UserDTO(null,"Usuario 5","", "usuario5@email.com", "pass");
+        UserDTO userDTO = new UserDTO(null,"Usuario 5","", "usuario5@email.com", "pass", false);
         when(userMapper.toEntity(userDTO)).thenReturn(new User());
         when(userRepository.save(any(User.class))).thenReturn(new User());
 
@@ -112,7 +112,7 @@ public class UserServiceTest {
 
     @Test
     public void givenExistingUser_whenCreated_thenThrowUserExisting(){
-        UserDTO userDTO = new UserDTO(null,"Usuario 5","", "usuario5@email.com", "pass");
+        UserDTO userDTO = new UserDTO(null,"Usuario 5","", "usuario5@email.com", "pass", false);
         
         doThrow(new EntityExistingException(Constants.ENTITY_EXISTS)).when(userRepository).findByEmail(anyString());
 
@@ -132,7 +132,7 @@ public class UserServiceTest {
                                         .email("usuario3@email.com")
                                         .password("pass")
                                         .build();
-        UserDTO requestUserDTO = new UserDTO(id,"Usuario 3","", "usuario3@email.com", "pass");
+        UserDTO requestUserDTO = new UserDTO(id,"Usuario 3","", "usuario3@email.com", "pass", false);
         
         when(userMapper.toEntity(requestUserDTO)).thenReturn(new User());
         when(userMapper.toDTO(updatedUser)).thenReturn(requestUserDTO);
@@ -150,7 +150,7 @@ public class UserServiceTest {
     
     void givenInexistentUserID_whenUpdate_thenThrowUserNotFound() throws Exception {
         Long id = -1L;
-        UserDTO userDTO = new UserDTO(id,"Usuario 3", "", "usuario2@email.com", "pass");
+        UserDTO userDTO = new UserDTO(id,"Usuario 3", "", "usuario2@email.com", "pass", false);
         
         doThrow(new EntityNotFoundException(Constants.ENTITY_NOTFOUND)).when(userRepository).findById(id);
        

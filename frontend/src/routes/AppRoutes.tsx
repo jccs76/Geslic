@@ -9,7 +9,9 @@ import Product from '../pages/products/Product.tsx';
 import License from '../pages/licenses/License.tsx';
 import Supports from '../pages/supports/Supports.tsx';
 import CustomerLicenses from '../pages/customers/CustomerLicenses.tsx';
-import Support from '../pages//supports/Support.tsx';
+import Support from '../pages/supports/Support.tsx';
+import Users from '../pages/users/Users.tsx';
+import User from '../pages/users/User.tsx';
 import ProtectedRoute from "./ProtectedRoute.tsx";
 
 
@@ -36,6 +38,9 @@ const AppRoutes = () => {
             <Route path="/license/:id/support" element={<Supports/>} />
             <Route path="/supports" element={<Supports />} />
             <Route path="/support/:id" element={<Support />} />
+            <Route path="/users" element={<Users />} />
+            <Route path="/user" element={<User />} />
+            <Route path="/user/:id" element={<User />} />
             <Route path="*" element={<Dashboard />} />
         </Route>
     </Routes>        

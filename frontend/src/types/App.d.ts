@@ -56,6 +56,18 @@ declare namespace App {
 
     type SupportsType = [SupportType] | null;
 
+    type UserType = {
+        id?: string;
+        firstName: string;
+        lastName?: string;
+        email: string;
+        password: string;
+        isAdmin : boolean;
+        [key: string]: string | string[] | number | boolean | undefined;
+    }
+
+    type UsersType = [UserType] | null;
+    
     type LoginType =  {
         email : string;
         password : string;

@@ -41,8 +41,8 @@ public class UserControllerTest {
     @BeforeEach
     void setUp() {
         users = List.of(
-                    new UserDTO(1L,"Usuario1", "", "usuario1@email.com", "pass"),
-                    new UserDTO(2L,"Usuario2",  "", "usuario2@email.com", "pass")
+                    new UserDTO(1L,"Usuario1", "", "usuario1@email.com", "pass", false),
+                    new UserDTO(2L,"Usuario2",  "", "usuario2@email.com", "pass", false)
         );                
     }
 
@@ -117,8 +117,8 @@ public class UserControllerTest {
     @Test
     @DisplayName("Create an user and obtain the saved user")
     void givenUser_whenCreated_thenIsSaved() throws Exception {
-        UserDTO user = new UserDTO(null,"Usuario 3", "", "usuario3@email.com", "pass");
-        UserDTO userCreated = new UserDTO(3L,"Usuario 3","", "usuario3@email.com", "pass");
+        UserDTO user = new UserDTO(null,"Usuario 3", "", "usuario3@email.com", "pass", false);
+        UserDTO userCreated = new UserDTO(3L,"Usuario 3","", "usuario3@email.com", "pass", false);
         
         String jsonResponse = """
                 {
@@ -141,7 +141,7 @@ public class UserControllerTest {
     @Test
     @DisplayName("Create User without name returns invalid User error")
     void givenBadUser_whenCreate_thenReturnBadRequestError() throws Exception {
-        UserDTO user = new UserDTO(null,"","", "usuario2@email.com", "pass");
+        UserDTO user = new UserDTO(null,"","", "usuario2@email.com", "pass", false);
 
         when(userService.create(user)).thenThrow(new EntityInvalidException(Constants.ENTITY_INVALID));
 
@@ -171,7 +171,7 @@ public class UserControllerTest {
     @DisplayName("Update an existing user and obtain the updated user")
     void givenUser_whenUpdated_thenIsSaved() throws Exception {
         Long id = 2L;
-        UserDTO user = new UserDTO(id,"Usuario 3","", "usuario2@email.com", "pass");
+        UserDTO user = new UserDTO(id,"Usuario 3","", "usuario2@email.com", "pass", false);
 
         String jsonResponse = """
                 {
@@ -197,7 +197,7 @@ public class UserControllerTest {
     @DisplayName("Update inexistent user returns user not found")
     void givenInexistentUserID_whenUpdate_thenReturnNotFoundError() throws Exception {
         Long id = -1L;
-        UserDTO user = new UserDTO(id,"Usuario 3","", "usuario2@email.com", "pass");
+        UserDTO user = new UserDTO(id,"Usuario 3","", "usuario2@email.com", "pass", false);
 
         when(userService.update(id, user)).thenThrow(new EntityNotFoundException(Constants.ENTITY_NOTFOUND));
 

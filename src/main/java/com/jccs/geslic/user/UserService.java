@@ -8,6 +8,7 @@ import com.jccs.geslic.common.AbstractService;
 import com.jccs.geslic.common.Constants;
 import com.jccs.geslic.common.exception.EntityExistingException;
 import com.jccs.geslic.common.exception.EntityInvalidException;
+import com.jccs.geslic.common.exception.EntityNotFoundException;
 
 
 @Service
@@ -28,7 +29,11 @@ public class UserService extends AbstractService<UserDTO, User, UserMapper, User
     @Override
     public UserDTO update(Long id, UserDTO dto) {
         if (dto.id().equals(id)){
-                return super.update(id, dto);
+            User user = repository.findById(id).orElseThrow(() -> new EntityNotFoundException(Constants.ENTITY_NOTFOUND));
+            if (user.getPassword() == dto.password()){
+                UserDTO tempDTO = new UserDTO(dto.id(), dto.firstName(), dto.lastName(), dto.email(), user.getPassword(), dto.isAdmin());
+                return mapper.toDTO(repository.save(mapper.toEntity(tempDTO)));         
+            }                        
         }
         throw new EntityInvalidException(Constants.ENTITY_INVALID);
     }    

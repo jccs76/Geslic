@@ -9,6 +9,7 @@ export interface ChildProps {
 
 export interface AuthContextProps {
     isAuthenticated: boolean;
+    isAdmin : boolean;
     userName: string;
     login: (token : string) => void;
     logout: () => void;
@@ -17,10 +18,11 @@ export interface AuthContextProps {
 export const AuthContext = createContext({} as AuthContextProps);
 
 export const AuthProvider = ({ children }: ChildProps) => {
-    const {isAuthenticated, userName, login, logout} = useAuth();
+    const {isAuthenticated, isAdmin, userName, login, logout} = useAuth();
 
     const value = {
         isAuthenticated,
+        isAdmin,
         userName,
         login,
         logout
