@@ -61,6 +61,7 @@ const User = () => {
     }
     
     const handleSave = (e : any) => {
+        
         e.preventDefault();
         if (id){
             UserService.updateUser(id, user).then((data) => {setUser(data as any); navigate(-1);})

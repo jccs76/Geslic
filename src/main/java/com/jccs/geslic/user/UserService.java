@@ -33,7 +33,8 @@ public class UserService extends AbstractService<UserDTO, User, UserMapper, User
             if (user.getPassword() == dto.password()){
                 UserDTO tempDTO = new UserDTO(dto.id(), dto.firstName(), dto.lastName(), dto.email(), user.getPassword(), dto.isAdmin());
                 return mapper.toDTO(repository.save(mapper.toEntity(tempDTO)));         
-            }                        
+            }
+            return mapper.toDTO(repository.save(mapper.toEntity(dto)));                                 
         }
         throw new EntityInvalidException(Constants.ENTITY_INVALID);
     }    
