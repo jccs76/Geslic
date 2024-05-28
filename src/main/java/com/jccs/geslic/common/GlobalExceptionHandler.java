@@ -56,48 +56,51 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<String> handleConstraintViolationException(ConstraintViolationException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    public ResponseEntity<ProblemDetail> handleConstraintViolationException(ConstraintViolationException ex) {        
+        ProblemDetail errorDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        errorDetail.setProperty("description", "Existen items asociados");
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorDetail);
    }
 
-    @ExceptionHandler(Exception.class)
-    public ProblemDetail handleSecurityException(Exception exception) {
+    @ExceptionHandler(BadCredentialsException.class)
+    public ProblemDetail BadCredentialsException(BadCredentialsException exception) {
         ProblemDetail errorDetail = null;
-        
-        exception.printStackTrace();
-
-        if (exception instanceof BadCredentialsException) {
-            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(401), exception.getMessage());
-            errorDetail.setProperty("description", "The username or password is incorrect");
-
-            return errorDetail;
-        }
-
-        if (exception instanceof AccountStatusException) {
-            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(403), exception.getMessage());
-            errorDetail.setProperty("description", "The account is locked");
-        }
-
-        if (exception instanceof AccessDeniedException) {
-            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(403), exception.getMessage());
-            errorDetail.setProperty("description", "You are not authorized to access this resource");
-        }
-
-        if (exception instanceof SignatureException) {
-            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(403), exception.getMessage());
-            errorDetail.setProperty("description", "The JWT signature is invalid");
-        }
-
-        if (exception instanceof ExpiredJwtException) {
-            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(403), exception.getMessage());
-            errorDetail.setProperty("description", "The JWT token has expired");
-        }
-
-        if (errorDetail == null) {
-            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(500), exception.getMessage());
-            errorDetail.setProperty("description", "Unknown internal server error.");
-        }
-
+        errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(401), exception.getMessage());
+        errorDetail.setProperty("description", "Usuario o contraseña incorrectos");
         return errorDetail;
     }
+    
+    @ExceptionHandler(AccountStatusException.class)
+    public ProblemDetail handleAccountStatusException(AccountStatusException exception) {
+        ProblemDetail errorDetail = null;
+        errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(403), exception.getMessage());
+        errorDetail.setProperty("description", "Cuenta bloqueada");
+        return errorDetail;
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ProblemDetail handleAccessDeniedException(AccessDeniedException exception) {
+        ProblemDetail errorDetail = null;
+        errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(403), exception.getMessage());
+        errorDetail.setProperty("description", "No autorizado a acceder a éste recurso");
+        return errorDetail;
+    }
+
+    @ExceptionHandler(SignatureException.class)
+    public ProblemDetail handleSignatureExceptionException(SignatureException exception) {
+        ProblemDetail errorDetail = null;
+        errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(403), exception.getMessage());
+        errorDetail.setProperty("description", "Firma del token JWT inválida");
+        return errorDetail;
+    }
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ProblemDetail handleExpiredJwtException(ExpiredJwtException exception) {
+        ProblemDetail errorDetail = null;
+        errorDetail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(403), exception.getMessage());
+        errorDetail.setProperty("description", "El token JWT ha expirado");
+        return errorDetail;
+    }
+
 }

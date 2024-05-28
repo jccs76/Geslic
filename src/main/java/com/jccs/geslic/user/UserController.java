@@ -11,5 +11,6 @@ class UserController extends AbstractController<UserDTO, UserService>{
     UserController(UserService service) {        
         super(service);
     }
-     
+       
+ 
 }

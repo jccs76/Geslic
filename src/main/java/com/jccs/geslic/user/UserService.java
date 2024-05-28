@@ -30,9 +30,11 @@ public class UserService extends AbstractService<UserDTO, User, UserMapper, User
     public UserDTO update(Long id, UserDTO dto) {
         if (dto.id().equals(id)){
             User user = repository.findById(id).orElseThrow(() -> new EntityNotFoundException(Constants.ENTITY_NOTFOUND));
-            if (user.getPassword() == dto.password()){
-                UserDTO tempDTO = new UserDTO(dto.id(), dto.firstName(), dto.lastName(), dto.email(), user.getPassword(), dto.isAdmin());
-                return mapper.toDTO(repository.save(mapper.toEntity(tempDTO)));         
+            if ( user.getPassword().equals(dto.password())) {
+                user.setFirstName(dto.firstName());
+                user.setLastName(dto.lastName());
+                user.setIsAdmin(dto.isAdmin());
+                return mapper.toDTO(repository.save(user));         
             }
             return mapper.toDTO(repository.save(mapper.toEntity(dto)));                                 
         }

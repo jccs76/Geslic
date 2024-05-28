@@ -36,7 +36,8 @@ export const ProductService = {
             .catch( (error) => console.log(error));
     },    
     deleteProduct(id : string | undefined) {        
-        return fetch(`${API_URL}/products/${id}`, {method: "DELETE", headers: authHeader() })    
-        .catch( (error) => console.log(error));
+        return fetch(`${API_URL}/products/${id}`, {method: "DELETE", headers: authHeader() })
+        .then((res) => res.json())    
+        .catch( (error) => {console.log(error);});
     }
 };

@@ -14,7 +14,6 @@ const User = () => {
         firstName: '',
         lastName: '',
         email: '',
-        password : '',
         isAdmin: false
     };
 
@@ -28,19 +27,15 @@ const User = () => {
         {id && (
             UserService.getUser(id)
            .then((data) => {
-                    setUser(data as any);
+                    let usr = { id : data.id,
+                                firstName : data.firstName,
+                                lastName : data.lastName,
+                                email : data.email,
+                                isAdmin: data.isAdmin
+                              };                        
+                    setUser(usr);
            })                  
             .catch( (error) => console.log(error))
-
-            // .then((res) =>{
-            //     if (res?.status == 409){                
-            //        toast.current?.show({
-            //            severity: 'error',
-            //            summary: 'Borrado',
-            //            detail: 'Usero no puede ser eliminado',
-            //            life: 3000
-            //        });        
-            //        hideDeleteUserDialog();            
         )};    
     }, []);
 
@@ -52,6 +47,7 @@ const User = () => {
         let _user = { ...user };        
         _user[`${name}`] = val;
         setUser(_user);
+        
     };
 
     const onIsAdminChange = (e : CheckboxChangeEvent) => {
@@ -61,9 +57,10 @@ const User = () => {
     }
     
     const handleSave = (e : any) => {
-        
+        console.log(user);
         e.preventDefault();
         if (id){
+            console.log(user);
             UserService.updateUser(id, user).then((data) => {setUser(data as any); navigate(-1);})
             
         } else {
@@ -82,15 +79,15 @@ const User = () => {
                         <div className="p-fluid formgrid grid">
                             <div className="field col-12 md:col-6">
                                 <label htmlFor="firstName" className="">Nombre</label>                        
-                                <InputText id="user.firstName" name="firstName"  value={user.firstName} autoFocus type="text" onChange={onInputChange} />
+                                <InputText id="user.firstName" name="firstName"  value={user?.firstName} autoFocus type="text" onChange={onInputChange} />
                             </div>
                             <div className="field col-12">                    
                                 <label htmlFor="lastName" className="">Apellidos</label>
-                                <InputText id="user.lastName" name="lastName"  value={user.lastName} type="text" onChange={onInputChange} />
+                                <InputText id="user.lastName" name="lastName"  value={user?.lastName} type="text" onChange={onInputChange} />
                             </div>
                             <div className="field col-12">                    
                                 <label htmlFor="email" className="">Email</label>                    
-                                <InputText id="user.email" name="email"  value={user.email} type="text" onChange={onInputChange} />
+                                <InputText id="user.email" name="email" disabled={!!id} value={user?.email} type="text" onChange={onInputChange} />
                             </div>                                                          
                             <div className="field col-12">                    
                                 <label htmlFor="password" className="">Contraseña</label>                    
@@ -98,7 +95,7 @@ const User = () => {
                             </div>                            
                             <div className="field col-12 flex flex-align-center">                    
                                 <label htmlFor="isAdmin" className=" mr-3">Administrador</label>                    
-                                <Checkbox inputId="user.isAdmin" name="isAdmin" onChange={onIsAdminChange} checked={user.isAdmin} />
+                                <Checkbox inputId="user.isAdmin" name="isAdmin" onChange={onIsAdminChange} checked={user?.isAdmin} />
                             </div>                                                          
 
                         </div>

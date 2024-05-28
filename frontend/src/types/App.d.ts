@@ -61,7 +61,7 @@ declare namespace App {
         firstName: string;
         lastName?: string;
         email: string;
-        password: string;
+        password?: string;
         isAdmin : boolean;
         [key: string]: string | string[] | number | boolean | undefined;
     }

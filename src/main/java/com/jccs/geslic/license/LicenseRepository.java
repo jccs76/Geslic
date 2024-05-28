@@ -10,7 +10,7 @@ import java.time.LocalDate;
 
 
 @Repository
-interface LicenseRepository extends CommonRepository<License>{
+public interface LicenseRepository extends CommonRepository<License>{
     Optional<License> findByCode(String code);
   
     @Query("select l from License l where lastSupport.toDate >= ?1 and lastSupport.toDate <= ?2")

@@ -69,14 +69,16 @@ const Products = () => {
     const deleteProduct = () => {
         ProductService.deleteProduct(product?.id)
         .then((res) =>{
-             if (res?.status == 409){                
-                toast.current?.show({
-                    severity: 'error',
-                    summary: 'Borrado',
-                    detail: 'Producto no puede ser eliminado',
-                    life: 3000
-                });        
-                hideDeleteProductDialog();
+            if (!res?.ok) {
+                if (res?.status == 409){
+                    toast.current?.show({
+                        severity: 'error',
+                        summary: 'Error de borrado',
+                        detail: 'Producto no puede ser eliminado al haber licencias asociadas',
+                        life: 3000
+                    });        
+                    hideDeleteProductDialog();
+                }
             } else {
                 let _products = (products as any)?.filter((val: any) => val.id !== product?.id);
                 setProducts(_products);
@@ -183,7 +185,6 @@ const Products = () => {
                         emptyMessage="No hay `productos."
                         header={header}
                     >
-                        <Column field="id" header="Id"  headerStyle={{ minWidth: '3rem' }}></Column>
                         <Column field="name" header="Nombre" body={nameBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
                         <Column field="description" header="Descripción" headerStyle={{ minWidth: '10rem' }}></Column>
                         <Column field="price" header="Precio" body={priceBodyTemplate}></Column>

@@ -17,7 +17,7 @@ public class TestGeslicApplication {
 	@SuppressWarnings("resource")
 	@Bean
 	@RestartScope
-	@ServiceConnection
+	@ServiceConnection	
 	OracleContainer oracleFreeContainer() {				
 		return new OracleContainer(DockerImageName.parse("gvenzl/oracle-xe:21-slim-faststart"))
 			.withDatabaseName("geslicdb")

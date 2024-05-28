@@ -31,7 +31,7 @@ public class User extends AbstractEntity implements UserDetails {
     private String lastName;
     @Column(unique = true, length = 100, nullable = false)
     private String email;
-    @Column(name = "user_password", nullable = false)
+    @Column(name = "user_password")
     private String password;
     @Column(nullable = false)
     private Boolean isAdmin;
