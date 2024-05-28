@@ -41,18 +41,25 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(EntityInvalidException.class)
-    public ResponseEntity<String> handleProductInvalid (EntityInvalidException ex) {
-        return ResponseEntity.badRequest().body(ex.getMessage());
+    public ResponseEntity<ProblemDetail> handleProductInvalid (EntityInvalidException ex) {
+        ProblemDetail errorDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());                
+        errorDetail.setProperty("description", ex.getMessage());
+        return ResponseEntity.badRequest().body(errorDetail);
     }
  
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<String> handleProductNotFound (EntityNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    public ResponseEntity<ProblemDetail> handleProductNotFound (EntityNotFoundException ex) {
+        ProblemDetail errorDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());        
+        errorDetail.setProperty("description", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetail);
     }
  
     @ExceptionHandler(EntityExistingException.class)
-    public ResponseEntity<String> handleProductExisting (EntityExistingException ex){
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    public ResponseEntity<ProblemDetail> handleProductExisting (EntityExistingException ex){
+        ProblemDetail errorDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());        
+        errorDetail.setProperty("description", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorDetail);
+
     }
 
     @ExceptionHandler(ConstraintViolationException.class)

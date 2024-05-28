@@ -17,7 +17,7 @@ declare namespace App {
         phoneNumber? : string;
         email? : string;
         [key: string]: string | string[] | number | boolean | undefined;
-    } | null;
+    };
 
     type CustomersType = [CustomerType] | null;
 
@@ -71,6 +71,7 @@ declare namespace App {
     type LoginType =  {
         email : string;
         password : string;
+        [key: string]: string | string[] | number | boolean | undefined;
     };
 
     interface Event extends EventInput {

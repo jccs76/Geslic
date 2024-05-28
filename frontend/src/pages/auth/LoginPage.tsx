@@ -1,5 +1,4 @@
-
-import { useContext, useRef, useState } from 'react';
+import { useContext, useRef } from 'react';
 import { Button } from 'primereact/button';
 import { Password } from 'primereact/password';
 import { LayoutContext } from '../../layout/context/layoutcontext';
@@ -10,66 +9,50 @@ import { LoginService } from '../../services/LoginService';
 import { Toast } from 'primereact/toast';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
+import { App } from '@/types/app';
+import { Controller, useForm } from 'react-hook-form';
 
 const LoginPage = () => {
 
-    // const defaultValues : App.LoginType = {
-    //     email : '',
-    //     password : ''
-    // };
+    const defaultValues : App.LoginType = {
+         email : '',
+         password : ''
+     };
 
     const {login} =  useContext(AuthContext);
 
     const navigate = useNavigate();
 
-    const [loginEmail, setLoginEmail] = useState('');
-    const [loginPassword, setLoginPassword] = useState('');
 
     const toast = useRef<Toast>(null);
     const { layoutConfig } = useContext(LayoutContext);
+    
+    const { control, formState: { errors }, handleSubmit} = useForm<App.LoginType>({ defaultValues });
 
     const containerClassName = classNames('surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden', { 'p-input-filled': layoutConfig.inputStyle === 'filled' });
 
-    // const validate = (data : App.LoginType) => {
-    //     let errors = { email : '', password: ''};
 
-    //     if (!data.email) {
-    //         errors.email = 'E-mail obligatorio';
-    //     }  else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(data.email)) {
-    //         errors.email = 'Email incorrecto. Ej: usuario@email.com';
-    //     }
-
-    //     if (!data.password) {
-    //         errors.password= 'Password obligatorio';
-    //     }
-      
-    //     return errors;
-    // };
-
-  
-    const handleLogin = () => { 
-            if (!loginEmail || !loginPassword) { 
-                return; 
-            }
-            let credentials = { email : loginEmail,  password : loginPassword }; 
-            LoginService.login(credentials).then((data) => 
-                {
-                    
-                    if (data.status == 401){                
-                    toast.current?.show({
-                        severity: 'error',
-                        summary: 'Error de acceso',
-                        detail: 'Usuario o contraseña incorrectos',
-                        life: 3000
-                        });        
-                    } else {                        
-                        login(data.token);
-                        navigate('/');
-                    }
-
-                })
-    }; 
+    const getFormErrorMessage = (name : string) => {
+        return errors[name] && <small className="p-error">{errors[name]?.message}</small>
+    };
     
+    const onSubmit = (data : App.LoginType) => {      
+        LoginService.login(data)
+            .then((data) => {                            
+                if (data.status == 401){                
+                    toast.current?.show({
+                    severity: 'error',
+                    summary: 'Error de acceso',
+                    detail: 'Usuario o contraseña incorrectos',
+                    life: 3000
+                    });        
+                } else {                        
+                    login(data.token);
+                    navigate('/');
+                }
+            });        
+    }
+      
     return (
         <>
         <div className={containerClassName}>
@@ -88,21 +71,34 @@ const LoginPage = () => {
                             <div className="text-900 text-3xl font-medium mb-3">GesLic</div>
                             <span className="text-600 font-medium">Introduzca usuario</span>
                         </div>
-
+                    <form onSubmit={handleSubmit(onSubmit)} className="p-fluid">
                         <div className="mb-5">
-                            <label htmlFor="loginEmail" className="block text-900 text-xl font-medium mb-2">
-                                Email
-                            </label>
-                            <InputText id="loginEmail" type="text" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} placeholder="Correo Electrónico" className="w-full md:w-30rem mb-5" style={{ padding: '1rem' }} />                            
-                            <label htmlFor="loginPassword" className="block text-900 font-medium text-xl mb-2">
-                                Contraseña
-                            </label>
-                            <Password inputId="loginPassword" toggleMask={true} feedback={false} value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)}  placeholder="Contraseña" className="w-full mb-5" inputClassName="w-full p-3 md:w-30rem" />                            
+                            <div className="field">
+                                <span className="p-float-label">
+                                    <Controller name="email" control={control} rules={{ required: 'Email obligatorio.', pattern: { value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i, message: 'Email inválido. Ej: usuario@email.com' }}}
+                                    render={({ field, fieldState }) => (
+                                        <InputText id={field.name} {...field} autoFocus className={classNames({ 'p-invalid': fieldState.invalid })} />
+                                    )} />
+                                    <label htmlFor="email" className={classNames({ 'p-error': errors.email })}>Email*</label>
+                                </span>
+                                {getFormErrorMessage('email')}
+                            </div>
                         </div>
-                     
-
-                        <Button label="Entrar" className="w-full p-3 text-xl" onClick={handleLogin}></Button>
+                        <div className="mb-5">
+                            <div className="field">
+                                <span className="p-float-label">
+                                    <Controller name="password" control={control} rules={{ required: 'Password obligatorio' }} render={({ field, fieldState }) => (
+                                        <Password id={field.name} {...field} toggleMask feedback={false} className={classNames({ 'p-invalid': fieldState.invalid })}  />                                                                
+                                    )} />
+                                    <label htmlFor="password" className={classNames({ 'p-error': errors.password })}>Contraseña*</label>
+                                </span>
+                                {getFormErrorMessage('password')}
+                            </div>                            
+                        </div>
+                        <Button type="submit" label="Entrar" className="w-full p-3 text-xl" />
+                    </form>
                     </div>
+                    
                 </div>
             </div>
         </div>

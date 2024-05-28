@@ -21,8 +21,6 @@ export const ProductService = {
                 headers: authHeader(),
                 body: JSON.stringify(product)
             })
-            .then((res) => res.json())
-            .then((d) => d as any)
             .catch( (error) => console.log(error));
     },    
     updateProduct(id: string, product : App.ProductType) {
@@ -31,8 +29,6 @@ export const ProductService = {
                 headers: authHeader(),
                 body: JSON.stringify(product)
             })
-            .then((res) => res.json())
-            .then((d) => d as any)
             .catch( (error) => console.log(error));
     },    
     deleteProduct(id : string | undefined) {        

@@ -19,6 +19,7 @@ const Users = () => {
         firstName: '',
         lastName: '',
         email: '',
+        password: '',
         isAdmin: false
     };
 
@@ -45,10 +46,10 @@ const Users = () => {
         navigate('/user');
     };
 
-    // const editUser = (rowData: App.UserType) => {
-    //     navigate('/user/' + rowData?.id );
+    const editUser = (rowData: App.UserType) => {
+        navigate('/user/' + rowData?.id );
         
-    // };
+    };
 
     const confirmDelete = (user: App.UserType) => {
         setUser(user);
@@ -128,7 +129,7 @@ const Users = () => {
     const actionBodyTemplate = (rowData: App.UserType) => {
         return (
             <div className="flex flex-column md:flex-row md:justify-content-center md:align-items-center ">
-                {/* <Button icon="pi pi-pencil" tooltip="Modificar" rounded severity="info"  className="mr-2"  onClick={() => editUser(rowData)} /> */}
+                <Button icon="pi pi-pencil" tooltip="Modificar" rounded severity="info"  className="mr-2" onClick={() => editUser(rowData)} />
                 <Button icon="pi pi-trash" tooltip="Eliminar" rounded severity="warning" disabled={rowData.email == "admin@geslic.com"} onClick={() => confirmDelete(rowData)}/>
             </div>
         );

@@ -21,8 +21,6 @@ export const CustomerService = {
                 headers: authHeader() ,
                 body: JSON.stringify(customer)
             })
-            .then((res) => res.json())
-            .then((d) => d as App.CustomerType)
             .catch( (error) => console.log(error));
     },    
     updateCustomer(id: string, customer : App.CustomerType) {
@@ -31,8 +29,6 @@ export const CustomerService = {
                 headers: authHeader(),
                 body: JSON.stringify(customer)
             })
-            .then((res) => res.json())
-            .then((d) => console.log(d as App.CustomerType))
             .catch( (error) => console.log(error));
     },    
     deleteCustomer(id : string | undefined) {      

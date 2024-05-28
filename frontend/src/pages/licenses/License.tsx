@@ -14,20 +14,26 @@ import { InputNumber } from "primereact/inputnumber";
 import { convertDatetoISOString, formatCurrencyES} from "../../util/Util";
 import {Calendar} from "primereact/calendar";
 import { Nullable } from "primereact/ts-helpers";
+import { Toast } from "primereact/toast";
+import { Controller, useForm } from 'react-hook-form';
+import { classNames } from "primereact/utils";
+
 
 const License = () => {
-    
 
-    const emptyLicense: App.LicenseType = {
+    const defaultValues: App.LicenseType = {
         code: '',
         purchaseDate: '',
         price: 0
     };
 
+    const toast = useRef<Toast>(null);
 
     const navigate = useNavigate();
 
     const {id} = useParams();    
+
+    const { control, formState: { errors }, handleSubmit, reset} = useForm<App.CustomerType>({ defaultValues });
     
     const dtCustomers = useRef<DataTable<any>>(null);
     const dtProducts  = useRef<DataTable<any>>(null);
@@ -54,7 +60,7 @@ const License = () => {
                 setProduct(data.product);
                 setFecha(new Date(data.purchaseDate));});
         } else {
-            setLicense(emptyLicense);
+            setLicense(defaultValues);
             setCustomer(null);
             setProduct(null);
             setFecha(new Date());
@@ -77,6 +83,13 @@ const License = () => {
 
     }, [fecha])
 
+    const getFormErrorMessage = (name : string) => {
+        return errors[name] && <small className="p-error">{errors[name]?.message}</small>
+    };
+
+    const onSubmit = (data : App.CustomerType) => {      
+        console.log(data)
+    }
     const onInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {        
         e.preventDefault();
         

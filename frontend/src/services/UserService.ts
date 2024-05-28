@@ -21,8 +21,7 @@ export const UserService = {
                 headers: authHeader(),
                 body: JSON.stringify(user)
             })
-            .then((res) => res.json())
-            .then((d) => d as any)
+            
             .catch( (error) => console.log(error));
     },    
     updateUser(id: string, user : App.UserType) {
@@ -31,8 +30,6 @@ export const UserService = {
                 headers: authHeader(),
                 body: JSON.stringify(user)
             })
-            .then((res) => res.json())
-            .then((d) => d as any)
             .catch( (error) => console.log(error));
     },    
     deleteUser(id : string | undefined) {        
