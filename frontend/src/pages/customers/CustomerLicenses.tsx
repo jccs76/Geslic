@@ -30,7 +30,7 @@ const CustomerLicenses = () => {
 
     const [license, setLicense] = useState<App.LicenseType>(emptyLicense);
     const [licenses, setLicenses] = useState(null);
-    const [selectedLicenses, setSelectedLicenses] = useState<App.LicenseType>(null);
+    const [selectedLicenses, setSelectedLicenses] = useState<App.LicenseType>(emptyLicense);
     const navigate = useNavigate();
     const [globalFilter, setGlobalFilter] = useState('');
     const toast = useRef<Toast>(null);
@@ -190,7 +190,7 @@ const CustomerLicenses = () => {
                             <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
                             {license && (
                                 <span>
-                                   ¿Seguro que quiere eliminar el licencia <b>{license.name}</b>?
+                                   ¿Seguro que quiere eliminar la licencia <b>{license.name as any}</b>?
                                 </span>
                             )}
                         </div>

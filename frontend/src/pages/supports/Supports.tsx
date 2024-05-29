@@ -72,8 +72,9 @@ const Supports = () => {
 
     const cancelSupport = () => {
         if (license){
-            LicenseService.cancelSupport(license.id);                        
-            license.lastSupport.status = SupportStatus.CANCELED;
+            LicenseService.cancelSupport(license.id);
+            if (license.lastSupport)
+                license.lastSupport.status = SupportStatus.CANCELED;
             if (licenses){
                 licenses.map((item : App.LicenseType) => item?.id === license.id ? {license} : item);
             }
@@ -138,19 +139,20 @@ const Supports = () => {
     };
 
     const toFromDateBodyTemplate = (rowData: App.LicenseType) => {
+        if (rowData.lastSupport)
         return formatDateEs(rowData?.lastSupport.fromDate);
         
     };
 
     const toDateBodyTemplate = (rowData: App.LicenseType) => {
+        if (rowData.lastSupport)
         return formatDateEs(rowData?.lastSupport.toDate);
         
     };
 
-    const priceBodyTemplate = (rowData: App.LicenseType) => {
-        if (rowData?.price){
-            return formatCurrencyES(rowData?.lastSupport.price);
-        }        
+    const priceBodyTemplate = (rowData: App.LicenseType) => {        
+        if (rowData.lastSupport)
+            return formatCurrencyES(rowData?.lastSupport.price);        
     };
 
     const statusBodyTemplate = (rowData: App.LicenseType) => {

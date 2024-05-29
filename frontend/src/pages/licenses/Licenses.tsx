@@ -204,7 +204,7 @@ const Licenses = () => {
                             <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
                             {license && (
                                 <span>
-                                   ¿Seguro que quiere eliminar el licencia <b>{license.name}</b>?
+                                   ¿Seguro que quiere eliminar el licencia <b>{license.name as string}</b>?
                                 </span>
                             )}
                         </div>

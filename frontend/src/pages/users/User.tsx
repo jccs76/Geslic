@@ -1,6 +1,6 @@
 import { UserService } from "../../services/UserService";
 import { App } from "@/types";
-import {  useEffect, useRef, useState } from "react";
+import {  useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
@@ -130,7 +130,7 @@ const User = () => {
                             </div>                            
                             <div className="field col-12 flex flex-align-center">                    
                                 <label htmlFor="isAdmin" className=" mr-3">Administrador</label>                    
-                                <Controller name="isAdmin" control={control}  render={({ field, fieldState }) => (
+                                <Controller name="isAdmin" control={control}  render={({ field }) => (
                                     <Checkbox id="field.name"  {...field} checked={field.value} />
                                 )} />
                             </div>                                                          
