@@ -9,8 +9,6 @@ create table customers (
     zip_code varchar2(255 char),
     created_date timestamp(6),
     last_modified_date timestamp(6),
-    created_by varchar2(255 char),
-    modified_by varchar2(255 char),
     primary key (id)
 );
 create sequence customers_seq start with 1 increment by 1;
@@ -22,8 +20,6 @@ create table products (
     price number(38,2),
     created_date timestamp(6),
     last_modified_date timestamp(6),
-    created_by varchar2(255 char),
-    modified_by varchar2(255 char),
     primary key (id)
 );
 create sequence products_seq start with 1 increment by 1;
@@ -38,8 +34,6 @@ create table licenses (
     product_id number(19,0),
     created_date timestamp(6),
     last_modified_date timestamp(6),
-    created_by varchar2(255 char),
-    modified_by varchar2(255 char),
     primary key (id)
 );
 create sequence licenses_seq start with 1 increment by 1;
@@ -53,8 +47,6 @@ create table supports (
     license_id number(19,0) not null,
     created_date timestamp(6),
     last_modified_date timestamp(6),
-    created_by varchar2(255 char),
-    modified_by varchar2(255 char),
     primary key (id)    
 );
 create sequence supports_seq start with 1 increment by 1;
@@ -68,8 +60,6 @@ create table users (
     is_admin number(1,0) default 0 not null,
     created_date timestamp(6),
     last_modified_date timestamp(6),
-    created_by varchar2(255 char),
-    modified_by varchar2(255 char),
     primary key (id)
 );
 create sequence users_seq start with 1 increment by 1;

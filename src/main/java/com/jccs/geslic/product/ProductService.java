@@ -9,7 +9,6 @@ import com.jccs.geslic.common.Constants;
 import com.jccs.geslic.common.exception.EntityExistingException;
 import com.jccs.geslic.common.exception.EntityInvalidException;
 import com.jccs.geslic.common.exception.EntityNotFoundException;
-import com.jccs.geslic.customer.Customer;
 
 @Service
 public class ProductService extends AbstractService<ProductDTO, Product, ProductMapper, ProductRepository>{

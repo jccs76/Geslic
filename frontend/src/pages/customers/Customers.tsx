@@ -9,8 +9,6 @@ import { App } from '@/types';
 import { CustomerService } from '../../services/CustomerService';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Dialog } from 'primereact/dialog';
-import { IconField } from 'primereact/iconfield';
-import { InputIcon } from 'primereact/inputicon';
 
 
 /* @todo Used 'as any' for types here. Will fix in next version due to onSelectionChange event type issue. */
@@ -102,13 +100,12 @@ const Customers = () => {
     );
 
     const toolbarCenterContent = (
-        <div></div>
-    //     <div className="p-inputgroup">
-    //     <span className="p-inputgroup-addon">
-    //         <i className="pi pi-search" />
-    //     </span>
-    //     <InputText className="pl-2" type="search" onInput={(e) => setGlobalFilter(e.currentTarget.value)} placeholder="Buscar..." />
-    // </div>
+            <div className="p-inputgroup">
+                <span className="p-inputgroup-addon">
+                    <i className="pi pi-search" />
+                </span>
+                <InputText className="pl-2" type="search" onInput={(e) => setGlobalFilter(e.currentTarget.value)} placeholder="Buscar..." />
+            </div>
     );
 
     const toolbarEndContent = (
@@ -119,13 +116,9 @@ const Customers = () => {
     );
 
     const header = (        
-        <div className="flex flex-column md:flex-row md:justify-content-evenly md:align-items-baseline">
-            <h5 className="flex-grow-1 ">Clientes</h5>
-            <IconField iconPosition="left" >
-                <InputIcon className="pi pi-search" />
-                <InputText type="search"  onInput={(e) => setGlobalFilter(e.currentTarget.value)} placeholder="Buscar..." />
-            </IconField>
-        </div>
+        <div className="flex flex-column md:flex-row md:justify-content-evenly md:align-items-center">
+            <span>Clientes</span>
+        </div>    
     );
 
     const actionBodyTemplate = (rowData: App.CustomerType) => {
