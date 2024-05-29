@@ -9,6 +9,8 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.id.enhanced.SequenceStyleGenerator;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.LastModifiedBy;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -50,4 +52,11 @@ public abstract class AbstractEntity implements Serializable {
     @JsonIgnore
     private LocalDateTime lastModifiedDate;
     
+    @CreatedBy
+    @JsonIgnore
+    private String createdBy;
+
+    @LastModifiedBy
+    @JsonIgnore
+    private String modifiedBy;
 }
