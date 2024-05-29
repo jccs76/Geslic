@@ -1,86 +1,78 @@
-import { App } from "@/types";
-import {  useEffect, useState } from "react";
+import {  useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { InputNumber } from "primereact/inputnumber";
 import { convertDatetoISOString} from "../../util/Util";
 import {Calendar} from "primereact/calendar";
-import { Nullable } from "primereact/ts-helpers";
 import { SupportService } from "../..//services/SupportService";
 import { SupportStatus } from "../../common/SupportStatus";
 import { LicenseService } from "../../services/LicenseService";
+import { Controller, useForm } from 'react-hook-form';
+import { classNames } from "primereact/utils";
+
 
 const Support = () => {
 
+    const defaultValues : { [key: string]: any }= {
+        id : '',
+        fromDate : null,
+        toDate : null,
+        status: SupportStatus.ACTIVE,
+        licenseId : ''
+    };
 
     const navigate = useNavigate();
 
-    const emptyLicense: App.LicenseType = {
-        code: '',
-        purchaseDate: '',
-        price: 0
-    };
-
-    const emptySupport: App.SupportType = {
-        price: 0,       
-        fromDate: '',
-        toDate: '',
-        status: SupportStatus.ACTIVE,
-        licenseId : ''    
-    };
-
     const {id} = useParams();    
     
-    const [license, setLicense] = useState<any>(emptyLicense);    
-    const [support, setSupport] = useState<App.SupportType>(emptySupport);    
-    
-    const [frmFromDate, setFrmFromDate] = useState<Nullable<Date>>(null);
-    const [frmToDate, setFrmToDate] = useState<Nullable<Date>>(null);
-    const [frmPrice, setFrmPrice] = useState<Nullable<number>>(0);
+    const { control, formState: { errors }, handleSubmit, reset } = useForm({mode: "onBlur", defaultValues });
 
+    
 
     useEffect(() => {  
         if (id){            
-            SupportService.getSupport(id).then((data) => {
-                setSupport(data as any);
-                setFrmFromDate(new Date(data.fromDate));
-                setFrmToDate(new Date(data.toDate));
-                setFrmPrice(data.price);
-                LicenseService.getLicense(data.licenseId).then((data) => setLicense(data as any))              
+            SupportService.getSupport(id).then((dataSupport) => {                
+                LicenseService.getLicense(dataSupport.licenseId).then((dataLicense) => 
+                    setFormData(dataSupport, dataLicense))              
         })}
     }, []);
 
-    useEffect(() => {
-        let _date = convertDatetoISOString(frmFromDate) ;
-        setSupport((prevState: any) => (
-            { ...prevState, fromDate : _date}
-        ));
-    }, [frmFromDate]);
+    const getFormErrorMessage = (name : string) => {
+        return errors[name] && <small className="p-error">{errors[name]?.message as any}</small>
+    };
 
-    useEffect(() => {
-        let _date = convertDatetoISOString(frmToDate) ;
-        setSupport((prevState: any) => (
-            { ...prevState, toDate : _date}
-        ));
-    }, [frmToDate]);
-
-    useEffect(() => {
-        setSupport((prevState: any) => (
-            { ...prevState, price : frmPrice}
-        ));
-    }, [frmPrice])
-
- 
-
-    const handleSave = (e : any) => {
-        e.preventDefault();
-        console.log(support);        
-        SupportService.updateSupport(id as string, support).then((data) => {setSupport(data as any);navigate('/supports');})
-         
+    const setFormData = (dataSupport : any, dataLicense : any) => {        
+        let formData = { id : dataSupport.id,
+                    fromDate : new Date(dataSupport.fromDate),
+                    toDate : new Date(dataSupport.toDate),
+                    price : dataSupport.price,
+                    status: dataSupport.status,
+                    licenseId : dataSupport.licenseId,
+                    licenseCode : dataLicense.code
+        };
+        reset(formData);
     }
 
+    const getSupport = (data : any) : any => {
+        const today = new Date();
+        const updatedStatus = (data.Status !== SupportStatus.CANCELED && data.toDate < today) ? SupportStatus.EXPIRED : data.status;
+        console.log (updatedStatus);        
+        let support = {id :data.id,
+                        fromDate : convertDatetoISOString(data.fromDate),
+                        toDate : convertDatetoISOString(data.toDate),
+                        price : data.price,
+                        status: updatedStatus,
+                        licenseId : data.licenseId
+                    };
+        return support;
+    }
+    
 
+    const onSubmit = (data : any) => {
+        console.log(getSupport(data));  
+        SupportService.updateSupport(id as string, getSupport(data)).then((result) => {console.log(result);navigate('/supports');});
+    }
 
 
   return (
@@ -91,30 +83,49 @@ const Support = () => {
                     <h5 className="">Modificar Mantenimiento</h5>
                 </div>
                 <div className="card p-fluid">                                        
+                    <form onSubmit={handleSubmit(onSubmit)} className="p-fluid formgrid grid">
                     <div className="p-fluid formgrid grid">
+                    
                         <div className="field col-12 md:col-4">
-                            <label htmlFor="code" className="">Nº Serie</label>
-                            <InputText id="code" name="code"  value={license.code}  disabled type="text"  />                        
+                            <label htmlFor="licenseCode" className="">Nº Serie</label>
+                            <Controller name="licenseCode" control={control} render={({ field }) => (                             
+                                <InputText id={field.name} {... field} value={field.value} disabled type="text"  />
+                            )} />
                         </div>
                         <div className="field col-12 md:col-3">
                             <label htmlFor="fromDate" className="">Desde</label>
-                            <Calendar id="fromDate" name="fromDate" selectionMode="single"  locale="es-ES"  value={frmFromDate} onChange={(e) => setFrmFromDate(e.value)} />
+                            <Controller name="fromDate" control={control} rules={{validate: {checkBefore:  (value, formValues) => value < formValues.toDate || 'Debe ser anterior a la fecha final'}, required: 'Fecha inicial obligatoria.'}}
+                                    render={({ field, fieldState }) => ( 
+
+                                <Calendar id={field.name} ref={field.ref} onBlur={field.onBlur}  
+                                        value={field.value} onChange={(e) => field.onChange(e)} selectionMode="single"  locale="es-ES" mask="99/99/9999" showIcon showOnFocus={false} className={classNames({ 'p-invalid': fieldState.invalid })} />
+                            // value={frmFromDate} onChange={(e) => setFrmFromDate(e.value)}
+                            )} />
+                            {getFormErrorMessage('fromDate')} 
                         </div>
                         <div className="field col-12 md:col-3">
                             <label htmlFor="toDate" className="">Hasta</label>
-                            <Calendar id="toDate" name="toDate" selectionMode="single"  locale="es-ES"  value={frmToDate} onChange={(e) => setFrmToDate(e.value)} />
+                            <Controller name="toDate" control={control} rules={{validate: {checkAfter:  (value, formValues) => value > formValues.fromDate || 'Debe ser posterior a la fecha inicial'}, required: 'Fecha final obligatoria.'}}
+                                        render={({ field, fieldState }) => ( 
+                                <Calendar id={field.name} ref={field.ref} onBlur={field.onBlur}  
+                                value={field.value} onChange={(e) => field.onChange(e)} selectionMode="single"  locale="es-ES" mask="99/99/9999" showIcon showOnFocus={false}  className={classNames({ 'p-invalid': fieldState.invalid })} />
+                            )} />
+                            {getFormErrorMessage('toDate')}                                 
                         </div>
                         <div className="field col-12 md:col-2">
-                            <label htmlFor="price" className="">Precio</label>                
-                            <InputNumber inputId="price" name="price" value={frmPrice} mode="currency" currency="EUR" locale="es-ES" inputClassName="text-right" onValueChange={(e) => setFrmPrice(e.value)}/>
+                            <label htmlFor="price" className="">Precio</label>
+                            <Controller name="price" control={control} rules={{ required: 'Precio obligatorio.'}}
+                                        render={({ field, fieldState }) => (                  
+                                <InputNumber id={field.name} ref={field.ref} onBlur={field.onBlur}  
+                                    value={field.value} onValueChange={(e) => field.onChange(e)} mode="currency" currency="EUR" locale="es-ES" inputClassName={classNames({ 'p-invalid': fieldState.error })} />
+                             )} />
+                            {getFormErrorMessage('price')}  
                         </div>
                     </div>
                     <div className="col-2 col-offset-5">
-                        <Button type="button" icon="pi pi-save" severity="info"  label="Guardar"  onClick={handleSave} />                    
+                        <Button type="submit" icon="pi pi-save" severity="info"  label="Guardar"  />                    
                     </div>
-
-
-                    
+                    </form>                    
                 </div>
             </div>        
     </div>

@@ -13,7 +13,6 @@ import { ProductService } from "../../services/ProductService";
 import { InputNumber } from "primereact/inputnumber";
 import { convertDatetoISOString, formatCurrencyES} from "../../util/Util";
 import {Calendar} from "primereact/calendar";
-import { Nullable } from "primereact/ts-helpers";
 import { Toast } from "primereact/toast";
 import { Controller, useForm } from 'react-hook-form';
 import { classNames } from "primereact/utils";
@@ -21,135 +20,133 @@ import { classNames } from "primereact/utils";
 
 const License = () => {
 
-    const defaultValues: App.LicenseType = {
-        code: '',
-        purchaseDate: '',
-        price: 0
+    const defaultValues : { [key: string]: any }= {
+        id : '',
+        code : '',
+        purchaseDate : null,
+        price: 0,
+        product: null,
+        customer: null,
+        lastSupport: null
     };
-
-    const toast = useRef<Toast>(null);
 
     const navigate = useNavigate();
 
     const {id} = useParams();    
-
-    const { control, formState: { errors }, handleSubmit, reset} = useForm<App.CustomerType>({ defaultValues });
+    
+    const toast = useRef<Toast>(null);
     
     const dtCustomers = useRef<DataTable<any>>(null);
     const dtProducts  = useRef<DataTable<any>>(null);
     
+    const { control, formState: { errors }, handleSubmit, reset, setValue } = useForm({ defaultValues });
 
-    const [fecha, setFecha] = useState<Nullable<Date>>(null);
     const [customers, setCustomers] = useState<App.CustomersType>(null);
     const [customersFilter, setCustomersFilter] = useState('');
     const [customer, setCustomer] = useState<any>(null);
     const [products, setProducts] = useState<App.ProductsType>(null);
     const [productsFilter, setProductsFilter] = useState('');
     const [product, setProduct] = useState<any>(null);
-    const [license, setLicense] = useState<any>(emptyLicense);
+
     
-    const [isComplete, setIsComplete] = useState<boolean>(false);
 
     useEffect(() => {  
         CustomerService.getCustomers().then((data) => setCustomers(data));
         ProductService.getProducts().then((data) => setProducts(data));
         if (id){            
             LicenseService.getLicense(id).then((data) => {
-                setLicense(data);
+                setFormData(data);
                 setCustomer(data.customer);
-                setProduct(data.product);
-                setFecha(new Date(data.purchaseDate));});
-        } else {
-            setLicense(defaultValues);
-            setCustomer(null);
-            setProduct(null);
-            setFecha(new Date());
+                setProduct(data.product);            
+            });
         }                
     }, []);
 
-    useEffect(() => {
-        (license.code && customer && product) ?
-            setIsComplete(true)
-        :
-            setIsComplete(false);
-        
-    }, [license, customer, product])
 
-    useEffect(() => {        
-        let _fecha = convertDatetoISOString(fecha) ;
-        setLicense((prevState: any) => (
-                { ...prevState, purchaseDate : _fecha}
-            ));
-
-    }, [fecha])
 
     const getFormErrorMessage = (name : string) => {
-        return errors[name] && <small className="p-error">{errors[name]?.message}</small>
+        return errors[name] && <small className="p-error">{errors[name]?.message as any}</small>
     };
 
-    const onSubmit = (data : App.CustomerType) => {      
-        console.log(data)
+    const setFormData = (dataLicense : any) => {        
+        let formData = { id : dataLicense.id,
+            code : dataLicense.code,
+            purchaseDate : new Date(dataLicense.purchaseDate),
+            price: dataLicense.price,
+            product: dataLicense.product,
+            customer: dataLicense.customer,
+            lastSupport: dataLicense.lastSupport
+        };
+        reset(formData);
     }
-    const onInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {        
-        e.preventDefault();
-        
-        const name = e.target.name;
-        const val = (e.target && e.target.value) || '';
-        let _license = { ...license };
-        _license[`${name}`] = val;
-        setLicense(_license);
 
-    };
-
-    const onInputNumberChange = (e : any) => {        
-        let _license = { ...license};
-        _license['price'] = e.value;
-        setLicense(_license);
+    const getLicense = (data : any) : any => {
+        let license = {id :data.id,
+                        code : data.code,
+                        purchaseDate : convertDatetoISOString(data.purchaseDate),
+                        price : data.price,
+                        product: data.product,
+                        customer : data.customer,
+                        lastSupport: data.lastSupport
+                    };
+        return license;
     }
+
 
 
     const onProductChange = (e : any) => {
-        if (e.value){
-            setProduct(e.value as any);        
-            let _license = { ...license};
-            _license['price'] = e.value.price;
-            setLicense(_license);
-        }
+        setProduct(e.value as any);
+        setValue("price", e.value.price);
+        setValue("product", e.value)
     }
 
-    const handleSave = (e : any) => {
-        e.preventDefault();
-        let _license = { ...license, 
-            customer,
-            product
-           };
-         if (id){
-             LicenseService.updateLicense(id, _license).then((data) => {setLicense(data); navigate('/licenses');})
-            
-         } else {
-            LicenseService.createLicense(_license).then((data) => {setLicense(data); navigate('/licenses');})
-        }
-        
+    const onCustomerChange = (e : any) => {
+        setCustomer(e.value as any);
+        setValue("customer", e.value)
     }
 
-    // const handleSubmit = (e : React.FormEvent<HTMLFormElement>) => {
-    //     e.preventDefault();        
-    //     let _license = { ...license, 
-    //         customer,
-    //         product
-    //        };
-    //      if (id){
-    //          LicenseService.updateLicense(id, _license).then((data) => setLicense(data as any))
-            
-    //      } else {
-    //         LicenseService.createLicense(_license).then((data) => setLicense(data as any))
-    //     }
-    //     navigate(-1);
-    // }
+    const onSubmit = (data : any) => {
+      
+        if (id){
+            LicenseService.updateLicense(id, data).then((res) => {
+                console.log(res);
+                if (!res?.ok) {
+                    if (res?.status == 409){
+                        toast.current?.show({
+                            severity: 'error',
+                            summary: 'Ya existe',
+                            detail: 'Ya hay una licencia con ese número de serie',
+                            life: 3000
+                        });
+                    }        
+                }else {                
+                    navigate('/licenses');
+                };
+                
+            })            
+        } else {
+            console.log(getLicense(data));
+        LicenseService.createLicense(getLicense(data)).then((res) => {
+            if (!res?.ok) {
+                if (res?.status == 409){
+                    toast.current?.show({
+                        severity: 'error',
+                        summary: 'Ya existe',
+                        detail: 'Ya hay una licencia con ese número de serie',
+                        life: 3000
+                    });
+                }        
+            }else {                
+                navigate('/licenses');
+            }        
+        })
+        }         
+    }
+
 
     const headerCustomer = (
         <div className="flex gap-5 align-items-center">
-            <h5 className="m-0">Cliente</h5>
+            <h6 className="m-0">Cliente*</h6>
             <IconField iconPosition="left" >
                 <InputIcon className="pi pi-search" />
                 <InputText type="search" onInput={(e) => setCustomersFilter(e.currentTarget.value)} placeholder="Buscar..." />
@@ -159,7 +156,7 @@ const License = () => {
 
     const headerProduct = (
         <div className="flex gap-5 align-items-center">
-            <h5 className="m-0">Producto</h5>
+            <h6 className="m-0">Producto*</h6>
             <IconField iconPosition="left" >
                 <InputIcon className="pi pi-search" />
                 <InputText type="search" onInput={(e) => setProductsFilter(e.currentTarget.value)} placeholder="Buscar..." />
@@ -176,57 +173,50 @@ const License = () => {
 
   return (
     <div className="grid">
+        <Toast ref={toast} />
             <div className="col-12">
                 <div className="flex justify-content-start align-items-baseline">
                     <Button className="mr-2"  icon="pi pi-chevron-left" rounded text onClick={() => navigate("/licenses")} />                    
                     <h5>{id ? 'Editar' : 'Nueva'} Licencia</h5>
                 </div>
+            <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="card p-fluid">                                        
                     <div className="p-fluid formgrid grid">
+                 
                         <div className="field col-12 md:col-6">
-                            <label htmlFor="code" className="">Nº Serie</label>
-                            <InputText id="code" name="code"  value={license?.code} autoFocus type="text" onChange={onInputChange} />                        
+                            <label htmlFor="code" className="">Nº Serie*</label>
+                            <Controller name="code" control={control} rules={{required: 'Número de serie obligatorio.'}} render={({ field, fieldState }) => (                                                         
+                                <InputText id={field.name} {... field} value={field.value} autoFocus type="text" className={classNames({ 'p-invalid': fieldState.invalid })} />   
+                            )} />
+                            {getFormErrorMessage('code')}
                         </div>
                         <div className="field col-12 md:col-3">
-                            <label htmlFor="purchaseDate" className="">Fecha Compra</label>
-                            <Calendar id="purchaseDate" selectionMode="single"  locale="es-ES"  value={fecha} onChange={(e) => setFecha(e.value)} />
+                            <label htmlFor="purchaseDate" className="">Fecha Compra*</label>
+                            <Controller name="purchaseDate" control={control} rules={{required: 'Fecha de compra obligatoria.'}} render={({ field, fieldState }) => (                             
+                                <Calendar id={field.name} ref={field.ref} onBlur={field.onBlur}  
+                                value={field.value} onChange={(e) => field.onChange(e)} selectionMode="single"  locale="es-ES" mask="99/99/9999" showIcon showOnFocus={false}  className={classNames({ 'p-invalid': fieldState.invalid })} />
+                            )} />
+                            {getFormErrorMessage('purchaseDate')}
                         </div>
                         <div className="field col-12 md:col-3">
-                            <label htmlFor="price" className="">Precio</label>                
-                            <InputNumber inputId="price" value={license?.price} mode="currency" currency="EUR" locale="es-ES" inputClassName="text-right" onValueChange={onInputNumberChange}/>
+                            <label htmlFor="price" className="">Precio*</label>  
+                            <Controller name="price" control={control} rules={{ required: 'Precio obligatorio.', min: {value : 1, message: 'Importe mayor que 0'}}}
+                                        render={({ field, fieldState }) => (                      
+                                <InputNumber id={field.name} ref={field.ref} onBlur={field.onBlur}  
+                                value={field.value} onValueChange={(e) => field.onChange(e)} mode="currency" currency="EUR" locale="es-ES" inputClassName={classNames({ 'p-invalid': fieldState.error })}/>
+                            )} />
+                            {getFormErrorMessage('price')}
                         </div>
                     </div>                    
                 </div>
-                <div className="card p-fluid">
-
-                <DataTable
-                        ref={dtCustomers}
-                        value={customers}                        
-                        selection={customer}
-                        onSelectionChange={(e) => setCustomer(e.value as any)}                        
-                        paginator
-                        rows={10}
-                        rowsPerPageOptions={[5, 10, 25]}
-                        showGridlines 
-                        stripedRows
-                        className="datatable-responsive"
-                        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords}"
-                        globalFilter={customersFilter}                        
-                        emptyMessage="No hay clientes."
-                        header={headerCustomer}
-                    >
-                        <Column selectionMode="single" headerStyle={{ width: '4rem' }}></Column>
-                        <Column field="id" header="Id"  headerStyle={{ minWidth: '3rem' }}></Column>
-                        <Column field="name" header="Nombre" headerStyle={{ minWidth: '30rem' }}></Column>
-                    </DataTable>
-                    </div>
                     <div className="card p-fluid">
+                    <Controller name="product" control={control} rules={{ required: 'Seleccione un producto.'}}
+                                        render={({}) => (                      
                     <DataTable
                         ref={dtProducts}
                         value={products}                        
                         selection={product}
-                        onSelectionChange={onProductChange}
+                        onSelectionChange={(e) => {onProductChange(e)}}
                         paginator
                         rows={10}
                         rowsPerPageOptions={[5, 10, 25]}
@@ -243,11 +233,41 @@ const License = () => {
                         <Column field="name" header="Nombre" headerStyle={{ minWidth: '30rem' }}></Column>
                         <Column field="price" header="Precio" body={priceBodyTemplate}></Column>
                     </DataTable>
+                    )} />
+                    {getFormErrorMessage('product')}
                     </div>
+                    <div className="card p-fluid">
+                <Controller name="customer" control={control} rules={{ required: 'Seleccione un cliente.'}}
+                                        render={({}) => (                      
+                <DataTable
+                        ref={dtCustomers}
+                        value={customers}                        
+                        selection={customer}
+                        onSelectionChange={(e) => {onCustomerChange(e)}}                        
+                        paginator
+                        rows={10}
+                        rowsPerPageOptions={[5, 10, 25]}
+                        showGridlines 
+                        stripedRows
+                        className="datatable-responsive"
+                        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords}"
+                        globalFilter={customersFilter}                        
+                        emptyMessage="No hay clientes."
+                        header={headerCustomer}
+                    >
+                        <Column selectionMode="single" headerStyle={{ width: '4rem' }}></Column>
+                        <Column field="name" header="Nombre" headerStyle={{ minWidth: '30rem' }}></Column>
+                    </DataTable>
+                     )} />
+                     {getFormErrorMessage('customer')}
+                    </div>
+
                     <div className="col-2 col-offset-5">
-                        <Button type="button" icon="pi pi-save" disabled={!isComplete} label="Guardar" severity="info" onClick={handleSave} />                    
+                        <Button type="submit" icon="pi pi-save" label="Guardar" severity="info"  />      
                     </div>
-            </div>        
+            </form>                    
+        </div>                
     </div>
   )
 }

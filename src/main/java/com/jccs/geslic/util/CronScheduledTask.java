@@ -21,7 +21,7 @@ public class CronScheduledTask {
         supportRepository.updateSupportStatusWhenExpires(today);
     }
 
-    @Scheduled(fixedDelay = 5000) //Executes every 5 seconds, THIS IS ONLY FOR DEMO PURPOSES
+    @Scheduled(fixedDelay = 60000) //Executes every minute, THIS IS ONLY FOR DEMO PURPOSES
     public void runFixedDelayTask() {
         LocalDate today = LocalDate.ofInstant(Instant.now(), ZoneId.systemDefault());
         supportRepository.updateSupportStatusWhenExpires(today);

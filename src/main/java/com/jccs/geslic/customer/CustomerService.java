@@ -34,6 +34,8 @@ public class CustomerService extends AbstractService<CustomerDTO, Customer, Cust
     @Override
     public CustomerDTO update(Long id, CustomerDTO dto) {
         if (dto.id().equals(id)){
+            repository.findByName(dto.name())
+                .ifPresent ( p -> {throw new EntityExistingException (Constants.ENTITY_EXISTS);});
             return super.update(id, dto);
         }
         throw new EntityInvalidException(Constants.ENTITY_INVALID);

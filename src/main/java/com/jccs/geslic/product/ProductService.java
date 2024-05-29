@@ -26,6 +26,8 @@ public class ProductService extends AbstractService<ProductDTO, Product, Product
     @Override
     public ProductDTO update(Long id, ProductDTO dto) {
         if (dto.id().equals(id)){
+            repository.findByName(dto.name())
+                .ifPresent ( p -> {throw new EntityExistingException (Constants.ENTITY_EXISTS);});            
             return super.update(id, dto);
         }
         throw new EntityInvalidException(Constants.ENTITY_INVALID);

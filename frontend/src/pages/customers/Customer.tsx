@@ -1,6 +1,6 @@
 import { CustomerService } from "../../services/CustomerService";
 import { App } from "@/types";
-import {  useEffect, useRef, useState } from "react";
+import {  useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
@@ -45,10 +45,18 @@ const Customer = () => {
             CustomerService.updateCustomer(id, data)
                             .then((res) => {
                                 if (!res?.ok) {
-                                    console.log(res);
+                                    if (res?.status == 409){
+                                        toast.current?.show({
+                                            severity: 'error',
+                                            summary: 'Ya existe',
+                                            detail: 'Un cliente con este nombre ya existe',
+                                            life: 3000
+                                        });
+                                    }        
                                 }else {                
                                     navigate(-1)
                                 };
+
                             })
             
         } else {
@@ -92,31 +100,31 @@ const Customer = () => {
                             </div>
                             <div className="field col-12">                    
                                 <label htmlFor="address" className="">Dirección</label>
-                                <Controller name="address" control={control} render={({ field, fieldState }) => (
+                                <Controller name="address" control={control} render={({ field }) => (
                                     <InputText id="field.name" {... field} value={field.value} type="text" />
                                 )} />                                 
                             </div>
                             <div className="field col-12 md:col-2">                    
                                 <label htmlFor="zipCode" className="">Código Postal</label>
-                                <Controller name="zipCode" control={control} render={({ field, fieldState }) => (
+                                <Controller name="zipCode" control={control} render={({ field }) => (
                                     <InputMask id="field.name" {... field} value={field.value} mask="99999" type="text"  />
                                 )} />                                 
                             </div>
                             <div className="field col-12 md:col-3">
                                 <label htmlFor="state" className="">Provincia</label>
-                                <Controller name="state" control={control} render={({ field, fieldState }) => (                                
+                                <Controller name="state" control={control} render={({ field }) => (                                
                                     <InputText id="field.name" {... field} value={field.value} type="text"  />
                                 )} />
                             </div>
                             <div className="field col-12 md:col-7">
                                 <label htmlFor="city" className="">Localidad</label>
-                                <Controller name="city" control={control} render={({ field, fieldState }) => (                                
+                                <Controller name="city" control={control} render={({ field }) => (                                
                                     <InputText id="field.name" {... field} value={field.value} type="text"  />                    
                                 )} />
                             </div>
                             <div className="field col-12 md:col-2 lg:col-2 xl:col-2">    
                                 <label htmlFor="phoneNumber" className="">Teléfono</label>
-                                <Controller name="phoneNumber" control={control} render={({ field, fieldState }) => (                                                                
+                                <Controller name="phoneNumber" control={control} render={({ field }) => (                                                                
                                 <InputMask id="field.name" {... field} value={field.value} mask="999999999"  type="text"  />
                                 )} />
                             </div>

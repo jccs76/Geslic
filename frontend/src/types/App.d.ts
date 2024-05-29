@@ -1,8 +1,6 @@
 export type LayoutType = 'list' | 'grid';
 export type SortOrderType = 1 | 0 | -1;
 
-
-
 declare namespace App {
     
     type SupportStatusType = 'ACTIVE' | 'CANCELED' | 'EXPIRED' | null;
@@ -27,7 +25,7 @@ declare namespace App {
         description?: string;
         price?: number;
         [key: string]: string | string[] | number | boolean | undefined;
-    } | null;
+    };
 
     type ProductsType = [ProducType] | null;
 
@@ -36,11 +34,11 @@ declare namespace App {
         code: string;
         purchaseDate? : string;
         price?: number;        
-        product?: Product ;
-        customer?: Customer ;
-        lastSupport?: Support;
-        [key: string]: string | Product |Customer | Support | undefined;
-    } | null;
+        product?: ProductType | null ;
+        customer?: CustomerType | null ;
+        lastSupport?: SupportType | null;
+        [key: string]: string | number | ProductType |CustomerType | SupportType | undefined;
+    };
 
     type LicensesType = [LicenseType] | null;
 

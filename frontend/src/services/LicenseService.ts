@@ -22,8 +22,6 @@ export const LicenseService = {
                 headers: authHeader(),
                 body: JSON.stringify(license)
             })
-            .then((res) => res.json())
-            .then((d) => d as any)
             .catch( (error) => console.log(error));
     },    
     updateLicense(id: string, license : App.LicenseType) {        
@@ -32,8 +30,6 @@ export const LicenseService = {
                 headers: authHeader(),
                 body: JSON.stringify(license)
             })
-            .then((res) => res.json())
-            .then((d) => d as any)
             .catch( (error) => console.log(error));
     },    
     deleteLicense(id : string | undefined) {

@@ -1,6 +1,6 @@
 import { ProductService } from "../../services/ProductService";
 import { App } from "@/types";
-import {  useEffect, useRef, useState } from "react";
+import {  useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
@@ -25,7 +25,7 @@ const Product = () => {
 
     const {id} = useParams();    
     
-    const { control, formState: { errors }, handleSubmit, reset} = useForm<App.CustomerType>({ defaultValues });
+    const { control, formState: { errors }, handleSubmit, reset} = useForm<App.ProductType>({ defaultValues });
 
     useEffect(() => {        
         {id && (
@@ -38,7 +38,7 @@ const Product = () => {
         return errors[name] && <small className="p-error">{errors[name]?.message}</small>
     };
 
-    const onSubmit = (data : App.CustomerType) => {      
+    const onSubmit = (data : any) => {
         if (id){
             ProductService.updateProduct(id, data).then((res) => { 
                 if (res?.status == 409){
@@ -92,16 +92,16 @@ const Product = () => {
                     </div>
                     <div className="field col-12">                    
                         <label htmlFor="description" className="">Descripción</label>
-                        <Controller name="description" control={control} render={({ field, fieldState }) => (
-                            <InputText id={field.name} {... field} value={field.value as any} type="text"  />
+                        <Controller name="description" control={control} render={({ field }) => (
+                            <InputText id={field.name} {... field} value={field.value} type="text"  />
                         )} />
                     </div>
                     <div className="field col-12 md:col-2">                    
                         <label htmlFor="price" className="">Precio</label> 
-                        <Controller name="price" control={control} rules={{ required: 'Precio obligatorio.'}} 
+                        <Controller name="price" control={control} rules={{ required: 'Precio obligatorio.', min: {value : 1, message: 'Importe mayor que 0'}}} 
                                     render={({ field, fieldState }) => (                   
                             <InputNumber  id={field.name} ref={field.ref} onBlur={field.onBlur}  
-                                         value={field.value as number} onValueChange={(e) => field.onChange(e)} mode="currency" currency="EUR" locale="es-ES" inputClassName={classNames({ 'p-invalid': fieldState.error })} />
+                                         value={field.value} onValueChange={(e) => field.onChange(e)} mode="currency" currency="EUR" locale="es-ES" inputClassName={classNames({ 'p-invalid': fieldState.error })} />
                         )} />
                         {getFormErrorMessage('price')} 
                     </div>                                                                              

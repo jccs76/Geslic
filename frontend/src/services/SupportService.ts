@@ -15,8 +15,6 @@ export const SupportService = {
                 headers: authHeader(),
                 body: JSON.stringify(support)
             })
-            .then((res) => res.json())
-            .then((d) => console.log(d as any))
             .catch( (error) => console.log(error));
     }    
 };

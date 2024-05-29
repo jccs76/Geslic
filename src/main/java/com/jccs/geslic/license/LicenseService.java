@@ -75,6 +75,8 @@ public class LicenseService extends AbstractService<LicenseDTO, License, License
     @Override
     public LicenseDTO update(Long id, LicenseDTO dto) {
         if (dto.id().equals(id)){
+            repository.findByCode(dto.code())
+                .ifPresent ( p -> {throw new EntityExistingException (Constants.ENTITY_EXISTS);});
                 return super.update(id, dto);
         }
         throw new EntityInvalidException(Constants.ENTITY_INVALID);
