@@ -38,7 +38,7 @@ declare namespace App {
         customer?: CustomerType | null ;
         lastSupport?: SupportType | null;
         [key: string]: string | number | ProductType |CustomerType | SupportType | undefined;
-    };
+    } ;
 
     type LicensesType = [LicenseType] | null;
 

@@ -39,8 +39,10 @@ const Product = () => {
     };
 
     const onSubmit = (data : any) => {
+        console.log(data);
         if (id){
             ProductService.updateProduct(id, data).then((res) => { 
+                console.log(res);
                 if (res?.status == 409){
                     toast.current?.show({
                         severity: 'error',
@@ -54,6 +56,7 @@ const Product = () => {
             })            
         } else {
             ProductService.createProduct(data).then((res) => {
+                console.log(res);
                 if (!res?.ok) {
                     if (res?.status == 409){
                         toast.current?.show({

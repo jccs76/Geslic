@@ -2,6 +2,7 @@ package com.jccs.geslic.customer;
 
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -34,8 +35,12 @@ public class CustomerService extends AbstractService<CustomerDTO, Customer, Cust
     @Override
     public CustomerDTO update(Long id, CustomerDTO dto) {
         if (dto.id().equals(id)){
-            repository.findByName(dto.name())
-                .ifPresent ( p -> {throw new EntityExistingException (Constants.ENTITY_EXISTS);});
+             Optional<Customer> c = repository.findByName(dto.name());
+             if (c.isPresent()) {
+                if (!c.get().getId().equals(id)){
+                    throw new EntityExistingException (Constants.ENTITY_EXISTS);                 
+                }
+             }   
             return super.update(id, dto);
         }
         throw new EntityInvalidException(Constants.ENTITY_INVALID);

@@ -26,7 +26,7 @@ export const Dashboard =() => {
     const {id} = useParams();    
 
     const [licenses, setLicenses] = useState<App.LicensesType | null>(null);
-    const [license, setLicense] = useState<App.LicenseType>(null);
+    const [license, setLicense] = useState<App.LicenseType | null>(null);
 
     const [searchFromDate, setSearchFromDate] = useState<Nullable<Date>>(null);
     const [searchToDate, setSearchToDate] = useState<Nullable<Date>>(null);
@@ -92,8 +92,9 @@ export const Dashboard =() => {
 
   const cancelSupport = () => {
       if (license){
-          LicenseService.cancelSupport(license.id);                        
-          license.lastSupport.status = SupportStatus.CANCELED;
+          LicenseService.cancelSupport(license.id);
+          if (license.lastSupport)
+            license.lastSupport.status = SupportStatus.CANCELED;        
           if (licenses){
               licenses.map(item => item?.id === license.id ? {license} : item);
           }
@@ -172,18 +173,20 @@ export const Dashboard =() => {
     );
   };
 
-  const toFromDateBodyTemplate = (rowData: App.LicenseType) => {
+  const toFromDateBodyTemplate = (rowData: App.LicenseType) => {    
+    if (rowData.lastSupport)
       return formatDateEs(rowData?.lastSupport.fromDate);
       
   };
 
   const toDateBodyTemplate = (rowData: App.LicenseType) => {
+    if (rowData.lastSupport)
       return formatDateEs(rowData?.lastSupport.toDate);
       
   };
 
   const priceBodyTemplate = (rowData: App.LicenseType) => {
-      if (rowData?.price){
+      if (rowData.lastSupport){
           return formatCurrencyES(rowData?.lastSupport.price);
       }        
   };

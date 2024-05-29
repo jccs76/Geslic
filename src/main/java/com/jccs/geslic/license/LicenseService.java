@@ -1,6 +1,7 @@
 package com.jccs.geslic.license;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -75,8 +76,12 @@ public class LicenseService extends AbstractService<LicenseDTO, License, License
     @Override
     public LicenseDTO update(Long id, LicenseDTO dto) {
         if (dto.id().equals(id)){
-            repository.findByCode(dto.code())
-                .ifPresent ( p -> {throw new EntityExistingException (Constants.ENTITY_EXISTS);});
+             Optional<License> l = repository.findByCode(dto.code());
+             if (l.isPresent()) {
+                if (!l.get().getId().equals(id)){
+                    throw new EntityExistingException (Constants.ENTITY_EXISTS);                 
+                }
+             }   
                 return super.update(id, dto);
         }
         throw new EntityInvalidException(Constants.ENTITY_INVALID);

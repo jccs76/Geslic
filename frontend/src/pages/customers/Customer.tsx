@@ -56,7 +56,6 @@ const Customer = () => {
                                 }else {                
                                     navigate(-1)
                                 };
-
                             })
             
         } else {
