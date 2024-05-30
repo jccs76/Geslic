@@ -76,7 +76,7 @@ jobs:
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{env.INSTANCE_IP}}
-          username: opc
+          username: ubuntu
           key: ${{secrets.VM_SSH_PRIVATE_KEY}}
           script: |
             pid=`ps aux | grep "geslic.jar" | awk '{print $2}'`
