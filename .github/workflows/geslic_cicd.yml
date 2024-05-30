@@ -128,5 +128,4 @@ jobs:
           username: ubuntu
           key: ${{ secrets.VM_SSH_PRIVATE_KEY }}
           script: |
-            sudo mv ~/app/geslic${{env.VERSION}}.jar ~/app/geslic.jar
-            nohup java -jar ~/app/geslic.jar > output.$(date --iso).log 2>&1 &
+            nohup java -jar ~/app/geslic${{env.VERSION}}.jar > output.$(date --iso).log 2>&1 &
