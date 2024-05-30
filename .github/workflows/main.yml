@@ -51,7 +51,6 @@ jobs:
           echo "INSTANCE_OCID=$( \
             oci compute instance list \
             --compartment-id ${{secrets.VM_COMPARTMENT_OCID}} \
-            --lifecycle-state "RUNNING" \            
-            --raw-output \
+            --lifecycle-state "RUNNING" \
             --query "data[0].id" \
           )" >> $GITHUB_ENV
