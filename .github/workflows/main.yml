@@ -52,7 +52,7 @@ jobs:
             oci compute instance list \
             --compartment-id ${{secrets.VM_COMPARTMENT_OCID}} \
             --lifecycle-state "RUNNING" \
-            --raw-output
+            --raw-output \
             --query "data[0].id" \
           )" >> $GITHUB_ENV
       - name: 'Get Instance IP'
