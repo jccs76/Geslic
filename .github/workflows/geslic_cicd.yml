@@ -76,9 +76,9 @@ jobs:
           echo "INSTANCE_OCID=$( \
             oci compute instance list \
             --compartment-id ${{secrets.VM_COMPARTMENT_OCID}} \
-            --lifecycle-state RUNNING \            
+            --lifecycle-state "RUNNING" \            
             --raw-output \
-            --query data[0].id \
+            --query "data[0].id" \
           )" >> $GITHUB_ENV
 
       - name: 'Get Instance IP'
