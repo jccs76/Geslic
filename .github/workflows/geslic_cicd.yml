@@ -97,24 +97,11 @@ jobs:
                   echo "SSH not available..."
           done; echo "SSH ready!"
 
-      - name: 'Stop App'
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{env.INSTANCE_IP}}
-          username: ubuntu
-          key: ${{secrets.VM_SSH_PRIVATE_KEY}}
-          script: |
-            pid=`ps aux | grep "geslic.jar" | awk '{print $2}'`
-            if [ "$pid" == "" ]; then
-              echo "Process not found"
-            else
-              kill -9 $pid
-            fi            
       - name: 'Push JAR'
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ env.INSTANCE_IP }}
-          username: opc
+          username: ubuntu
           key: ${{ secrets.VM_SSH_PRIVATE_KEY }}
           source: "build/libs/geslic${{env.VERSION}}.jar"
           target: "app"
