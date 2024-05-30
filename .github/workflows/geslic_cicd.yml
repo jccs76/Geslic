@@ -127,5 +127,5 @@ jobs:
           host: ${{ env.INSTANCE_IP }}
           username: ubuntu
           key: ${{ secrets.VM_SSH_PRIVATE_KEY }}
-          script: |
-            nohup java -jar ~/app/geslic${{env.VERSION}}.jar > output.$(date --iso).log 2>&1 &
+          script: 
+            nohup java -jar app/geslic${{env.VERSION}}.jar > output.$(date --iso).log 2>&1 &
