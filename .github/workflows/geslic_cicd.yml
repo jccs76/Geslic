@@ -96,7 +96,21 @@ jobs:
                   sleep 5
                   echo "SSH not available..."
           done; echo "SSH ready!"
-
+      
+      - name: 'Stop App'
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{env.INSTANCE_IP}}
+          username: ubuntu
+          key: ${{secrets.VM_SSH_PRIVATE_KEY}}
+          script: |
+            pid=`ps aux | grep "geslic.jar" | awk '{print $2}'`
+            if [ "$pid" == "" ]; then
+              echo "Process not found"
+            else
+              kill -9 $pid
+            fi
+            sudo mkdir -p app
       - name: 'Push JAR'
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -104,15 +118,15 @@ jobs:
           username: ubuntu
           key: ${{ secrets.VM_SSH_PRIVATE_KEY }}
           source: "build/libs/geslic-${{env.VERSION}}.jar"
-          target: "home/ubuntu"
+          target: "app"
           strip_components: 2
 
       - name: 'Start App'
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ env.INSTANCE_IP }}
-          username: opc
+          username: ubuntu
           key: ${{ secrets.VM_SSH_PRIVATE_KEY }}
           script: |
-            sudo mv geslic${{env.VERSION}}.jar geslic.jar
-            nohup java -jar geslic.jar > output.$(date --iso).log 2>&1 &
+            sudo mv app/geslic${{env.VERSION}}.jar app/geslic.jar
+            nohup java -jar app/geslic.jar > output.$(date --iso).log 2>&1 &
