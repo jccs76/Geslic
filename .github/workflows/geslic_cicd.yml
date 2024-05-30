@@ -110,7 +110,7 @@ jobs:
             else
               kill -9 $pid
             fi
-            sudo mkdir -p app
+            sudo mkdir -p ~/app
       - name: 'Push JAR'
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -128,5 +128,5 @@ jobs:
           username: ubuntu
           key: ${{ secrets.VM_SSH_PRIVATE_KEY }}
           script: |
-            sudo mv app/geslic${{env.VERSION}}.jar app/geslic.jar
-            nohup java -jar app/geslic.jar > output.$(date --iso).log 2>&1 &
+            sudo mv ~/app/geslic${{env.VERSION}}.jar ~/app/geslic.jar
+            nohup java -jar ~/app/geslic.jar > output.$(date --iso).log 2>&1 &
