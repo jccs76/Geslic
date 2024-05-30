@@ -104,7 +104,7 @@ jobs:
           username: ubuntu
           key: ${{ secrets.VM_SSH_PRIVATE_KEY }}
           source: "build/libs/geslic${{env.VERSION}}.jar"
-          target: "app"
+          target: "home/ubuntu"
           strip_components: 2
 
       - name: 'Start App'
