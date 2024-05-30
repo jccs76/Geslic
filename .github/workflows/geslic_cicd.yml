@@ -30,9 +30,9 @@ jobs:
           java --version
       - name: Make gradlew executable
         run: chmod +x ./gradlew
-      - name: 'Assemble JAR'
+      - name: 'Build JAR'
         run: |
-          ./gradlew assemble
+          ./gradlew build
       - name: 'Get Version Number'
         run: |
           echo "VERSION=$(./gradlew properties -q | grep "version:" | awk '{print $2}')" >> $GITHUB_ENV          
