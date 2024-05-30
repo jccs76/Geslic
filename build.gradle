@@ -73,6 +73,6 @@ tasks.register('npmBuild', NpmTask) {
     args = [ 'run', 'build' ]
 }
 
-tasks.named('assemble') {
+tasks.named('build') {
  dependsOn('npmBuild')
 }
