@@ -52,5 +52,37 @@ jobs:
             oci compute instance list \
             --compartment-id ${{secrets.VM_COMPARTMENT_OCID}} \
             --lifecycle-state "RUNNING" \
+            --raw-output
             --query "data[0].id" \
           )" >> $GITHUB_ENV
+      - name: 'Get Instance IP'
+        run: |
+          echo "INSTANCE_IP=$( \
+            oci compute instance list-vnics \
+            --instance-id ${{env.INSTANCE_OCID}} \
+            --raw-output \
+            --query "data[0]"."\"public-ip\" \
+            )" >> $GITHUB_ENV
+          echo Instance IP: ${{ env.INSTANCE_IP }}
+
+      - name: 'Wait for SSH'
+        run: |
+          while ! nc -w5 -z ${{ env.INSTANCE_IP }} 22; do
+                  sleep 5
+                  echo "SSH not available..."
+          done; echo "SSH ready!"
+
+      - name: 'Stop App'
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{env.INSTANCE_IP}}
+          username: opc
+          key: ${{secrets.VM_SSH_PRIVATE_KEY}}
+          script: |
+            pid=`ps aux | grep "geslic.jar" | awk '{print $2}'`
+            if [ "$pid" == "" ]; then
+              echo "Process not found"
+            else
+              kill -9 $pid
+            fi
+            sudo mkdir -p /app
