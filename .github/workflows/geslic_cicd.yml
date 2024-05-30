@@ -76,18 +76,17 @@ jobs:
           echo "INSTANCE_OCID=$( \
             oci compute instance list \
             --compartment-id ${{secrets.VM_COMPARTMENT_OCID}} \
-            --lifecycle-state "RUNNING" \            
+            --lifecycle-state "RUNNING" \
             --raw-output \
             --query "data[0].id" \
           )" >> $GITHUB_ENV
-
       - name: 'Get Instance IP'
         run: |
           echo "INSTANCE_IP=$( \
             oci compute instance list-vnics \
             --instance-id ${{env.INSTANCE_OCID}} \
             --raw-output \
-            --query "data[0]"."\"public-ip\" \
+            --query "data[0].\"public-ip\"" \
             )" >> $GITHUB_ENV
           echo Instance IP: ${{ env.INSTANCE_IP }}
 
@@ -102,7 +101,7 @@ jobs:
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{env.INSTANCE_IP}}
-          username: opc
+          username: ubuntu
           key: ${{secrets.VM_SSH_PRIVATE_KEY}}
           script: |
             pid=`ps aux | grep "geslic.jar" | awk '{print $2}'`
@@ -111,8 +110,7 @@ jobs:
             else
               kill -9 $pid
             fi
-            sudo mkdir -p /app
-
+            sudo mkdir -p ~/app
       - name: 'Push JAR'
         uses: appleboy/scp-action@v0.1.7
         with:
