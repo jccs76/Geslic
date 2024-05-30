@@ -44,7 +44,7 @@ jobs:
         uses: actions/upload-artifact@v4.3.3
         with:
           name: 'geslic-${{env.VERSION}}.jar'
-          path: build/libs/*.jar
+          path: build/libs/geslic-${{env.VERSION}}.jar
       - name: 'Write Config & Key Files'
         run: |
           mkdir ~/.oci
