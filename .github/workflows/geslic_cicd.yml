@@ -103,7 +103,7 @@ jobs:
           host: ${{ env.INSTANCE_IP }}
           username: ubuntu
           key: ${{ secrets.VM_SSH_PRIVATE_KEY }}
-          source: "build/libs/geslic${{env.VERSION}}.jar"
+          source: "build/libs/geslic-${{env.VERSION}}.jar"
           target: "home/ubuntu"
           strip_components: 2
 
