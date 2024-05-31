@@ -9,5 +9,6 @@ spring :
         username: USUARIOGESLIC
         password: Abcdefg12345
         driver-class-name: oracle.jdbc.OracleDriver
-    jpa:
-        open-in-view: false
+    jpa:        
+        hibernate:
+            ddl-auto: update

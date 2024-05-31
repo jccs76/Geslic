@@ -62,11 +62,10 @@ create table users (
     last_modified_date timestamp(6),
     primary key (id)
 );
-create sequence users_seq start with 1 increment by 1;
+insert into users (id, first_name, email, user_password, is_admin)values (1, 'Admin', 'admin@geslic.com', '$2a$10$aFFN9tA68poV/AOK2qi8VOnpdH5NBIvpHdp/46mZXZuRYaoKX8YIm', 1);
+create sequence users_seq start with 2 increment by 1;
 
 alter table licenses add constraint FK_licenses_customer_id foreign key (customer_id) references customers;
 alter table licenses add constraint FK_licenses_lastsupport_id foreign key (lastsupport_id) references supports;
 alter table licenses add constraint FK_licenses_product_id foreign key (product_id) references products;
 alter table supports add constraint FK_supports_license_id foreign key (license_id) references licenses;
-
-insert into users (id, first_name, email, user_password, is_admin)values (1, 'Admin', 'admin@geslic.com', '$2a$10$aFFN9tA68poV/AOK2qi8VOnpdH5NBIvpHdp/46mZXZuRYaoKX8YIm', 1);
