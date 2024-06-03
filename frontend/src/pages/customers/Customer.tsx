@@ -124,7 +124,7 @@ const Customer = () => {
                             <div className="field col-12 md:col-2 lg:col-2 xl:col-2">    
                                 <label htmlFor="phoneNumber" className="">Teléfono</label>
                                 <Controller name="phoneNumber" control={control} render={({ field }) => (                                                                
-                                <InputMask id="field.name" {... field} value={field.value} keyfilter="pint"  type="text"  />
+                                <InputMask id="field.name" {... field} mask="99999999?9" autoClear={false}  value={field.value}  type="text"  /> 
                                 )} />
                             </div>
                             <div className="field col-12 md:col-5">    
