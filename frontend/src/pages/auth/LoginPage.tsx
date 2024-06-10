@@ -69,7 +69,7 @@ const LoginPage = () => {
                         <div className="text-center mb-5">
                         <img src={`/layout/images/logo-${layoutConfig.colorScheme === 'light' ? 'dark' : 'white'}.svg`} alt="GesLic" className="mb-5 w-6rem flex-shrink-0" />                            
                             <div className="text-900 text-3xl font-medium mb-3">Bienvenido a GesLic</div>
-                            <span className="text-600 font-medium">Introduzca usuario</span>
+                            <span className="text-600 font-medium">Introduce usuario</span>
                         </div>
                     <form onSubmit={handleSubmit(onSubmit)} className="p-fluid">
                         <div className="mb-5">

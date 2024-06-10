@@ -136,7 +136,7 @@ const Customer = () => {
                             </div>
                            
                             <div className="col-2 col-offset-5 mt-5">
-                                <Button type="submit" icon="pi pi-save" label="Guardar" severity="info" />                    
+                                <Button type="submit" icon="pi pi-save" tooltip="Guardar" severity="info" />                    
                             </div>
                         </div>                        
                     </form>    

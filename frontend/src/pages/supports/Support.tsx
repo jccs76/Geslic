@@ -123,7 +123,7 @@ const Support = () => {
                         </div>
                     </div>
                     <div className="col-2 col-offset-5">
-                        <Button type="submit" icon="pi pi-save" severity="info"  label="Guardar"  />                    
+                        <Button type="submit" icon="pi pi-save" severity="info"  tooltip="Guardar"  />                    
                     </div>
                     </form>                    
                 </div>
